@@ -8,6 +8,7 @@ public abstract class Value {
     private String varName;
 
     public Value (String name) {
+        this.varName = name;
     }
 
     public Object getValue () {
