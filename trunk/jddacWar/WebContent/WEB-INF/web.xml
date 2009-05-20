@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+
+    <!-- ### Filters -->
+    <filter>
+        <filter-name>LoginFilter</filter-name>
+        <filter-class>net.java.jddac.servlets.SessionSetupFilter</filter-class>
+        <init-param>
+            <param-name>accessBlock</param-name>
+            <param-value>AccessBlock</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>LoginFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- ### Servlets -->
+    <servlet>
+        <servlet-name>JddacServlet</servlet-name>
+        <servlet-class>net.java.jddac.jmdi.comm.CommServlet</servlet-class>
+        <init-param>
+            <param-name>registrationRequired</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <load-on-startup>3</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>StartupServlet</servlet-name>
+        <servlet-class>net.java.jddac.servlets.Start1451Servlet</servlet-class>
+        <init-param>
+            <param-name>startupConfigFile</param-name>
+            <param-value>../etc/startup.xml</param-value>
+        </init-param>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewThreadsServlet</servlet-name>
+        <servlet-class>net.java.jddac.servlets.ViewThreadsServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ListRegisteredMeasurements</servlet-name>
+        <servlet-class>net.java.jddac.servlets.ListRegisteredMeasurements</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JFreeChartServlet</servlet-name>
+        <servlet-class>net.java.jddac.servlets.JFreeChartServlet</servlet-class>
+        <init-param>
+            <param-name>serverDataBlock</param-name>
+            <param-value>JddacServerDataBlock</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>ObjectRegistryServlet</servlet-name>
+        <servlet-class>net.java.jddac.servlets.ObjectRegistryServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>MQStatusServlet</servlet-name>
+        <servlet-class>net.java.jddac.servlets.MQStatusServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DbSetupServlet</servlet-name>
+        <servlet-class>net.java.jddac.servlets.DbSetupServlet</servlet-class>
+        <init-param>
+            <param-name>dbConMgr</param-name>
+            <param-value>DataDb</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>GenericStoreServlet</servlet-name>
+        <servlet-class>net.java.jddac.servlets.GenericStoreServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RSSServlet</servlet-name>
+        <servlet-class>net.java.jddac.servlets.RSSServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CSVServlet</servlet-name>
+        <servlet-class>net.java.jddac.servlets.CsvExportServlet</servlet-class>
+        <init-param>
+            <param-name>defQids</param-name>
+            <param-value>defStartTime</param-value>
+        </init-param>
+        <init-param>
+            <param-name>defReportDbBlk</param-name>
+            <param-value>csvDb</param-value>
+        </init-param>
+        <init-param>
+            <param-name>dbConMgr</param-name>
+            <param-value>DataDb</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>RESTServlet</servlet-name>
+        <servlet-class>net.java.jddac.servlets.RESTServlet</servlet-class>
+    </servlet>
+
+    <!-- Action Servlet Configuration -->
+    <servlet>
+        <servlet-name>action</servlet-name>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>/WEB-INF/struts-config.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+
+    <!-- Action Servlet Mapping -->
+    
+<!-- JSPC servlet mappings start -->
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.publicPages.termsOfUse_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.publicPages.termsOfUse_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.addGraphReport_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.addGraphReport_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.configure_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.configure_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.configureList_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.configureList_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.getGraphProbe_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.getGraphProbe_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.graphReport_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.graphReport_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.home_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.home_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.jddacMenus_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.jddacMenus_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.measProps_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.measProps_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.probeProps_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.probeProps_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.probes_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.probes_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.probeStatus_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.probeStatus_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.probeTypeEdit_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.probeTypeEdit_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.reports_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.reports_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.summaryReports_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.summaryReports_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.viewFederation_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.viewFederation_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.viewProbe_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.viewProbe_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.pages.violation_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.pages.violation_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.layouts.default_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.layouts.default_jsp</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>org.apache.jsp.private_.layouts.noMenu_jsp</servlet-name>
+        <servlet-class>org.apache.jsp.private_.layouts.noMenu_jsp</servlet-class>
+    </servlet>
+    <servlet>
+    	<servlet-name>MetadataServlet</servlet-name>
+    	<display-name>MetadataServlet</display-name>
+    	<description></description>
+    	<servlet-class>
+    	net.java.jddac.servlets.MetadataServlet</servlet-class>
+    </servlet>
+    <servlet>
+    	<servlet-name>ConnectorServlet</servlet-name>
+    	<display-name>ConnectorServlet</display-name>
+    	<description></description>
+    	<servlet-class>
+    	net.java.jddac.servlets.ConnectorServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.publicPages.termsOfUse_jsp</servlet-name>
+        <url-pattern>/private/publicPages/termsOfUse.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.addGraphReport_jsp</servlet-name>
+        <url-pattern>/private/pages/addGraphReport.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.configure_jsp</servlet-name>
+        <url-pattern>/private/pages/configure.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.configureList_jsp</servlet-name>
+        <url-pattern>/private/pages/configureList.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.getGraphProbe_jsp</servlet-name>
+        <url-pattern>/private/pages/getGraphProbe.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.graphReport_jsp</servlet-name>
+        <url-pattern>/private/pages/graphReport.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.home_jsp</servlet-name>
+        <url-pattern>/private/pages/home.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.jddacMenus_jsp</servlet-name>
+        <url-pattern>/private/pages/jddacMenus.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.measProps_jsp</servlet-name>
+        <url-pattern>/private/pages/measProps.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.probeProps_jsp</servlet-name>
+        <url-pattern>/private/pages/probeProps.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.probes_jsp</servlet-name>
+        <url-pattern>/private/pages/probes.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.probeStatus_jsp</servlet-name>
+        <url-pattern>/private/pages/probeStatus.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.probeTypeEdit_jsp</servlet-name>
+        <url-pattern>/private/pages/probeTypeEdit.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.reports_jsp</servlet-name>
+        <url-pattern>/private/pages/reports.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.summaryReports_jsp</servlet-name>
+        <url-pattern>/private/pages/summaryReports.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.viewFederation_jsp</servlet-name>
+        <url-pattern>/private/pages/viewFederation.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.viewProbe_jsp</servlet-name>
+        <url-pattern>/private/pages/viewProbe.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.pages.violation_jsp</servlet-name>
+        <url-pattern>/private/pages/violation.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.layouts.default_jsp</servlet-name>
+        <url-pattern>/private/layouts/default.jsp</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>org.apache.jsp.private_.layouts.noMenu_jsp</servlet-name>
+        <url-pattern>/private/layouts/noMenu.jsp</url-pattern>
+    </servlet-mapping>
+
+<!-- JSPC servlet mappings end -->
+
+    <servlet-mapping>
+        <servlet-name>action</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+
+    <!-- Report Servlets -->
+    <servlet-mapping>
+        <servlet-name>JFreeChartServlet</servlet-name>
+        <url-pattern>/jddac/reports/jchart</url-pattern>
+    </servlet-mapping>
+    <!-- Public Graph Servlet -->
+    <servlet-mapping>
+        <servlet-name>JFreeChartServlet</servlet-name>
+        <url-pattern>/reports/jchart</url-pattern>
+    </servlet-mapping>
+
+    <!-- NRSS feed servlets -->
+    <servlet-mapping>
+        <servlet-name>RSSServlet</servlet-name>
+        <url-pattern>/nrss/feed</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CSVServlet</servlet-name>
+        <url-pattern>/nrss/data/csv</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RESTServlet</servlet-name>
+        <url-pattern>/rest</url-pattern>
+    </servlet-mapping>
+
+    <!-- Admin Servlets -->
+    <servlet-mapping>
+        <servlet-name>StartupServlet</servlet-name>
+        <url-pattern>/private/servlets/startup</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GenericStoreServlet</servlet-name>
+        <url-pattern>/private/servlets/genericStore/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ListRegisteredMeasurements</servlet-name>
+        <url-pattern>/private/servlets/listRegisteredMeasurements</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ObjectRegistryServlet</servlet-name>
+        <url-pattern>/private/servlets/registry</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MQStatusServlet</servlet-name>
+        <url-pattern>/private/servlets/mq</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewThreadsServlet</servlet-name>
+        <url-pattern>/private/servlets/viewThreads</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DbSetupServlet</servlet-name>
+        <url-pattern>/private/servlets/dbSetup/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Probe Servlets -->
+    <servlet-mapping>
+        <servlet-name>JddacServlet</servlet-name>
+        <url-pattern>/probe</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JddacServlet</servlet-name>
+        <url-pattern>/rome/probe</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JddacServlet</servlet-name>
+        <url-pattern>/server/probe</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+    	<servlet-name>MetadataServlet</servlet-name>
+    	<url-pattern>/MetadataServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+    	<servlet-name>ConnectorServlet</servlet-name>
+    	<url-pattern>/ConnectorServlet</url-pattern>
+    </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>redirect.html</welcome-file>
+    </welcome-file-list>
+</web-app>

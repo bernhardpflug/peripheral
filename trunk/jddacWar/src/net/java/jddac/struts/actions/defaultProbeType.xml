@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+
+<argArray>
+ <argArray l="54" t="vector" n="channelList">
+  <argArray l="2">
+   <arg n="displayName">Sampling Specification</arg>
+   <arg n="displayType">title</arg>
+  </argArray>
+  <argArray l="5">
+   <arg n="displayName">Sample Period</arg>
+   <arg n="displayType">textbox</arg>
+   <arg n="parmName">period</arg>
+   <arg n="attrName">b_period</arg>
+  </argArray>
+  <argArray l="2">
+   <arg n="displayName">Memory Measurements</arg>
+   <arg n="displayType">title</arg>
+  </argArray>
+  <argArray l="4">
+   <arg n="displayName">Total JVM Memory</arg>
+   <arg n="attrName">ck1_totalMemory</arg>
+   <arg n="timName">Memory Usage Stim</arg>
+   <arg n="timChName">totalMemory</arg>
+  </argArray>
+  <argArray l="4">
+   <arg n="displayName">Free JVM Memory</arg>
+   <arg n="attrName">ck1_freeMemory</arg>
+   <arg n="timName">Memory Usage Stim</arg>
+   <arg n="timChName">freeMemory</arg>
+  </argArray>
+ </argArray>
+ <argArray l="9" t="vector" n="defaultBlocks">
+  <argArray l="2">
+   <arg n="instanceName">Memory Usage Stim</arg>
+   <arg n="className">net.java.jddac.jmdi.transducer.MemoryUsage</arg>
+  </argArray>
+  <argArray l="7">
+   <arg n="instanceName">TBlock1</arg>
+   <arg n="Entity.description">Generic TBlock 1</arg>
+   <arg n="BasicTransducerBlock.enable">dataCondition</arg>
+   <arg n="className">net.java.jddac.jmdi.fblock.BasicTransducerBlock</arg>
+   <argArray l="1" n="FunctionBlock.pubPorts">
+    <arg n="result">storeMeasurement</arg>
+   </argArray>
+  </argArray>
+ </argArray>
+ <arg t="boolean" n="canMultipleRecords">true</arg>
+ <arg n="mainTblockName">TBlock1</arg>
+ <argArray l="1" n="criteria">
+  <argArray l="2" n="metaData">
+   <arg n="networkID">jddac:\/\/00000\*00000\*00000\*00000:.*</arg>
+   <arg n="modelNumber">JddacClient.*</arg>
+  </argArray>
+ </argArray>
+</argArray>
+

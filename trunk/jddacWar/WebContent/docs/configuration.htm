@@ -1,0 +1,636 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 9">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./configuration_files/filelist.xml">
+<link rel=Edit-Time-Data href="./configuration_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>JDDAC Tutorial – Configuration Guide</title>
+<!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:Zoom>75</w:Zoom>
+  <w:ActiveWritingStyle Lang="EN-US" VendorID="64" DLLVersion="131077"
+   NLCheck="1">1</w:ActiveWritingStyle>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	color:black;}
+h4
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:4;
+	font-size:14.0pt;
+	font-family:Arial;
+	mso-bidi-font-family:"Times New Roman";
+	color:black;
+	font-weight:bold;}
+h6
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:6;
+	font-size:11.0pt;
+	font-family:Arial;
+	mso-bidi-font-family:"Times New Roman";
+	color:black;
+	font-weight:bold;}
+p.MsoHeading7, li.MsoHeading7, div.MsoHeading7
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:7;
+	font-size:12.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	color:black;}
+p.MsoHeading8, li.MsoHeading8, div.MsoHeading8
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:8;
+	font-size:12.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	color:black;
+	font-style:italic;}
+p.MsoFootnoteText, li.MsoFootnoteText, div.MsoFootnoteText
+	{margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	color:black;}
+span.MsoFootnoteReference
+	{vertical-align:super;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;
+	text-underline:single;}
+p
+	{margin-right:0in;
+	mso-margin-top-alt:auto;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";
+	color:black;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="1027"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+<meta name=Version content=8.0.4308>
+<meta name=Date content="7/8/97">
+<meta name=Template content="C:\Program Files\Microsoft Office\Office\HTML.DOT">
+</head>
+
+<body bgcolor=white lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<table border=0 cellspacing=0 cellpadding=0 width="100%" style='width:100.0%;
+ mso-cellspacing:0in;mso-padding-alt:5.25pt 5.25pt 5.25pt 5.25pt'>
+ <tr style='height:19.5pt'>
+  <td width="33%" valign=top style='width:33.0%;padding:5.25pt 5.25pt 5.25pt 5.25pt;
+  height:19.5pt'>
+  <p><b><span style='font-size:13.5pt;mso-bidi-font-family:Arial'>March 1, 2006</span></b></p>
+  </td>
+  <td width="33%" valign=top style='width:33.0%;padding:5.25pt 5.25pt 5.25pt 5.25pt;
+  height:19.5pt'>
+  <p align=center style='text-align:center'><b><span style='font-size:13.5pt;
+  mso-bidi-font-family:Arial'>JDDAC Tutorial – Configuration Guide</span></b></p>
+  </td>
+  <td width="33%" valign=top style='width:33.0%;padding:5.25pt 5.25pt 5.25pt 5.25pt;
+  height:19.5pt'>
+  <p align=right style='text-align:right'><b><span style='font-size:13.5pt;
+  mso-bidi-font-family:Arial'>Jerry Liu</span></b></p>
+  </td>
+ </tr>
+</table>
+
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=2 width="100%" align=center>
+
+</div>
+
+
+<p><b><i>Introduction<o:p></o:p></i></b></p>
+
+<p>This tutorial discusses how JDDAC applications are configured through startup
+XML files. Users wishing to customize their applications can edit the XML file.
+</p>
+
+<p>For the JddacClient application, the name of the XML file is provided as the
+first command line argument:<span style="mso-spacerun: yes">  </span>java –jar
+lib/JddacClient.jar<span style="mso-spacerun: yes">  </span>myConfig.xml</p>
+
+<p><b><i>Steps during Application Launch<o:p></o:p></i></b></p>
+
+<p>There are 3 steps during the launch of a JDDAC application. Although this
+tutorial discusses configuration as a “one-time” process, in reality JDDAC supports
+dynamic configuration as well.</p>
+
+<p>Step 1: Making the classes available to the Java class loader.</p>
+
+<p>All classes used in the JDDAC application must be specified on the CLASSPATH
+or in the –jar parameter to the java command. For the tutorial, everything is packaged
+into the JddacClient.jar file.</p>
+
+<p>Step 2: Instantiating instances of classes</p>
+
+<p>In the configuration XML, each object to be instantiated is specified with
+the two attributes: the class name, and the desired instance name. The
+configuration logic uses the Class.forName( ) mechanism<a style='mso-footnote-id:
+ftn1' href="#_ftn1" name="_ftnref1" title=""><span class=MsoFootnoteReference><span
+style='mso-special-character:footnote'><![if !supportFootnotes]>[1]<![endif]></span></span></a>.
+This will work for any class in the system. Note that JDDAC will register the
+instance by the “instanceName” and provides a simple local registration service
+so that other objects can get a local reference to the object.</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;instanceName&quot;&gt;My Memory Usage Stim&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;className&quot;&gt;net.java.jddac.jti.transducer.MemoryUsage&lt;/arg&gt;</p>
+
+<p>Step 3: Configure select instance variables.</p>
+
+<p>JDDAC object also can accept numerous configuration parameters. This is
+supported on any class that implements the “<span style='font-size:10.0pt;
+font-family:"Courier New";background:white;mso-highlight:white'>ConfigurationInterface</span><span
+style='font-size:10.0pt;font-family:"Courier New"'>”</span>. Here’s an example
+for the creation of the “Reporter” F-Block which manages communication between
+the JddacClient and the JDDAC server. Key configuration parameters will be
+discussed below.</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt'>&lt;argArray l=&quot;8&quot;&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;className&quot;&gt;net.java.jddac.jmdi.fblock.Reporter&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;instanceName&quot;&gt;Reporter&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+t=&quot;int&quot; n=&quot;Block.numSubs&quot;&gt;1&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;Block.s1.qual&quot;&gt;storeMeasurement&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes"> </span>&lt;arg
+n=&quot;Reporter.destination&quot;&gt;http://jddac.labs.agilent.com:8080/server/probe&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+t=&quot;long&quot; n=&quot;Reporter.connectInterval&quot;&gt;10&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;Reporter.transportName&quot;&gt;reporter&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;Reporter.xdestination&quot;&gt;http://localhost:8080/server/probe&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt'><span style="mso-spacerun:
+yes"> </span>&lt;/argArray&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:.5in;
+margin-bottom:.0001pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p><b><i>Configuration XML File<o:p></o:p></i></b></p>
+
+<p>The JDDAC XML configuration file contains a “configuration set”. This is
+represented as an “argument array” of type “vector”. In the following XML
+example, this vector contains 5 elements.</p>
+
+<p>The startup processing parses this XML and traverses the vector in
+sequential order. The first “configuration” encountered is fully processed
+before moving onto the next “configuration”. This means that object at the top
+of the XML are instantiated and configured BEFORE object further down in the
+XML. During instantiation, an appropriate constructor will be called with NO
+arguments. The programmer must initialize the object’s attributes to reasonable
+defaults at this time.</p>
+
+<p>Each element of the “configuration set” contains a “configuration”. Each is
+represented as an “argument array” and contains all the “name / value”
+configuration parameters for this object. The order of parameters in the
+configuration is arbitrary. For objects that implement the
+“ConfigurationInterface”, the configure( ) method will be called with the
+configuration provided as a parameter. The programmer is responsible for
+retrieving appropriate values from the configuration during this call.</p>
+
+<p>To prevent name-space collisions within the object’s class inheritance
+chain, names are prefaced with the leaf-node class name. </p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'>&lt;?xml version=&quot;1.0&quot;?&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'>&lt;argArray l=&quot;5&quot; t=&quot;vector&quot;&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes"> </span>&lt;argArray
+l=&quot;4&quot;&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;className&quot;&gt;net.java.jddac.jmdi.block.BasicNCAPBlock&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;instanceName&quot;&gt;Probe1&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;Entity.objectName&quot;&gt;NCAP Block&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;NCAPBlock.probeNetworkId&quot;&gt;jddac://00634*38764*26041*95865@jddac.labs.agilent.com&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun:
+yes"> </span>&lt;/argArray&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes"> </span>&lt;argArray
+l=&quot;7&quot;&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;className&quot;&gt;net.java.jddac.jmdi.fblock.Reporter&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">   </span>&lt;arg
+n=&quot;instanceName&quot;&gt;Reporter&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+t=&quot;int&quot; n=&quot;Block.numSubs&quot;&gt;1&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;Block.s1.qual&quot;&gt;storeMeasurement&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;Reporter.destination&quot;&gt;http://jddac.labs.agilent.com:8080/server/probe&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+t=&quot;long&quot; n=&quot;Reporter.connectInterval&quot;&gt;10&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;Reporter.transportName&quot;&gt;reporter&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'>&lt;/argArray&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes"> </span>&lt;argArray
+l=&quot;2&quot;&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg n=&quot;instanceName&quot;&gt;My
+Memory Usage Stim&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;className&quot;&gt;net.java.jddac.jti.transducer.MemoryUsage&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun:
+yes"> </span>&lt;/argArray&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes"> </span>&lt;argArray
+l=&quot;9&quot;&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;className&quot;&gt;net.java.jddac.jmdi.block.BasicTransducerBlock&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;instanceName&quot;&gt;My Memory Usage TBlock&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;Entity.owningBlockObjectTag&quot;&gt;NCAP&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;Entity.objectName&quot;&gt;Demo Basic Transducer Block for Memory
+Usage&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+t=&quot;int&quot; n=&quot;Block.numPubs&quot;&gt;1&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;Block.p1.topic&quot;&gt;storeMeasurement&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;BasicTransducerBlock.transducerName&quot;&gt;My Memory Usage
+Stim&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+t=&quot;int&quot;
+n=&quot;BasicTransducerBlock.period&quot;&gt;10000&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+t=&quot;boolean&quot;
+n=&quot;BasicTransducerBlock.autoStart&quot;&gt;true&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'>&lt;/argArray&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes"> </span>&lt;argArray
+l=&quot;4&quot;&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;className&quot;&gt;net.java.jddac.jmdi.fblock.EchoBlock&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;instanceName&quot;&gt;EchoBlock&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+t=&quot;int&quot; n=&quot;Block.numSubs&quot;&gt;1&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><span style="mso-spacerun: yes">  </span>&lt;arg
+n=&quot;Block.s1.qual&quot;&gt;storeMeasurement&lt;/arg&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'>&lt;/argArray&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'>&lt;/argArray&gt;</p>
+
+<p style='margin-top:0in;margin-right:0in;margin-bottom:0in;margin-left:1.0in;
+margin-bottom:.0001pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p><b><i>NCAP Block<o:p></o:p></i></b></p>
+
+<p style='margin:0in;margin-bottom:.0001pt'>The NCAP block is a singleton
+object that is required for each JDDAC application. The
+“NCAPBlock.probeNetworkID” parameter contains your registration key
+information.</p>
+
+<p><b><i>Reporter F-Block<o:p></o:p></i></b></p>
+
+<p style='margin:0in;margin-bottom:.0001pt'>The Reporter is also singleton
+object in the current JDDAC release. It is a sub-class of “Function Block”
+(F-Block for short) and represents application level processing in the 1451.1
+architecture. It manages communication to the JDDAC server. The
+“Reporter.destination” parameter specifies the connection information. The
+“Reporter.connectInterval” parameter specifies the period for connections in
+seconds. Note that the Reporter subscribes to intra-JVM communications from
+other local JDDAC object. This is controlled by the “Block.numSubs” and
+“Block.s1.qual” parameters. See below for more details on intra-JVM publication
+/ subscription configuration. Note that the Reporter can be configured to
+subscribe to more than one topic by changing these parameters.</p>
+
+<p><b><i>Memory Usage Transducer<o:p></o:p></i></b></p>
+
+<p style='margin:0in;margin-bottom:.0001pt'>This object is a transducer that
+makes memory measurements on the local JVM. It takes no configuration
+parameters. It is important to realize that Transducers ARE NOT part of the
+1451.1 Block architecture. They provide an interface to the transducers but do
+not support Block-to-Block communications. See the TransducerBlock for that
+functionality.</p>
+
+<p><b><i>BasicTransducerBlock Block<o:p></o:p></i></b></p>
+
+<p style='margin:0in;margin-bottom:.0001pt'>TransducerBlocks (T-Block for
+short) are at the boundary between the 1451.1 world and Transducers. The
+“BasicTransducerBlock.transducerName” configures the T-Block with the
+appropriate transducer. The “period” parameter specifies the periodic sample
+rate in msecs. The T-Block generates a publication with each measurement. This
+is configured with the “Block.numPubs” and “Block.p1.topic” parameters.</p>
+
+<p><b><i>Echo<span style="mso-spacerun: yes">  </span>F-Block<o:p></o:p></i></b></p>
+
+<p style='margin:0in;margin-bottom:.0001pt'>This F-Block is for diagnostic
+purposes. It subscribes to appropriate topics using the “Block.numSubs”
+and<span style="mso-spacerun: yes">  </span>“Block.s1.qual” parameters.
+Incoming subscriptions are printed to the console. Note that the Echo block
+supports multiple subscriptions by manipulating these parameters.</p>
+
+<p style='margin:0in;margin-bottom:.0001pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p><b><i>Managing Intra-JVM Communications<o:p></o:p></i></b></p>
+
+<p style='margin:0in;margin-bottom:.0001pt'>The current JDDAC release has
+implemented the “publish / subscribe” communication model in the IEEE 1451.1
+standard. Future releases will add the “client / server” and “asynchronous
+client / server” models. </p>
+
+<p style='margin:0in;margin-bottom:.0001pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p style='margin:0in;margin-bottom:.0001pt'>The most common usage of “pub/sub”
+is to route measurement messages between cooperating F-Blocks within the
+JddacClient. This is known as intra-JVM pub/sub. Any sub-class of Block
+inherits support for this form of communication. Just specify the desired
+number of publications with the “Block.numPubs” parameter followed by each
+topic using this form: “Block.p1.topic”,<span style="mso-spacerun: yes"> 
+</span>“Block.p2.topic”, “Block.p3.topic”, etc.</p>
+
+<p style='margin:0in;margin-bottom:.0001pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p style='margin:0in;margin-bottom:.0001pt'>Topic strings should NOT contain
+the “.” or “*” characters. The period is used as a field separator and the “*”
+is used for specifying wildcards.</p>
+
+<p style='margin:0in;margin-bottom:.0001pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p style='margin:0in;margin-bottom:.0001pt'>For subscriptions, use the
+“Block.numSubs” parameter and the appropriate number of “Block.s1.qual”,
+“Block.s2.qual”, etc. parameters. Subscription qualifiers can use the “.” and
+“*” for limited wild-card support.</p>
+
+<p style='margin:0in;margin-bottom:.0001pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p style='margin:0in;margin-bottom:.0001pt'>For example, a “Block.s1.qual” of
+“*.temperature” would match any of these topics: “outlet.temperature”,
+“inlet.temperature”, etc.</p>
+
+<p style='margin:0in;margin-bottom:.0001pt'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p><b><i>Building your own F-Blocks and Transducers<o:p></o:p></i></b></p>
+
+<p style='margin:0in;margin-bottom:.0001pt'>To enhance the JddacClient,
+programmers will be implementing new F-Blocks and Transducers. It is
+recommended that you study the examples to understand startup and threading
+conventions. <b><i><o:p></o:p></i></b></p>
+
+<p><span style='font-size:8.0pt;mso-bidi-font-size:12.0pt;mso-bidi-font-family:
+Arial'>©</span><span style='font-size:8.0pt;mso-bidi-font-size:12.0pt'> 2004-5
+Agilent Technologies</span></p>
+
+<p><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+<p><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+</div>
+
+<div style='mso-element:footnote-list'><![if !supportFootnotes]><br clear=all>
+
+<hr align=left size=1 width="33%">
+
+<![endif]>
+
+<div style='mso-element:footnote' id=ftn1>
+
+<p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><a
+style='mso-footnote-id:ftn1' href="#_ftnref1" name="_ftn1" title=""><span
+class=MsoFootnoteReference><span style='mso-special-character:footnote'><![if !supportFootnotes]>[1]<![endif]></span></span></a>
+The actual code is:</p>
+
+<p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+style="mso-spacerun: yes"> </span><span style='font-size:10.0pt;font-family:
+"Courier New";color:windowtext;background:white;mso-highlight:white'><span
+style='mso-tab-count:3'>                  </span></span><span style='font-size:
+10.0pt;font-family:"Courier New";color:#3F7F5F;background:white;mso-highlight:
+white'>// Get the class for the new instance</span><span style='font-size:10.0pt;
+font-family:"Courier New";color:windowtext'><o:p></o:p></span></p>
+
+<p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+style='font-size:10.0pt;font-family:"Courier New";color:windowtext;background:
+white;mso-highlight:white'><span style='mso-tab-count:3'>                  </span></span><span
+style='font-size:10.0pt;font-family:"Courier New";background:white;mso-highlight:
+white'>Class</span><span style='font-size:10.0pt;font-family:"Courier New";
+color:windowtext;background:white;mso-highlight:white'> </span><span
+style='font-size:10.0pt;font-family:"Courier New";background:white;mso-highlight:
+white'>thisClass</span><span style='font-size:10.0pt;font-family:"Courier New";
+color:windowtext;background:white;mso-highlight:white'> </span><span
+style='font-size:10.0pt;font-family:"Courier New";background:white;mso-highlight:
+white'>=</span><span style='font-size:10.0pt;font-family:"Courier New";
+color:windowtext;background:white;mso-highlight:white'> </span><span
+style='font-size:10.0pt;font-family:"Courier New";background:white;mso-highlight:
+white'>Class.forName(className);</span><span style='font-size:10.0pt;
+font-family:"Courier New";color:windowtext'><o:p></o:p></span></p>
+
+<p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+style='font-size:10.0pt;font-family:"Courier New";color:windowtext;background:
+white;mso-highlight:white'><span style='mso-tab-count:3'>                  </span></span><span
+style='font-size:10.0pt;font-family:"Courier New";color:#3F7F5F;background:
+white;mso-highlight:white'>// Create the new instance</span><span
+style='font-size:10.0pt;font-family:"Courier New";color:windowtext'><o:p></o:p></span></p>
+
+<p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
+style='font-size:10.0pt;font-family:"Courier New";color:windowtext;background:
+white;mso-highlight:white'><span style='mso-tab-count:3'>                  </span></span><span
+style='font-size:10.0pt;font-family:"Courier New";background:white;mso-highlight:
+white'>object</span><span style='font-size:10.0pt;font-family:"Courier New";
+color:windowtext;background:white;mso-highlight:white'> </span><span
+style='font-size:10.0pt;font-family:"Courier New";background:white;mso-highlight:
+white'>=</span><span style='font-size:10.0pt;font-family:"Courier New";
+color:windowtext;background:white;mso-highlight:white'> </span><span
+style='font-size:10.0pt;font-family:"Courier New";background:white;mso-highlight:
+white'>thisClass.newInstance();</span><span style='font-size:10.0pt;font-family:
+"Courier New";color:windowtext'><o:p></o:p></span></p>
+
+<p class=MsoFootnoteText><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+
+</div>
+
+</div>
+
+</body>
+
+</html>
