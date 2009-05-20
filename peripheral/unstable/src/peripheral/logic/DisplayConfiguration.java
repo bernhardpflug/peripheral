@@ -1,11 +1,14 @@
 package peripheral.logic;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import peripheral.logic.sensor.SensorServer;
 import peripheral.logic.symboladapter.SymbolAdapter;
 
 
 public class DisplayConfiguration {
+
+    private static DisplayConfiguration instance;
 
     private java.util.List<SymbolAdapter> adapter;
 
@@ -14,10 +17,19 @@ public class DisplayConfiguration {
     private java.util.List<SensorServer> sensorServer;
 
     private DisplayConfiguration () {
+
+        adapter = new ArrayList<SymbolAdapter>();
+
+        sensorServer = new ArrayList<SensorServer>();
     }
 
     public static DisplayConfiguration getInstance () {
-        return null;
+
+        if (instance == null) {
+            instance = new DisplayConfiguration();
+        }
+
+        return instance;
     }
 
     public java.util.List<SymbolAdapter> getAdapter () {
