@@ -1,6 +1,7 @@
 package peripheral.logic.symboladapter;
 
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Map;
 import peripheral.logic.action.Action;
 import peripheral.logic.filter.Filter;
@@ -37,6 +38,19 @@ public class SymbolAdapter {
     private Action defaultAction;
 
     public SymbolAdapter () {
+
+        beforeFilter = new ArrayList<Filter>();
+        afterFilter = new ArrayList<Filter>();
+
+        rules = new ArrayList<Rule>();
+
+        varpool = new java.util.HashMap<String,Value>();
+
+        neededUserInput = new ArrayList<UserInput>();
+
+        preselectedSensors = new java.util.HashSet<Sensor>();
+
+        requiredSteps = new java.util.HashMap<String,Boolean>();
     }
 
     public java.util.List<Filter> getAfterFilter () {
