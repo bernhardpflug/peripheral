@@ -7,6 +7,8 @@ public class ConstValue extends Value {
 
     public ConstValue (String varName, Object value) {
         super(varName);
+
+        this.value = value;
     }
 
     public Object getValue () {

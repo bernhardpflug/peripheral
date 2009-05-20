@@ -13,6 +13,8 @@ public class SensorValue extends Value {
 
     public SensorValue (String varName, SensorAttribute sensorAttribute) {
         super(varName);
+
+        this.sensorAttribute = sensorAttribute;
     }
 
     public SensorAttribute getSensorAttribute () {
@@ -34,6 +36,8 @@ public class SensorValue extends Value {
      */
     public SensorValue (String varName, SensorChannel sensorChannel) {
         super(varName);
+
+        this.sensorChannel = sensorChannel;
     }
 
     public SensorChannel getSensorChannel () {
