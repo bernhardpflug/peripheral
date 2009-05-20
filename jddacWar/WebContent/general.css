@@ -1,0 +1,143 @@
+/* General page style. The scroll bar colours only visible in IE5.5+ */
+body {
+	background-color: #FFFFFF; /* #E5E5E5; */
+	/*scrollbar-face-color: #DEE3E7;
+	scrollbar-highlight-color: #FFFFFF;
+	scrollbar-shadow-color: #DEE3E7;
+	scrollbar-3dlight-color: #D1D7DC;
+	scrollbar-arrow-color:  #006699;
+	scrollbar-track-color: #EFEFEF;
+	scrollbar-darkshadow-color: #98AAB1; */
+	font-size: 10pt;
+	margin-top: 4pt;
+}
+
+/* General font families for common tags */
+font, th, td, p, h1, h2 { font-family: Arial, Arial, Helvetica, sans-serif, Verdana }
+
+A:link, .menuLink  { color : #336699; text-decoration : underline; }
+A:visited { color : #663366; }
+A:hover   { color : #ff6633; text-decoration : underline; }
+A:active  { color : #cc6699; }
+
+hr	{ height: 0pt; border: solid #B9C9DF 0pt; border-top-width: 1pt;}
+           
+h1 { color: #003366; font-size: 14pt; font-weight : bold; }
+h2 { color: #003366; font-size: 12pt; font-weight : bold; }
+h3 { color: #003366; font-size: 10pt; font-weight : bold; }
+h1.title, h2.title, h3.title, h1.error, h2.error, h3.error { margin-top: 0pt; margin-bottom: 4pt }
+.error { color: #800000 }
+
+.nomargin { margin-top: 0pt; margin-bottom: 0pt }
+form, table { margin-top: 0pt; margin-bottom: 0pt }             
+
+/* This is the outline round the main forum tables */
+.outline { background-color: #FFFFFF; border: 2pt #336699 solid; }
+.inner   { background-color: #FFFFFF; border: 0pt; }
+
+/* Main table cell colours and backgrounds.  Note that tr does not accept font specs */
+tr.title{ background-color: #003366; }
+tr.space{ background-color: #FFFFFF; }
+tr.row0	{ background-color: #cccccc; }
+tr.row1	{ background-color: #B9C9DF; }
+tr.row2	{ background-color: #dddddd; }
+
+/* Table cell colors and sizes */
+td { font-size: 10pt; font-weight : normal; }
+td.center { text-align: center }
+td.title { background-color: #003366; color: #ffffff; font-size: 14pt; font-weight: bold; }
+
+/* Config. tables */
+.configBehavior { margin-top: 0pt; margin-bottom: 0pt; border: 1px;
+            background-color: #CCFFCC; color: #000000; font-size: 10pt; font-weight: normal; }
+td.configColTitle { white-space: nowrap; }
+td.configRowTitle { font-weight: bold; white-space: nowrap; }
+
+/* Header cells  */
+th	{
+	color: #ffffff; font-size: 12pt; font-weight : bold;
+	background-color: #336699; height: 22pt;
+        /* background-image: url('/images/vgradient.gif');   */
+	text-align: left;
+}
+th.center { text-align: center }
+
+/* The largest text used in the index page title and toptic title etc. */
+.maintitle	{
+	font-weight: bold; font-size: 20pt; font-family: "Trebuchet MS",Verdana, Arial, Helvetica, sans-serif;
+	text-decoration: none; line-height : 120%; color : #000000;
+}
+
+/* General text */
+.gen { font-size : 10pt; }
+.genmed { font-size : 9pt; }
+.gensmall { font-size : 8pt; }
+.genlarge { font-size : 12pt; }
+.gen, .genmed, .gensmall, .genlarge { color : #000000; }
+a.gen, a.genmed, a.gensmall, .genlarge { color: #006699; text-decoration: none; }
+a.gen:hover, a.genmed:hover, a.gensmall, .genlarge:hover	{ color: #DD6900; text-decoration: underline; }
+
+/* Menus */
+.menu { font-size : 9pt; }
+.menuTitle { color: #ffffff; background-color: #336699; font-weight : bold; }
+
+/* Location, number of posts, post date etc */
+.postdetails		{ font-size : 8pt; color : #000000; }
+
+/* The content of the posts (body of text) */
+.postbody { font-size : 10pt; line-height: 16pt}
+a.postlink:link	{ text-decoration: none; color : #006699 }
+a.postlink:visited { text-decoration: none; color : #5493B4; }
+a.postlink:hover { text-decoration: underline; color : #DD6900}
+
+/* Quote & Code blocks */
+.code {
+	font-family: Courier, 'Courier New', sans-serif; font-size: 10pt; color: #006600;
+	background-color: #FAFAFA; border: #D1D7DC; border-style: solid;
+	border-left-width: 1pt; border-top-width: 1pt; border-right-width: 1pt; border-bottom-width: 1pt
+}
+
+.quote {
+	font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt; color: #444444; line-height: 125%;
+	background-color: #FAFAFA; border: #D1D7DC; border-style: solid;
+	border-left-width: 1pt; border-top-width: 1pt; border-right-width: 1pt; border-bottom-width: 1pt
+}
+
+/* Copyright and bottom info */
+.copyright		{ font-size: 8pt; font-family: Verdana, Arial, Helvetica, sans-serif; color: #444444; letter-spacing: -1pt;}
+a.copyright		{ color: #444444; text-decoration: none;}
+a.copyright:hover { color: #000000; text-decoration: underline;}
+.footer			{ font-size: 8pt; font-family: Verdana, Arial, Helvetica, sans-serif; color : #999999; }
+
+/* Form elements */
+input, textarea, select {
+	color : #000000;
+	font: normal 10pt Verdana, Arial, Helvetica, sans-serif;
+	border-color : #000000;
+}
+
+/* The text input fields background colour */
+input.post, textarea.post, select {
+	background-color : #FFFFFF;
+}
+
+input { text-indent : 1pt; }
+
+/* The buttons used for bbCode styling in message post */
+input.button {
+	background-color : #EFEFEF;
+	color : #000000;
+	font-size: 10pt; font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+/* The main submit button option */
+input.mainoption {
+	background-color : #FAFAFA;
+	font-weight : bold;
+}
+
+/* None-bold submit button */
+input.liteoption {
+	background-color : #FAFAFA;
+	font-weight : normal;
+}
