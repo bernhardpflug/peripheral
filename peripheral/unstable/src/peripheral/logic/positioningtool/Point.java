@@ -4,18 +4,18 @@ import peripheral.logic.symboladapter.Symbol;
 
 public class Point extends PositioningTool {
 
-    private Point position;
+    private java.awt.Point position;
 
     private Symbol actSymbol;
 
     public Point () {
     }
 
-    public Point getPosition () {
+    public java.awt.Point getPosition () {
         return position;
     }
 
-    public void setPosition (Point val) {
+    public void setPosition (java.awt.Point val) {
         this.position = val;
     }
 
