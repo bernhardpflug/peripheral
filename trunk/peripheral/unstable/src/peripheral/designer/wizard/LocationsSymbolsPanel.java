@@ -52,8 +52,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
         alterSymbolButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         symbolList = new javax.swing.JList();
-
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Step 3: Create Point(s), Area(s) and their symbols"));
+        displaySymbolCheckBox = new javax.swing.JCheckBox();
 
         LocationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Point(s), Area(s)"));
 
@@ -131,7 +130,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
         LocationPanelLayout.setVerticalGroup(
             LocationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(LocationPanelLayout.createSequentialGroup()
-                .addContainerGap(21, Short.MAX_VALUE)
+                .addContainerGap(28, Short.MAX_VALUE)
                 .add(LocationPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(LocationPanelLayout.createSequentialGroup()
                         .add(addLocationButton)
@@ -171,19 +170,25 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
         });
         jScrollPane2.setViewportView(symbolList);
 
+        displaySymbolCheckBox.setSelected(true);
+        displaySymbolCheckBox.setText("display symbol in preview");
+
         org.jdesktop.layout.GroupLayout symbolPanelLayout = new org.jdesktop.layout.GroupLayout(symbolPanel);
         symbolPanel.setLayout(symbolPanelLayout);
         symbolPanelLayout.setHorizontalGroup(
             symbolPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, symbolPanelLayout.createSequentialGroup()
+            .add(symbolPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(symbolPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, symbolPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(addSymbolButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .add(removeSymbolButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, alterSymbolButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(org.jdesktop.layout.GroupLayout.TRAILING, symbolPanelLayout.createSequentialGroup()
+                        .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(symbolPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, symbolPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                                .add(addSymbolButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .add(removeSymbolButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(org.jdesktop.layout.GroupLayout.TRAILING, alterSymbolButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                    .add(displaySymbolCheckBox))
                 .addContainerGap())
         );
         symbolPanelLayout.setVerticalGroup(
@@ -198,7 +203,8 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
                         .add(removeSymbolButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(alterSymbolButton)))
-                .addContainerGap())
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(displaySymbolCheckBox))
         );
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
@@ -210,7 +216,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
                 .add(LocationPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(45, 45, 45)
                 .add(symbolPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -219,7 +225,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING, false)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, symbolPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, LocationPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -230,6 +236,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
     private javax.swing.JButton addLocationButton;
     private javax.swing.JButton addSymbolButton;
     private javax.swing.JButton alterSymbolButton;
+    private javax.swing.JCheckBox displaySymbolCheckBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
