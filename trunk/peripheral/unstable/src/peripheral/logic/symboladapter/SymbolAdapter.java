@@ -53,6 +53,7 @@ public class SymbolAdapter {
         requiredSteps = new java.util.HashMap<String,Boolean>();
     }
 
+
     public java.util.List<Filter> getAfterFilter () {
         return afterFilter;
     }
@@ -131,6 +132,11 @@ public class SymbolAdapter {
     }
 
     public void save (ObjectOutputStream os) {
+    }
+
+    public String toString() {
+        //returns name to be displayed in Animation list
+        return this.name;
     }
 
 }
