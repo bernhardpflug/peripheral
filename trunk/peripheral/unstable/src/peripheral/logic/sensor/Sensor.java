@@ -1,28 +1,49 @@
 package peripheral.logic.sensor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 
-public class Sensor {
+public class Sensor extends Observable {
 
     private long pid;
-
     private String name;
-
     private SensorServer server;
-
-    private java.util.List<SensorChannel> channels;
-
     private float samplerate;
-
-    private SensorServer parentServer;
-
-    public Sensor(){}
+    private ArrayList<SensorChannel> channels;
+    
+    private CSVCheckout csv;
 
     public Sensor (long pid, String name, SensorServer server, float samplerate) {
+    	this.pid = pid;
+    	this.name = name;
+    	this.server = server;
+    	this.samplerate = samplerate;
+    	this.channels = new ArrayList<SensorChannel>();
+    	
+    	this.csv = new CSVCheckout(this);
+    	
+    	// Dummy Method
+//    	observeSampleRate();
+//    	getObservedSampleRate();
     }
+    
+    public float observeSampleRate(){
+    	//TODO call function of CSVCheckout to observe samplerate of meas
+    	return 1.0f;
+    }
+    
+//    protected void getObservedSampleRate(){
+//    	
+//    	samplerate = 2.0f;
+//    	setChanged();
+//    	notifyObservers(new SensorSamplingStarted(samplerate));
+//    
+//    }
 
-    public List<SensorChannel> getSensorChannels () {
+    // GETTERS AND SETTERS
+    public ArrayList<SensorChannel> getSensorChannels () {
         return channels;
     }
 
@@ -38,26 +59,14 @@ public class Sensor {
         return server;
     }
 
-    public void addSensorChannel (SensorChannel channel) {
-    }
-
-    public void removeSensorChannel (long mid) {
-    }
-
-    public SensorServer getParentServer () {
-        return parentServer;
-    }
-
-    public void setParentServer (SensorServer server) {
-        this.parentServer = server;
-    }
-
     public float getSamplerate () {
         return samplerate;
     }
 
     public void setSamplerate (float samplerate) {
         this.samplerate = samplerate;
+        setChanged();
+        notifyObservers(new SensorSamplingRateChanged(samplerate));
     }
 
 }

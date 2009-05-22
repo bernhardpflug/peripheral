@@ -1,57 +1,45 @@
 package peripheral.logic.sensor;
 
-import java.net.URL;
+import java.util.ArrayList;
+
 
 
 public class SensorServer {
 
-    private URL address;
-
+    private String address;
     private int port;
-
     private String username;
+    private ArrayList<Sensor> sensors;
+    private XmlMetaParser parser;
 
-    private java.util.List<Sensor> sensors;
-
-    public SensorServer (URL address, int port, String username) {
+    public SensorServer (String address, int port, String username) {
+    	this.address = address;
+    	this.port = port;
+    	this.username = username;
+    	this.sensors = new ArrayList<Sensor>();
+    	
+    	this.parser = new XmlMetaParser(this);
     }
-
-    public URL getAddress () {
+    
+    // GETTERS AND SETTERS
+    public String getAddress () {
         return address;
-    }
-
-    public void setAddress (URL val) {
-        this.address = val;
     }
 
     public int getPort () {
         return port;
     }
 
-    public void setPort (int val) {
-        this.port = val;
-    }
-
-    public java.util.List<Sensor> getSensorList () {
+    public java.util.ArrayList<Sensor> getSensorList () {
         return sensors;
-    }
-
-    public void setSensors (java.util.List<Sensor> sensorlist) {
-        this.sensors = sensorlist;
     }
 
     public String getUsername () {
         return username;
     }
-
-    public void setUsername (String val) {
-        this.username = val;
-    }
-
-    public void addSensor (Sensor sensor) {
-    }
-
-    public void removeSensor (long pid) {
+    
+    public XmlMetaParser getXmlMetaParser(){
+    	return parser;
     }
 
 }

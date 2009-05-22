@@ -6,18 +6,19 @@ import java.util.TreeMap;
 public class SensorChannel {
 
     private long mid;
-
     private String fullname;
-
-    private Sensor Sensor;
-
+    private Sensor sensor;
     private java.util.concurrent.ConcurrentLinkedQueue<Measurement> measQueue;
-
     private java.util.TreeMap<String,String> metadata;
 
-    public SensorChannel (long mid, String fullname, Sensor sensor, TreeMap<String,String> metadata) {
+    public SensorChannel (long mid, String fullname, Sensor sensor) {
+    	this.mid = mid;
+    	this.fullname = fullname;
+    	this.sensor = sensor;
+    	this.metadata = new TreeMap<String, String>();
     }
 
+    // GETTERS AND SETTERS
     public String getFullname () {
         return fullname;
     }
@@ -41,7 +42,7 @@ public class SensorChannel {
     }
 
     public Sensor getSensor () {
-        return Sensor;
+        return sensor;
     }
 
 }
