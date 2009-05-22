@@ -3,19 +3,15 @@ package peripheral.logic.sensor;
 
 public class SensorSamplingRateChanged implements SensorEvent {
 
-    private int samplingRate;
+    private float samplerate;
 
-    private int Unnamed;
-
-    public SensorSamplingRateChanged () {
+    public SensorSamplingRateChanged (float samplingrate) {
+    	this.samplerate = samplingrate;
     }
-
-    public int getSamplingRate () {
-        return samplingRate;
-    }
-
-    public void setSamplingRate (int val) {
-        this.samplingRate = val;
+    
+    // GETTERS AND SETTERS
+    public float getSamplerate () {
+        return samplerate;
     }
 
 }
