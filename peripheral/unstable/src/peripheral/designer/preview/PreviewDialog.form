@@ -38,7 +38,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="xValueLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="0"/>
+            <Property name="text" type="java.lang.String" value="-"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="yLabel">
@@ -48,7 +48,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="yValueLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="0"/>
+            <Property name="text" type="java.lang.String" value="-"/>
           </Properties>
         </Component>
       </SubComponents>

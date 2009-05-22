@@ -11,12 +11,10 @@
 
 package peripheral.designer.preview;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import javax.swing.BorderFactory;
 
 /**
  *
@@ -24,6 +22,7 @@ import javax.swing.BorderFactory;
  */
 public class PreviewDialog extends javax.swing.JDialog {
 
+    private static final String [] supportedFileEndings = {"jpg","jpeg","gif","png","bmp"};
 
     /** Creates new form PreviewDialog */
     public PreviewDialog(java.awt.Frame parent, boolean modal) {
@@ -75,13 +74,13 @@ public class PreviewDialog extends javax.swing.JDialog {
         xLabel.setText("X:");
         southPanel.add(xLabel);
 
-        xValueLabel.setText("0");
+        xValueLabel.setText("-");
         southPanel.add(xValueLabel);
 
         yLabel.setText("Y:");
         southPanel.add(yLabel);
 
-        yValueLabel.setText("0");
+        yValueLabel.setText("-");
         southPanel.add(yValueLabel);
 
         getContentPane().add(southPanel, java.awt.BorderLayout.SOUTH);
@@ -93,13 +92,24 @@ public class PreviewDialog extends javax.swing.JDialog {
         previewPanel1.setBackgroundImage(sourceFile);
     }
 
-    public boolean isExtentionSupported(File sourceFile) {
-        return previewPanel1.isImageFile(sourceFile);
+    public java.awt.image.BufferedImage getBackgroundImage() {
+        return previewPanel1.getBackgroundImage();
     }
 
-    public void setMouseCoords(int x, int y) {
-        xValueLabel.setText(""+x);
-        yValueLabel.setText(""+y);
+    public static boolean isExtentionSupported(File sourceFile) {
+
+        for (String support : supportedFileEndings) {
+            if (sourceFile.getName().toLowerCase().endsWith(support)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void setMouseCoords(String x, String y) {
+        xValueLabel.setText(x);
+        yValueLabel.setText(y);
     }
 
     /**

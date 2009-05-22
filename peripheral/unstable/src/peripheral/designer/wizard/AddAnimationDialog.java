@@ -12,6 +12,8 @@
 package peripheral.designer.wizard;
 
 import java.awt.CardLayout;
+import javax.swing.JOptionPane;
+import peripheral.logic.symboladapter.SymbolAdapter;
 
 /**
  *
@@ -19,17 +21,67 @@ import java.awt.CardLayout;
  */
 public class AddAnimationDialog extends javax.swing.JDialog {
 
+    public static final String RULEPANEL = "rulepanel";
+
+    //refrence to created symbol adapter
+    SymbolAdapter symbolAdapter;
+
+    //flag that defines whether user completed creation
+    private boolean completedFlag = false;
+
+    //flag that defines whether this dialog should edit existing or create new adapter
+    private boolean modifyFlag = false;
+
+    //defines whether selected symboladapter allows setting rules
+    private boolean ruleBasedAdapterFlag = false;
+
     //remember current panel
     private int currentIndex = 0;
     private int lastIndex = 2;
 
     /** Creates new form addAnimationDialog */
-    public AddAnimationDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public AddAnimationDialog(javax.swing.JFrame parent) {
+        super(parent, true);
         initComponents();
+        //add rule panel by hand as not supported by editor
+        rulesRootPanel1 = new RulesRootPanel(this);
+        rulesRootPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 4 : Define Rules for Animationbehaviour"));
+        cardPanel.add(rulesRootPanel1,"card5");
 
         //set prevbutton initially disabled
         prevButton.setEnabled(false);
+    }
+
+    public boolean completedCreation() {
+        return completedFlag;
+    }
+
+    public SymbolAdapter getCreatedAdapter() {
+        return symbolAdapter;
+    }
+
+    /**
+     * In case already existing adapter should be modified
+     * this method should be called directly after instancing this dialog
+     * (before setVisible)
+     * this causes disappearance of first panel and fill in of already defined
+     * properties
+     * @param symbolAdapter to edit
+     */
+    public void modifyExisting(SymbolAdapter symbolAdapter) {
+
+        //leave first panel out
+        CardLayout cl = ((java.awt.CardLayout)cardPanel.getLayout());
+        currentIndex++;
+        cl.next(cardPanel);
+
+        if (symbolAdapter.getRequiredSteps().get(AddAnimationDialog.RULEPANEL).booleanValue()) {
+            this.ruleBasedAdapterFlag = true;
+        }
+
+        modifyFlag = true;
+
+        this.symbolAdapter = symbolAdapter;
     }
 
     /** This method is called from within the constructor to
@@ -42,7 +94,7 @@ public class AddAnimationDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         cardPanel = new javax.swing.JPanel();
-        chooseAnimationPanel1 = new peripheral.designer.wizard.SelectAnimationPanel();
+        selectAnimationPanel1 = new peripheral.designer.wizard.SelectAnimationPanel();
         preselectSensorPanel1 = new peripheral.designer.wizard.PreselectSensorPanel();
         createLocationsSymbolsPanel1 = new peripheral.designer.wizard.LocationsSymbolsPanel();
         prevButton = new javax.swing.JButton();
@@ -51,8 +103,14 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         cardPanel.setLayout(new java.awt.CardLayout());
-        cardPanel.add(chooseAnimationPanel1, "card3");
+
+        selectAnimationPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 1 : Select an Animation Template"));
+        cardPanel.add(selectAnimationPanel1, "card4");
+
+        preselectSensorPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 2 : Select Sensors"));
         cardPanel.add(preselectSensorPanel1, "card2");
+
+        createLocationsSymbolsPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 3 : Create Point(s), Area(s) and their symbols"));
         cardPanel.add(createLocationsSymbolsPanel1, "card4");
 
         prevButton.setText("<");
@@ -98,22 +156,61 @@ public class AddAnimationDialog extends javax.swing.JDialog {
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         CardLayout cl = ((java.awt.CardLayout)cardPanel.getLayout());
 
+        //select symbol adapter
         if (currentIndex == 0) {
             prevButton.setEnabled(true);
-        }
 
-        if (currentIndex == (lastIndex - 1)) {
-            nextButton.setText("Finish");
-        }
+            //only allow proceeding if an adapter has been selected
+            SymbolAdapter selected = this.selectAnimationPanel1.getSelectedAdapter();
 
-        if (currentIndex == lastIndex) {
-            //TODO finish was pressed
-            this.setVisible(false);
-            this.dispose();
+            if (selected != null) {
+                this.symbolAdapter = selected;
+
+                currentIndex++;
+                cl.next(cardPanel);
+            }
+            else {
+
+                JOptionPane.showMessageDialog(this, "Select an Animation in order to proceed","No Animation selected", JOptionPane.ERROR_MESSAGE);
+            }
+            
+            
         }
-        else {
+        //preselect sensor
+        else if (currentIndex == 1) {
+
+            if (!this.ruleBasedAdapterFlag) {
+                nextButton.setText("Finish");
+            }
+
             currentIndex++;
             cl.next(cardPanel);
+        }
+        //create points/areas
+        else if (currentIndex == 2) {
+
+            if (!this.ruleBasedAdapterFlag) {
+                completedFlag = true;
+
+                this.setVisible(false);
+                this.dispose();
+            }
+            else {
+                nextButton.setText("Finish");
+
+                //set symboladapter for rulespanel
+                this.rulesRootPanel1.setSymbolAdapter(symbolAdapter);
+
+                currentIndex++;
+                cl.next(cardPanel);
+            }
+        }
+        //rules panel
+        else if (currentIndex == 3) {
+            completedFlag = true;
+
+            this.setVisible(false);
+            this.dispose();
         }
     }//GEN-LAST:event_nextButtonActionPerformed
 
@@ -121,46 +218,51 @@ public class AddAnimationDialog extends javax.swing.JDialog {
 
         CardLayout cl = ((java.awt.CardLayout)cardPanel.getLayout());
 
+        //animation panel
         if (currentIndex == 0) {
             return;
         }
+        //preselect sensor panel
+        else if (currentIndex == 1) {
 
-        if (currentIndex == 1) {
-            prevButton.setEnabled(false);
+            if (this.modifyFlag) {
+                return;
+            }
+            else {
+                prevButton.setEnabled(false);
+                currentIndex--;
+                cl.previous(cardPanel);
+            }
         }
+        //points /areas panel
+        else if (currentIndex == 2) {
 
-        if (currentIndex == lastIndex) {
+            if (!this.ruleBasedAdapterFlag) {
+                nextButton.setText(">");
+            }
+
+            currentIndex--;
+            cl.previous(cardPanel);
+        }
+        //rulepanel
+        else if (currentIndex == 3) {
+
             nextButton.setText(">");
-        }
 
-        currentIndex--;
-        cl.previous(cardPanel);
+            currentIndex--;
+            cl.previous(cardPanel);
+        }
     }//GEN-LAST:event_prevButtonActionPerformed
 
-    /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                AddAnimationDialog dialog = new AddAnimationDialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel cardPanel;
-    private peripheral.designer.wizard.SelectAnimationPanel chooseAnimationPanel1;
     private peripheral.designer.wizard.LocationsSymbolsPanel createLocationsSymbolsPanel1;
     private javax.swing.JButton nextButton;
     private peripheral.designer.wizard.PreselectSensorPanel preselectSensorPanel1;
     private javax.swing.JButton prevButton;
+    private peripheral.designer.wizard.SelectAnimationPanel selectAnimationPanel1;
     // End of variables declaration//GEN-END:variables
 
+    private peripheral.designer.wizard.RulesRootPanel rulesRootPanel1;
 }

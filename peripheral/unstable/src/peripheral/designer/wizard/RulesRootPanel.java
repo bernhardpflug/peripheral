@@ -11,14 +11,11 @@
 
 package peripheral.designer.wizard;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -35,7 +32,7 @@ import peripheral.logic.symboladapter.SymbolAdapter;
 public class RulesRootPanel extends javax.swing.JPanel {
 
 
-    private Container parent;
+    private Window parent;
 
     public GridBagLayout layout;
 
@@ -45,13 +42,11 @@ public class RulesRootPanel extends javax.swing.JPanel {
     private ArrayList<RulePanel> rulePanels;
 
     /** Creates new form rulesPanel */
-    public RulesRootPanel(SymbolAdapter symbolAdapter, Container parent) {
+    public RulesRootPanel(Window parent) {
         initComponents();
 
 
         this.parent = parent;
-
-        this.symbolAdapter = symbolAdapter;
 
         layout = new GridBagLayout();
 
@@ -61,14 +56,6 @@ public class RulesRootPanel extends javax.swing.JPanel {
 
         rulePanels = new ArrayList<RulePanel>();
 
-        createConditionPanels();
-
-        //in case of emty rule set create one default
-        if (symbolAdapter.getRules().size() == 0) {
-
-            addNewRule();
-        }
-        
     }
 
     /** This method is called from within the constructor to
@@ -95,6 +82,21 @@ public class RulesRootPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
+
+    public void setSymbolAdapter(SymbolAdapter symbolAdapter) {
+
+        this.symbolAdapter = symbolAdapter;
+        
+        rulePanels.clear();
+        
+        if (symbolAdapter.getRules().size() == 0) {
+            addNewRule();
+        }
+        
+        createConditionPanels();
+        
+        parent.validate();
+    }
 
     private void createConditionPanels() {
 
@@ -220,7 +222,8 @@ public class RulesRootPanel extends javax.swing.JPanel {
 
 
         //Create and set up the content pane.
-        RulesRootPanel newContentPane = new RulesRootPanel(new SymbolAdapter(),frame);
+        RulesRootPanel newContentPane = new RulesRootPanel(frame);
+        newContentPane.setSymbolAdapter(new SymbolAdapter());
         newContentPane.setOpaque(true); //content panes must be opaque
         frame.setContentPane(new JScrollPane(newContentPane));
 

@@ -11,6 +11,11 @@
 
 package peripheral.designer.wizard;
 
+import java.util.List;
+import javax.swing.DefaultListModel;
+import peripheral.logic.symboladapter.AdapterTemplateFactory;
+import peripheral.logic.symboladapter.SymbolAdapter;
+
 /**
  *
  * @author Berni
@@ -20,6 +25,16 @@ public class SelectAnimationPanel extends javax.swing.JPanel {
     /** Creates new form chooseAnimationPanel */
     public SelectAnimationPanel() {
         initComponents();
+
+        //fill list with available adapter templates
+        DefaultListModel listModel = new DefaultListModel();
+        this.adapterList.setModel(listModel);
+
+        List<SymbolAdapter> symbolAdapters = AdapterTemplateFactory.getInstance().getTemplates();
+
+        for (SymbolAdapter symbolAdapter : symbolAdapters) {
+            listModel.addElement(symbolAdapter);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -35,30 +50,28 @@ public class SelectAnimationPanel extends javax.swing.JPanel {
         adapterList = new javax.swing.JList();
         jLabel1 = new javax.swing.JLabel();
         descriptionPanel = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        descriptionTextArea = new javax.swing.JTextArea();
 
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Step 1: Choose an animation"));
-
-        adapterList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
+        adapterList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        adapterList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                adapterListValueChanged(evt);
+            }
         });
         jScrollPane1.setViewportView(adapterList);
 
         jLabel1.setText("Available Animations");
 
         descriptionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Description"));
+        descriptionPanel.setLayout(new java.awt.BorderLayout());
 
-        org.jdesktop.layout.GroupLayout descriptionPanelLayout = new org.jdesktop.layout.GroupLayout(descriptionPanel);
-        descriptionPanel.setLayout(descriptionPanelLayout);
-        descriptionPanelLayout.setHorizontalGroup(
-            descriptionPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 307, Short.MAX_VALUE)
-        );
-        descriptionPanelLayout.setVerticalGroup(
-            descriptionPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 297, Short.MAX_VALUE)
-        );
+        descriptionTextArea.setColumns(20);
+        descriptionTextArea.setEditable(false);
+        descriptionTextArea.setRows(5);
+        jScrollPane2.setViewportView(descriptionTextArea);
+
+        descriptionPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -69,16 +82,16 @@ public class SelectAnimationPanel extends javax.swing.JPanel {
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 246, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(jLabel1))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 32, Short.MAX_VALUE)
-                .add(descriptionPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 64, Short.MAX_VALUE)
+                .add(descriptionPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 299, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(23, 23, 23)
+                .add(51, 51, 51)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, descriptionPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, descriptionPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(jLabel1)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -87,12 +100,28 @@ public class SelectAnimationPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void adapterListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_adapterListValueChanged
+
+        if (adapterList.getSelectedValue() != null) {
+            SymbolAdapter selected = ((SymbolAdapter)adapterList.getSelectedValue());
+            descriptionTextArea.setText(selected.getDescription());
+        }
+        else {
+            descriptionTextArea.setText("");
+        }
+    }//GEN-LAST:event_adapterListValueChanged
+
+    public SymbolAdapter getSelectedAdapter() {
+        return (SymbolAdapter)this.adapterList.getSelectedValue();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList adapterList;
     private javax.swing.JPanel descriptionPanel;
+    private javax.swing.JTextArea descriptionTextArea;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 
 }

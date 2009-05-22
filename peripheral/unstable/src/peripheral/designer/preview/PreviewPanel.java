@@ -10,6 +10,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -22,10 +23,9 @@ import javax.swing.JPanel;
  *
  * @author Berni
  */
-public class PreviewPanel extends JPanel implements Runnable, MouseMotionListener{
+public class PreviewPanel extends JPanel implements Runnable, MouseMotionListener, MouseListener{
 
     //Variables
-    private static final String [] supportedFileEndings = {"jpg","jpeg","gif","png","bmp"};
 
     private PreviewDialog parent;
 
@@ -41,6 +41,9 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
     private float scale;
     private Rectangle imageBounds;
 
+    //boolean that defines whether mouse is currently in image
+    private boolean inBounds = false;
+
     public PreviewPanel(PreviewDialog parent) {
 
         this.parent = parent;
@@ -50,6 +53,7 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
         imageLoaded = false;
 
         this.addMouseMotionListener(this);
+        this.addMouseListener(this);
 
     }
 
@@ -68,7 +72,7 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
         }
 
         //check whether given file is image file, if not display no-support msg
-        if (isImageFile(sourceFile)) {
+        if (PreviewDialog.isExtentionSupported(sourceFile)) {
             //create thread of this with minor priority to load thumbnail
             Thread t = new Thread(this);
             t.setPriority(Math.max(Thread.currentThread().getPriority()-1, Thread.MIN_PRIORITY));
@@ -80,17 +84,6 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
         }
 
         this.repaint();
-    }
-
-    public boolean isImageFile(File sourceFile) {
-
-        for (String support : supportedFileEndings) {
-            if (sourceFile.getName().toLowerCase().endsWith(support)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public void flushResources() {
@@ -209,6 +202,11 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
         this.repaint();
     }
 
+    /*
+     *
+     *MOUSE MOTION LISTENER
+     */
+
     public void mouseDragged(MouseEvent e) {
         //DO nothing
     }
@@ -218,11 +216,48 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
         if (backgroundImage != null) {
             //Only update coords if it is within image bounds
             if ((e.getX() >= imageBounds.x) && (e.getX() <= (imageBounds.x + imageBounds.width)) &&
-                    (e.getY() >= imageBounds.y) && (e.getY() <= (imageBounds.y + imageBounds.height))) {
+                    (e.getY() >= imageBounds.y) && (e.getY() < (imageBounds.y + imageBounds.height))) {
 
-                parent.setMouseCoords(e.getX()-imageBounds.x, e.getY()-imageBounds.y);
+                inBounds = true;
+                parent.setMouseCoords(""+(int)((e.getX()-imageBounds.x)/scale), ""+(int)((e.getY()-imageBounds.y)/scale));
+            }
+            else {
+                inBounds = false;
+                parent.setMouseCoords("-", "-");
             }
         }
         
+    }
+
+    /*
+     * MOUSE LISTENER
+     */
+
+    public void mouseClicked(MouseEvent e) {
+
+        //in case mouse is within image
+    }
+
+    public void mousePressed(MouseEvent e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void mouseReleased(MouseEvent e) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void mouseEntered(MouseEvent e) {
+        System.out.println("mouse entered");
+    }
+
+    /**
+     * Additionally registers that mouse is out of bounds as if image
+     * is directly at the border of the window mouse motion listener
+     * does not recognize exit of mouse
+     * @param e
+     */
+    public void mouseExited(MouseEvent e) {
+        inBounds = false;
+        parent.setMouseCoords("-", "-");
     }
 }

@@ -15,9 +15,19 @@ import java.awt.CardLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.util.List;
+import javax.swing.AbstractListModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import peripheral.designer.preview.PreviewDialog;
+import peripheral.designer.property.PropertyPanel;
 import peripheral.designer.wizard.AddAnimationDialog;
+import peripheral.logic.DisplayConfiguration;
+import peripheral.logic.symboladapter.SymbolAdapter;
+import peripheral.logic.value.ConstValue;
+import peripheral.logic.value.UserInput;
 
 /**
  *
@@ -31,10 +41,38 @@ public class DesignerGUI extends javax.swing.JFrame {
 
     private PreviewDialog prevDialog;
 
+
     /** Creates new form DesignerGUI */
     public DesignerGUI() {
         initComponents();
         initPreviewBehaviour();
+
+        //define model that allows to modify list data
+        this.defAnimationsList.setModel(new DefaultListModel());
+
+        createDummyData();
+        
+        //fill list with already defined animations
+        fillAnimationList();
+    }
+
+    private void createDummyData() {
+        SymbolAdapter slider1 = new SymbolAdapter();
+        slider1.setName("RuleSlider1");
+        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue("EnableSmoothing",new Boolean(true))));
+        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue("LocationX",new Integer(0))));
+        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue("LocationY",new Integer(0))));
+
+        slider1.getRequiredSteps().put(AddAnimationDialog.RULEPANEL, new Boolean(true));
+
+        DisplayConfiguration.getInstance().getAdapter().add(slider1);
+
+        SymbolAdapter mover1 = new SymbolAdapter();
+        mover1.setName("ContinousMover1");
+        mover1.getRequiredSteps().put(AddAnimationDialog.RULEPANEL, new Boolean(false));
+        DisplayConfiguration.getInstance().getAdapter().add(mover1);
+
+
     }
 
     private void initPreviewBehaviour() {
@@ -99,6 +137,14 @@ public class DesignerGUI extends javax.swing.JFrame {
         prevDialog.setBackgroundImage(selectedFile);
     }
 
+    private void fillAnimationList() {
+
+        for (SymbolAdapter symbolAdapter : DisplayConfiguration.getInstance().getAdapter()) {
+
+            ((DefaultListModel)this.defAnimationsList.getModel()).addElement(symbolAdapter);
+        }
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -125,6 +171,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         editAnimationButton = new javax.swing.JButton();
         priorityUpButton = new javax.swing.JButton();
         priorityDownButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
         SavePanel = new javax.swing.JPanel();
         ApplicationMenu = new javax.swing.JMenuBar();
         FileMenu = new javax.swing.JMenu();
@@ -172,18 +219,22 @@ public class DesignerGUI extends javax.swing.JFrame {
 
         cardPanel.setLayout(new java.awt.CardLayout());
 
+        SensorPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 1 : Select Sensorserver"));
+
         org.jdesktop.layout.GroupLayout SensorPanelLayout = new org.jdesktop.layout.GroupLayout(SensorPanel);
         SensorPanel.setLayout(SensorPanelLayout);
         SensorPanelLayout.setHorizontalGroup(
             SensorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 733, Short.MAX_VALUE)
+            .add(0, 721, Short.MAX_VALUE)
         );
         SensorPanelLayout.setVerticalGroup(
             SensorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 443, Short.MAX_VALUE)
+            .add(0, 435, Short.MAX_VALUE)
         );
 
         cardPanel.add(SensorPanel, "card2");
+
+        BackgroundPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 2 : Select Background Image of the Scene"));
 
         jFileChooser1.setControlButtonsAreShown(false);
 
@@ -194,24 +245,32 @@ public class DesignerGUI extends javax.swing.JFrame {
             .add(BackgroundPanelLayout.createSequentialGroup()
                 .add(85, 85, 85)
                 .add(jFileChooser1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 541, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(107, Short.MAX_VALUE))
+                .addContainerGap(95, Short.MAX_VALUE))
         );
         BackgroundPanelLayout.setVerticalGroup(
             BackgroundPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(BackgroundPanelLayout.createSequentialGroup()
                 .add(63, 63, 63)
                 .add(jFileChooser1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 304, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addContainerGap(68, Short.MAX_VALUE))
         );
 
         cardPanel.add(BackgroundPanel, "card3");
 
+        AnimationsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 3 : Define Animations for the Scene"));
+
         DefAnimationsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Defined Animations"));
 
         defAnimationsList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            String[] strings = { "item1", "item2" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
+        });
+        defAnimationsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        defAnimationsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                defAnimationsListValueChanged(evt);
+            }
         });
         jScrollPane1.setViewportView(defAnimationsList);
 
@@ -232,7 +291,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         );
 
         AnimationPropertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("AnimationProperties"));
-        AnimationPropertiesPanel.setLayout(new java.awt.CardLayout());
+        AnimationPropertiesPanel.setLayout(new java.awt.BorderLayout());
 
         addAnimationButton.setText("+");
         addAnimationButton.addActionListener(new java.awt.event.ActionListener() {
@@ -244,10 +303,17 @@ public class DesignerGUI extends javax.swing.JFrame {
         removeAnimationButton.setText("-");
 
         editAnimationButton.setText("...");
+        editAnimationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editAnimationButtonActionPerformed(evt);
+            }
+        });
 
         priorityUpButton.setText("UP");
 
         priorityDownButton.setText("DOWN");
+
+        jLabel1.setText("Tip: The order in the list defines the order of painting the symbols of an adapter");
 
         org.jdesktop.layout.GroupLayout AnimationsPanelLayout = new org.jdesktop.layout.GroupLayout(AnimationsPanel);
         AnimationsPanel.setLayout(AnimationsPanelLayout);
@@ -255,17 +321,20 @@ public class DesignerGUI extends javax.swing.JFrame {
             AnimationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(AnimationsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(DefAnimationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(AnimationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                    .add(addAnimationButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 55, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(removeAnimationButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 55, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(editAnimationButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 55, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(priorityDownButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .add(priorityUpButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .add(32, 32, 32)
-                .add(AnimationPropertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 299, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(41, Short.MAX_VALUE))
+                .add(AnimationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(AnimationsPanelLayout.createSequentialGroup()
+                        .add(DefAnimationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                        .add(AnimationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(addAnimationButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 55, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(removeAnimationButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 55, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(editAnimationButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 55, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(priorityDownButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .add(priorityUpButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .add(32, 32, 32)
+                        .add(AnimationPropertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 299, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(jLabel1))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
         AnimationsPanelLayout.setVerticalGroup(
             AnimationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -287,20 +356,23 @@ public class DesignerGUI extends javax.swing.JFrame {
                         .add(AnimationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                             .add(org.jdesktop.layout.GroupLayout.LEADING, AnimationPropertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
                             .add(org.jdesktop.layout.GroupLayout.LEADING, DefAnimationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 383, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(jLabel1))
         );
 
         cardPanel.add(AnimationsPanel, "card4");
+
+        SavePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 4 : Save this Configuration"));
 
         org.jdesktop.layout.GroupLayout SavePanelLayout = new org.jdesktop.layout.GroupLayout(SavePanel);
         SavePanel.setLayout(SavePanelLayout);
         SavePanelLayout.setHorizontalGroup(
             SavePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 733, Short.MAX_VALUE)
+            .add(0, 721, Short.MAX_VALUE)
         );
         SavePanelLayout.setVerticalGroup(
             SavePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 443, Short.MAX_VALUE)
+            .add(0, 435, Short.MAX_VALUE)
         );
 
         cardPanel.add(SavePanel, "card5");
@@ -329,8 +401,13 @@ public class DesignerGUI extends javax.swing.JFrame {
 
     private void addAnimationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAnimationButtonActionPerformed
 
-        AddAnimationDialog aaD = new AddAnimationDialog(this,true);
+        AddAnimationDialog aaD = new AddAnimationDialog(this);
         aaD.setVisible(true);
+
+        if (aaD.completedCreation()) {
+            DisplayConfiguration.getInstance().getAdapter().add(aaD.getCreatedAdapter());
+            ((DefaultListModel)this.defAnimationsList.getModel()).addElement(aaD.getCreatedAdapter());
+        }
     }//GEN-LAST:event_addAnimationButtonActionPerformed
 
     private void exitMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuActionPerformed
@@ -343,43 +420,116 @@ public class DesignerGUI extends javax.swing.JFrame {
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
         CardLayout cl = ((java.awt.CardLayout)cardPanel.getLayout());
 
+        //Sensorpanel
         if (currentIndex == 0) {
             prevButton.setEnabled(true);
-        }
 
-        if (currentIndex == (lastIndex - 1)) {
-            nextButton.setText("Finish");
-        }
-
-        if (currentIndex == lastIndex) {
-            //TODO finish was pressed
-            this.setVisible(false);
-            this.dispose();
-        }
-        else {
             currentIndex++;
             cl.next(cardPanel);
         }
+        //background panel
+        else if (currentIndex == 1) {
+
+            //Save selected image in display configuration
+            File selectedFile = this.jFileChooser1.getSelectedFile();
+
+            if (selectedFile != null && PreviewDialog.isExtentionSupported(selectedFile)) {
+
+                DisplayConfiguration.getInstance().setBackgroundImage(this.prevDialog.getBackgroundImage());
+
+                currentIndex++;
+                cl.next(cardPanel);
+            }
+            else {
+
+//                JOptionPane.showMessageDialog(this, "Please select a supported image file\n" +
+//                        "Supported are jpg, bmp, gif, png files", "Unable to proceed", JOptionPane.ERROR_MESSAGE);
+                currentIndex++;
+                cl.next(cardPanel);
+            }
+            
+        }
+        //animation panel
+        else if (currentIndex == 2) {
+
+            nextButton.setText("Finish");
+            currentIndex++;
+            cl.next(cardPanel);
+        }
+        //save panel
+        else if (currentIndex == 3) {
+
+            this.setVisible(false);
+            this.dispose();
+        }
+        
     }//GEN-LAST:event_nextButtonActionPerformed
 
     private void prevButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevButtonActionPerformed
         CardLayout cl = ((java.awt.CardLayout)cardPanel.getLayout());
 
+        //Sensorpanel
         if (currentIndex == 0) {
             return;
         }
-
-        if (currentIndex == 1) {
+        //background panel
+        else if (currentIndex == 1) {
             prevButton.setEnabled(false);
         }
+        //animation panel
+        else if (currentIndex == 2) {
 
-        if (currentIndex == lastIndex) {
+        }
+        //save panel
+        else if (currentIndex == 3) {
             nextButton.setText("next");
         }
 
         currentIndex--;
         cl.previous(cardPanel);
     }//GEN-LAST:event_prevButtonActionPerformed
+
+    private void defAnimationsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_defAnimationsListValueChanged
+
+        if (defAnimationsList.getSelectedValue() != null) {
+            //in case of list selection change display properties of selected
+            //symbol adapter
+            List<UserInput> userInputs = ((SymbolAdapter)defAnimationsList.getSelectedValue()).getNeededUserInput();
+
+            PropertyPanel propertyPanel = new PropertyPanel(userInputs);
+
+            AnimationPropertiesPanel.removeAll();
+            AnimationPropertiesPanel.add(propertyPanel, java.awt.BorderLayout.CENTER);
+
+            this.validate();
+        }
+        else {
+            AnimationPropertiesPanel.removeAll();
+            AnimationPropertiesPanel.add(new JLabel("No Animation selected"), java.awt.BorderLayout.CENTER);
+
+            this.validate();
+        }
+    }//GEN-LAST:event_defAnimationsListValueChanged
+
+    private void editAnimationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editAnimationButtonActionPerformed
+
+        SymbolAdapter editAdapter = ((SymbolAdapter)defAnimationsList.getSelectedValue());
+
+        if (editAdapter != null) {
+
+            AddAnimationDialog aaD = new AddAnimationDialog(this);
+            aaD.modifyExisting(editAdapter);
+            aaD.setVisible(true);
+
+            //in case editing canceled remove item from list (to support editing cancel symboladpater must be cloneable)
+            if (!aaD.completedCreation()) {
+                
+                DisplayConfiguration.getInstance().getAdapter().remove(aaD.getCreatedAdapter());
+                ((DefaultListModel)this.defAnimationsList.getModel()).removeElement(aaD.getCreatedAdapter());
+                
+            }
+        }
+    }//GEN-LAST:event_editAnimationButtonActionPerformed
 
     /**
     * @param args the command line arguments
@@ -409,6 +559,7 @@ public class DesignerGUI extends javax.swing.JFrame {
     private javax.swing.JButton editAnimationButton;
     private javax.swing.JMenuItem exitMenu;
     private javax.swing.JFileChooser jFileChooser1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton nextButton;
     private javax.swing.JButton prevButton;
