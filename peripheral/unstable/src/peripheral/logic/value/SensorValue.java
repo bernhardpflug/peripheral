@@ -11,11 +11,12 @@ public class SensorValue extends Value {
 
     private SensorAttribute sensorAttribute;
 
-    public SensorValue (String varName, SensorAttribute sensorAttribute) {
+    /* DEPRECATED ???????????? - Berni
+     public SensorValue (String varName, SensorAttribute sensorAttribute) {
         super(varName);
 
         this.sensorAttribute = sensorAttribute;
-    }
+    }*/
 
     public SensorAttribute getSensorAttribute () {
         return sensorAttribute;
