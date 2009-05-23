@@ -89,11 +89,11 @@ public class RulesRootPanel extends javax.swing.JPanel {
         
         rulePanels.clear();
         
+        createConditionPanels();
+
         if (symbolAdapter.getRules().size() == 0) {
             addNewRule();
         }
-        
-        createConditionPanels();
         
         parent.validate();
     }
@@ -135,8 +135,6 @@ public class RulesRootPanel extends javax.swing.JPanel {
         this.removeAll();
 
         this.createLayout();
-
-        this.validate();
 
         parent.validate();
     }
