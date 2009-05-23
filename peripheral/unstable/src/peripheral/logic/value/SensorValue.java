@@ -1,6 +1,5 @@
 package peripheral.logic.value;
 
-import peripheral.logic.sensor.SensorAttribute; 
 import peripheral.logic.sensor.SensorChannel;
 
 public class SensorValue extends Value {
@@ -8,27 +7,6 @@ public class SensorValue extends Value {
     private SensorChannel sensorChannel;
 
     private Object actValue;
-
-    private SensorAttribute sensorAttribute;
-
-    /* DEPRECATED ???????????? - Berni
-     public SensorValue (String varName, SensorAttribute sensorAttribute) {
-        super(varName);
-
-        this.sensorAttribute = sensorAttribute;
-    }*/
-
-    public SensorAttribute getSensorAttribute () {
-        return sensorAttribute;
-    }
-
-    public void setSensorAttribute (SensorAttribute val) {
-        this.sensorAttribute = val;
-    }
-
-    public Object getValue () {
-        return null;
-    }
 
     /**
      *  <p style="margin-top: 0">
@@ -52,6 +30,11 @@ public class SensorValue extends Value {
     public void setActValue (Object val) {
         this.actValue = val;
     }
+
+    public Object getValue () {
+        return actValue;
+    }
+
 
 }
 
