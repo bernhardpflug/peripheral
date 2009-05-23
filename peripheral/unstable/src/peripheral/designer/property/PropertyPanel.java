@@ -21,7 +21,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import peripheral.logic.sensor.Sensor;
-import peripheral.logic.sensor.SensorAttribute;
+import peripheral.logic.sensor.SensorChannel;
 import peripheral.logic.value.ConstValue;
 import peripheral.logic.value.SensorValue;
 import peripheral.logic.value.UserInput;
@@ -37,20 +37,21 @@ import peripheral.logic.value.Value;
 public class PropertyPanel extends JPanel {
 
     List<Value> userInputs;
-    List<SensorAttribute> sensorTemplate;
+    List<SensorChannel> sensorTemplate;
 
     public PropertyPanel(List<UserInput> userInputs) {
 
         super(new GridLayout(1,0));
 
         //TODO DELETE DELETE
-        sensorTemplate = new ArrayList<SensorAttribute>();
-        SensorAttribute sa = new SensorAttribute();
-        sa.setSensor(new Sensor());
+        sensorTemplate = new ArrayList<SensorChannel>();
+        Sensor sensor1 = new Sensor(1,"sensor1", null, 1.0f);
+        SensorChannel sa = new SensorChannel(1, "SensorX",sensor1);
         sensorTemplate.add(sa);
-        sa = new SensorAttribute();
-        sa.setSensor(new Sensor());
-        sensorTemplate.add(new SensorAttribute());
+
+        Sensor sensor2 = new Sensor(1,"sensor2", null, 2.0f);
+        SensorChannel sa2 = new SensorChannel(2, "SensorX",sensor2);
+        sensorTemplate.add(sa2);
 
 
         this.userInputs = new ArrayList<Value>();
@@ -111,7 +112,7 @@ public class PropertyPanel extends JPanel {
                 }
                 //Sensorvalue
                 else {
-                    return ((SensorValue)val).getSensorAttribute();
+                    return ((SensorValue)val).getSensorChannel();
                 }
             }
             else {
@@ -158,7 +159,7 @@ public class PropertyPanel extends JPanel {
             }
             //Sensorvalue
             else {
-                ((SensorValue)val).setSensorAttribute((SensorAttribute)value);
+                ((SensorValue)val).setSensorChannel((SensorChannel)value);
             }
             
             fireTableCellUpdated(row, col);
@@ -185,7 +186,7 @@ public class PropertyPanel extends JPanel {
 
                 JComboBox box = new JComboBox();
 
-                for (SensorAttribute satt : sensorTemplate) {
+                for (SensorChannel satt : sensorTemplate) {
                     box.addItem(satt);
                 }
 
@@ -236,7 +237,7 @@ public class PropertyPanel extends JPanel {
                 if (val instanceof SensorValue) {
 
                     //In case of sensor value just display attribute
-                    return super.getTableCellRendererComponent(table, ((SensorValue) val).getSensorAttribute(), isSelected, hasFocus, row, column);
+                    return super.getTableCellRendererComponent(table, ((SensorValue) val).getSensorChannel(), isSelected, hasFocus, row, column);
                 } //ConstValue
                 else {
                     ConstValue cval = (ConstValue) val;
@@ -273,8 +274,9 @@ public class PropertyPanel extends JPanel {
         frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 
         UserInput ui1 = new UserInput("ui1","what the hell", new ConstValue("constVal1",new Boolean(true)));
-        SensorAttribute sa = new SensorAttribute();
-        sa.setSensor(new Sensor());
+        Sensor sensor1 = new Sensor(1,"sensor1", null, 1.0f);
+        SensorChannel sa = new SensorChannel(1, "x", sensor1);
+        
         UserInput ui2 = new UserInput("ui2","what the f***", new SensorValue("sensorVal1",sa));
         UserInput ui3 = new UserInput("ui3","what the hell", new ConstValue("constVal2",new Boolean(true)));
         UserInput ui4 = new UserInput("ui4","what the hell", new ConstValue("constVal3","test1"));
