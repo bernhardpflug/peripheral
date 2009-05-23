@@ -52,10 +52,17 @@ public class DisplayConfiguration {
     }
 
     public int getWidth () {
+
+        if (backgroundImage != null) {
+            return backgroundImage.getWidth();
+        }
         return 0;
     }
 
     public int getHeight () {
+        if (backgroundImage != null) {
+            return backgroundImage.getHeight();
+        }
         return 0;
     }
 
