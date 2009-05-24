@@ -1,7 +1,6 @@
 package peripheral.logic.sensor;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.TreeMap;
 
 public class CreateDummySensorEnvironment {
@@ -9,7 +8,7 @@ public class CreateDummySensorEnvironment {
 	public static void main(String[] args) {
 		
 		// Create Server
-		SensorServer server = new SensorServer("http://127.0.0.1",8080, "admin");
+		SensorServer server = new SensorServer("http://127.0.0.1","8080", "admin");
 		
 		// Create Sensor
 		Sensor sensor = new Sensor(13, "Dummy Sensor", server, 1.0f);
