@@ -2,17 +2,15 @@ package peripheral.logic.sensor;
 
 import java.util.ArrayList;
 
-
-
 public class SensorServer {
 
     private String address;
-    private int port;
+    private String port;
     private String username;
     private ArrayList<Sensor> sensors;
     private XmlMetaParser parser;
 
-    public SensorServer (String address, int port, String username) {
+    public SensorServer (String address, String port, String username) {
     	this.address = address;
     	this.port = port;
     	this.username = username;
@@ -26,7 +24,7 @@ public class SensorServer {
         return address;
     }
 
-    public int getPort () {
+    public String getPort () {
         return port;
     }
 

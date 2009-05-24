@@ -1,6 +1,7 @@
 package peripheral.logic.sensor;
 
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public class SensorChannel {
@@ -8,14 +9,16 @@ public class SensorChannel {
     private long mid;
     private String fullname;
     private Sensor sensor;
-    private java.util.concurrent.ConcurrentLinkedQueue<Measurement> measQueue;
-    private java.util.TreeMap<String,String> metadata;
+    private ConcurrentLinkedQueue<Measurement> measQueue;
+    private TreeMap<String,String> metadata;
 
     public SensorChannel (long mid, String fullname, Sensor sensor) {
     	this.mid = mid;
     	this.fullname = fullname;
     	this.sensor = sensor;
     	this.metadata = new TreeMap<String, String>();
+    	
+    	this.measQueue = new ConcurrentLinkedQueue<Measurement>();
     }
 
     // GETTERS AND SETTERS
@@ -33,9 +36,6 @@ public class SensorChannel {
 
     public long getMid () {
         return mid;
-    }
-
-    public void addMeasurementToQueue (Measurement meas) {
     }
 
     public void flushMeasQueue () {

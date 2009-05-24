@@ -11,36 +11,37 @@ public class Sensor extends Observable {
     private SensorServer server;
     private float samplerate;
     private ArrayList<SensorChannel> channels;
+    private String startmark;
     
     private CSVCheckout csv;
+    private CSVSamplerateEstimator estimator;
 
     public Sensor (long pid, String name, SensorServer server, float samplerate) {
+    	
     	this.pid = pid;
     	this.name = name;
     	this.server = server;
     	this.samplerate = samplerate;
     	this.channels = new ArrayList<SensorChannel>();
     	
+    	this.startmark = "0";
     	this.csv = new CSVCheckout(this);
-    	
-    	// Dummy Method
-//    	observeSampleRate();
-//    	getObservedSampleRate();
+    	this.estimator = new CSVSamplerateEstimator(this);
+    
+    }
+ 
+    protected void estimateSamplerateFromCSV(){
+    	estimator.start();
     }
     
-    public float observeSampleRate(){
-    	//TODO call function of CSVCheckout to observe samplerate of meas
-    	return 1.0f;
+    public void startCheckout(){
+    	csv.start();
     }
     
-//    protected void getObservedSampleRate(){
-//    	
-//    	samplerate = 2.0f;
-//    	setChanged();
-//    	notifyObservers(new SensorSamplingStarted(samplerate));
-//    
-//    }
-
+    public void stopCheckout(){
+    	csv.setActive(false);
+    }
+    
     // GETTERS AND SETTERS
     public ArrayList<SensorChannel> getSensorChannels () {
         return channels;
@@ -68,5 +69,13 @@ public class Sensor extends Observable {
         notifyObservers(new SensorSamplingRateChanged(samplerate));
     }
 
+    public String getStartmark(){
+    	return startmark;
+    }
+    
+    public void setStartmark(String lastmark){
+    	this.startmark = lastmark;
+    }
+    
 }
 
