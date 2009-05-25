@@ -12,7 +12,14 @@
 package peripheral.designer.wizard;
 
 import java.awt.CardLayout;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import peripheral.designer.DesignerGUI;
+import peripheral.designer.preview.PreviewDialog;
 import peripheral.logic.symboladapter.SymbolAdapter;
 
 /**
@@ -40,16 +47,22 @@ public class AddAnimationDialog extends javax.swing.JDialog {
     private int lastIndex = 2;
 
     /** Creates new form addAnimationDialog */
-    public AddAnimationDialog(javax.swing.JFrame parent) {
-        super(parent, true);
+    public AddAnimationDialog(DesignerGUI parent) {
+        super(parent, false);
         initComponents();
+
         //add rule panel by hand as not supported by editor
         rulesRootPanel1 = new RulesRootPanel(this);
         rulesRootPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 4 : Define Rules for Animationbehaviour"));
-        cardPanel.add(rulesRootPanel1,"card5");
+        
+        cardPanel.add(new javax.swing.JScrollPane(rulesRootPanel1),"card5");
 
         //set prevbutton initially disabled
         prevButton.setEnabled(false);
+
+        //add window listener to inform frame if this dialog is closed
+        //to be able to save new symboladapter
+        this.addWindowListener(new MyWindowListener(parent,this));
     }
 
     public boolean completedCreation() {
@@ -96,7 +109,7 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         cardPanel = new javax.swing.JPanel();
         selectAnimationPanel1 = new peripheral.designer.wizard.SelectAnimationPanel();
         preselectSensorPanel1 = new peripheral.designer.wizard.PreselectSensorPanel();
-        createLocationsSymbolsPanel1 = new peripheral.designer.wizard.LocationsSymbolsPanel();
+        createLocationsSymbolsPanel1 = new peripheral.designer.wizard.LocationsSymbolsPanel(this);
         prevButton = new javax.swing.JButton();
         nextButton = new javax.swing.JButton();
 
@@ -132,7 +145,7 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(506, Short.MAX_VALUE)
+                .addContainerGap(518, Short.MAX_VALUE)
                 .add(prevButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(nextButton)
@@ -166,6 +179,10 @@ public class AddAnimationDialog extends javax.swing.JDialog {
             if (selected != null) {
                 this.symbolAdapter = selected;
 
+                if (symbolAdapter.getRequiredSteps().get(AddAnimationDialog.RULEPANEL).booleanValue()) {
+                    this.ruleBasedAdapterFlag = true;
+                }
+
                 currentIndex++;
                 cl.next(cardPanel);
             }
@@ -183,6 +200,10 @@ public class AddAnimationDialog extends javax.swing.JDialog {
                 nextButton.setText("Finish");
             }
 
+            //display preview dialog for position panel
+            if (!PreviewDialog.getInstance().isVisible()) {
+                PreviewDialog.getInstance().setVisible(true);
+            }
             currentIndex++;
             cl.next(cardPanel);
         }
@@ -265,4 +286,37 @@ public class AddAnimationDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     private peripheral.designer.wizard.RulesRootPanel rulesRootPanel1;
+
+    class MyWindowListener implements WindowListener {
+
+        DesignerGUI parent;
+        AddAnimationDialog dialog;
+
+        public MyWindowListener(DesignerGUI parent, AddAnimationDialog dialog) {
+            this.parent = parent;
+            this.dialog = dialog;
+        }
+        public void windowOpened(WindowEvent e) {
+        }
+
+        public void windowClosing(WindowEvent e) {
+        }
+
+        public void windowClosed(WindowEvent e) {
+            parent.AddAnimationDialogClosed(dialog);
+        }
+
+        public void windowIconified(WindowEvent e) {
+        }
+
+        public void windowDeiconified(WindowEvent e) {
+        }
+
+        public void windowActivated(WindowEvent e) {
+        }
+
+        public void windowDeactivated(WindowEvent e) {
+        }
+
+    }
 }

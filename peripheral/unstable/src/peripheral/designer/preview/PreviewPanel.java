@@ -16,8 +16,11 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import peripheral.logic.positioningtool.PositioningTool;
+import peripheral.logic.symboladapter.Symbol;
 
 /**
  *
@@ -29,12 +32,15 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
 
     private PreviewDialog parent;
 
+    private String no_file_msg = "No file selected";
     private String no_preview_msg = "No preview available";
     private String error_msg = "Image can't be read";
     private String load_msg = "Loading image...";
 
     private File sourceFile;
     private BufferedImage backgroundImage;
+
+    private List<PositioningTool> tools;
 
     private boolean errorOccured, imageLoaded;
 
@@ -43,6 +49,11 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
 
     //boolean that defines whether mouse is currently in image
     private boolean inBounds = false;
+
+    //reference that keeps currently dragging positioning tool
+    //needed to keep reference between mouse methods
+    private PositioningTool currentlyDragging;
+
 
     public PreviewPanel(PreviewDialog parent) {
 
@@ -86,6 +97,14 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
         this.repaint();
     }
 
+    public void setPositioningtoolsToPaint(List<PositioningTool> symbols) {
+        this.tools = symbols;
+    }
+
+    public List getPositioningtoolsToPaint() {
+        return tools;
+    }
+
     public void flushResources() {
 
         if (backgroundImage != null) {
@@ -99,7 +118,15 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
     @Override
     public void paint (Graphics g) {
 
-        if (!imageLoaded) {
+        if (sourceFile == null) {
+
+            paintBackground(g);
+            g.setColor(Color.BLACK);
+            FontMetrics fm = g.getFontMetrics();
+            Rectangle2D msgArea = fm.getStringBounds(no_file_msg,g);
+            g.drawString(no_file_msg,(int)(this.getWidth()-msgArea.getWidth())/2,(int)(this.getHeight()-msgArea.getHeight())/2);
+        }
+        else if (!imageLoaded) {
 
             paintBackground(g);
             g.setColor(Color.BLACK);
@@ -132,7 +159,18 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
             Rectangle imageBounds = calculateImageBounds(backgroundImage);
             
             g.drawImage(backgroundImage,(int)imageBounds.getX(),(int)imageBounds.getY(),(int)imageBounds.getX() + (int)imageBounds.getWidth(), (int)imageBounds.getY() + (int)imageBounds.getHeight(),
-             0,0,backgroundImage.getWidth(),backgroundImage.getHeight(),Color.BLACK,null);
+             0,0,backgroundImage.getWidth(),backgroundImage.getHeight(),null,null);
+
+
+            if (tools != null) {
+
+                //go through list from back to forward to paint first symbol at the top
+                for (int i= tools.size()-1; i >=0; i--) {
+                    PositioningTool pos = (PositioningTool)tools.get(i);
+
+                    pos.paint(g, scale, imageBounds);
+                }
+            }
 
             g.setColor(Color.RED);
             g.drawRect(1,1,this.getX()-1,this.getY()-1);
@@ -202,13 +240,33 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
         this.repaint();
     }
 
+     /**
+      * calculates coords from current display coordinates to szene coordinates
+      * @param displayCoords
+      * @return
+      */
+     private java.awt.Point translateCoords(java.awt.Point displayCoords) {
+         java.awt.Point point = new java.awt.Point();
+
+         point.x = (int)((displayCoords.getX()-imageBounds.x)/scale);
+         point.y = (int)((displayCoords.getY()-imageBounds.y)/scale);
+
+         return point;
+     }
+
     /*
      *
      *MOUSE MOTION LISTENER
      */
 
-    public void mouseDragged(MouseEvent e) {
-        //DO nothing
+    public void mouseDragged(MouseEvent e) { 
+
+        if (currentlyDragging != null) {
+            java.awt.Point szeneCoords = translateCoords(e.getPoint());
+
+            currentlyDragging.dragAction(szeneCoords);
+            this.repaint();
+        }
     }
 
     public void mouseMoved(MouseEvent e) {
@@ -219,7 +277,9 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
                     (e.getY() >= imageBounds.y) && (e.getY() < (imageBounds.y + imageBounds.height))) {
 
                 inBounds = true;
-                parent.setMouseCoords(""+(int)((e.getX()-imageBounds.x)/scale), ""+(int)((e.getY()-imageBounds.y)/scale));
+                java.awt.Point szeneCoords = translateCoords(e.getPoint());
+                //parent.setMouseCoords(""+(int)((e.getX()-imageBounds.x)/scale), ""+(int)((e.getY()-imageBounds.y)/scale));
+                parent.setMouseCoords(""+szeneCoords.x, ""+szeneCoords.y);
             }
             else {
                 inBounds = false;
@@ -234,20 +294,38 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
      */
 
     public void mouseClicked(MouseEvent e) {
-
-        //in case mouse is within image
+        //do nothing
     }
 
     public void mousePressed(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        if (currentlyDragging == null) {
+
+            //go through all positioning tools and find first one that is dragable at given point
+            for (PositioningTool tool : tools) {
+
+                java.awt.Point szeneCoords = translateCoords(e.getPoint());
+
+                if (tool.dragable(szeneCoords.x, szeneCoords.y)) {
+
+                    currentlyDragging = tool;
+                    currentlyDragging.dragStart(szeneCoords);
+                    return;
+                }
+            }
+        }
     }
 
     public void mouseReleased(MouseEvent e) {
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        if (currentlyDragging != null) {
+            currentlyDragging.dragStop();
+            currentlyDragging = null;
+        }
     }
 
     public void mouseEntered(MouseEvent e) {
-        System.out.println("mouse entered");
+        //do nothing
     }
 
     /**

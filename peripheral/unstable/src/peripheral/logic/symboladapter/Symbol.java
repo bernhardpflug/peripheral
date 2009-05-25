@@ -1,12 +1,20 @@
 package peripheral.logic.symboladapter;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import peripheral.logic.action.SymbolAction;
 import peripheral.logic.positioningtool.Point; 
 
 public class Symbol {
 
 
-    private String filename;
+    private File file;
+
+    private BufferedImage bufferedImage;
 
     private float angle;
 
@@ -16,7 +24,8 @@ public class Symbol {
 
     private float scaleY;
 
-    public Symbol () {
+    public Symbol (File file) {
+        this.file = file;
     }
 
     public void executeAction (SymbolAction action) {
@@ -30,12 +39,8 @@ public class Symbol {
         this.angle = val;
     }
 
-    public String getFilename () {
-        return filename;
-    }
-
-    public void setFilename (String val) {
-        this.filename = val;
+    public File getFile () {
+        return file;
     }
 
     public Point getPosition () {
@@ -66,9 +71,30 @@ public class Symbol {
         return null;
     }
 
-    public void draw (java.awt.Graphics g) {
+    public BufferedImage getBufferedImage () {
+
+        if (bufferedImage == null) {
+            try {
+                bufferedImage = ImageIO.read(file);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        return bufferedImage;
     }
 
+    public void flush() {
+
+        if (bufferedImage != null) {
+            bufferedImage.flush();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return file.getName();
+    }
 
 }
 

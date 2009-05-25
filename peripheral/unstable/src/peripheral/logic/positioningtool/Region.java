@@ -1,5 +1,7 @@
 package peripheral.logic.positioningtool;
 
+import java.awt.Dimension;
+import java.awt.Graphics;
 import peripheral.logic.datatype.Rectangle; 
 import peripheral.logic.symboladapter.Symbol; 
 
@@ -16,7 +18,8 @@ public class Region extends PositioningTool {
      *    
      *      </p>
      */
-    public Region () {
+    public Region (Dimension backgroundDimension) {
+        super();
     }
 
     public Rectangle getBounds () {
@@ -34,6 +37,10 @@ public class Region extends PositioningTool {
         return userSelectedSymbols;
     }
 
+    public String toString() {
+        return "Region";
+    }
+
     /**
      *  <p style="margin-top: 0">
      *        super.addSymbol(s);
@@ -49,6 +56,35 @@ public class Region extends PositioningTool {
 
     public void setHidden (boolean val) {
         this.hidden = val;
+    }
+
+    /*
+     * GRAPHICAL METHODS
+     */
+
+    @Override
+    public void paint(Graphics g, float scale, java.awt.Rectangle imageBounds) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean dragable(int x, int y) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void dragStart(java.awt.Point origin) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void dragAction(java.awt.Point newPosition) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void dragStop() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }
