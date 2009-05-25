@@ -15,6 +15,8 @@ import java.awt.Dimension;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.util.List;
+import peripheral.logic.positioningtool.PositioningTool;
 
 /**
  *
@@ -22,36 +24,28 @@ import java.io.File;
  */
 public class PreviewDialog extends javax.swing.JDialog {
 
-    private static final String [] supportedFileEndings = {"jpg","jpeg","gif","png","bmp"};
+    private static final String [] supportedFileEndings = {"jpg","jpeg","gif","png","bmp","tif","tiff"};
 
+    private static PreviewDialog instance;
+
+    public static PreviewDialog getInstance() {
+
+        if (instance == null) {
+            instance = new PreviewDialog();
+        }
+
+        return instance;
+    }
     /** Creates new form PreviewDialog */
-    public PreviewDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public PreviewDialog() {
+        super();
+
+        this.setModal(false);
 
         previewPanel1 = new PreviewPanel(this);
         getContentPane().add(previewPanel1,java.awt.BorderLayout.CENTER);
         previewPanel1.setPreferredSize(new Dimension(400,300));
         initComponents();
-
-        //add listener to be aware of cleaning up in case of closing window
-        this.addWindowListener(new WindowListener () {
-
-            public void windowOpened(WindowEvent e) {
-            }
-            public void windowClosing(WindowEvent e) {
-                previewPanel1.flushResources();
-            }
-            public void windowClosed(WindowEvent e) {
-            }
-            public void windowIconified(WindowEvent e) {
-            }
-            public void windowDeiconified(WindowEvent e) {
-            }
-            public void windowActivated(WindowEvent e) {
-            }
-            public void windowDeactivated(WindowEvent e) {
-            }
-        });
     }
 
     /** This method is called from within the constructor to
@@ -107,26 +101,22 @@ public class PreviewDialog extends javax.swing.JDialog {
         return false;
     }
 
+    public void setPositioningtoolsToPaint(List<PositioningTool> symbols) {
+        previewPanel1.setPositioningtoolsToPaint(symbols);
+    }
+
+    public List getPositioningtoolsToPaint() {
+        return previewPanel1.getPositioningtoolsToPaint();
+    }
+
     public void setMouseCoords(String x, String y) {
         xValueLabel.setText(x);
         yValueLabel.setText(y);
     }
 
-    /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                PreviewDialog dialog = new PreviewDialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
+    public void updatePreview() {
+        previewPanel1.repaint();
+        this.repaint();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

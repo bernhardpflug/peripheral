@@ -12,15 +12,15 @@
 package peripheral.designer;
 
 import java.awt.CardLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.List;
-import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import peripheral.designer.preview.PreviewDialog;
 import peripheral.designer.property.PropertyPanel;
 import peripheral.designer.wizard.AddAnimationDialog;
@@ -37,16 +37,20 @@ public class DesignerGUI extends javax.swing.JFrame {
 
     //remember current panel
     private int currentIndex = 0;
-    private int lastIndex = 4;
-
-    private PreviewDialog prevDialog;
 
 
     /** Creates new form DesignerGUI */
     public DesignerGUI() {
         initComponents();
-        initPreviewBehaviour();
 
+        //be informed about file selection to display image preview
+        jFileChooser1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (e.getActionCommand().equals("ApproveSelection")) {
+                    handleFilePreview(jFileChooser1.getSelectedFile());
+                }
+            }
+        });
         //define model that allows to modify list data
         this.defAnimationsList.setModel(new DefaultListModel());
 
@@ -75,66 +79,19 @@ public class DesignerGUI extends javax.swing.JFrame {
 
     }
 
-    private void initPreviewBehaviour() {
-
-        //We will be interested in files only, but we need to allow it to choose both
-        jFileChooser1.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        jFileChooser1.addPropertyChangeListener(new PropertyChangeListener() {
-
-            //To prevent reentry
-            private boolean handlingEvent = false;
-
-            public void propertyChange(PropertyChangeEvent e) {
-
-                //Prevent reentry
-                if (handlingEvent) {
-                    return;
-                } else //Mark it as handling the event
-                {
-                    handlingEvent = true;
-                }
-
-                String propertyName = e.getPropertyName();
-
-                //We are interested in both event types
-                if (propertyName.equals(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY) ||
-                        propertyName.equals(JFileChooser.DIRECTORY_CHANGED_PROPERTY)) {
-
-                    File selectedFile = (File) e.getNewValue();
-                    if (selectedFile != null) {
-                        if (selectedFile.isDirectory()) {
-                            //Allow the user to navigate directories with single click
-                            jFileChooser1.setCurrentDirectory(selectedFile);
-                        } else {
-                            jFileChooser1.setSelectedFile(selectedFile);
-                            if (jFileChooser1.getSelectedFile() != null) //Accept it
-                            {
-                                jFileChooser1.approveSelection();
-
-                                handleFilePreview(selectedFile);
-                            }
-                        }
-                    }
-                }
-
-                //Allow new events to be processed now
-                handlingEvent = false;
-            }
-        });
-    }
-
     private void handleFilePreview (File selectedFile) {
 
-        //active preview
-        if (prevDialog == null) {
-            prevDialog = new PreviewDialog(this,false);
-            prevDialog.setLocation((int)(this.getBounds().getX()+this.getBounds().getWidth()+5), (int)(this.getBounds().getY()));
+        //in case of first display set location beside current window
+        if (PreviewDialog.getInstance().getLocation().x == 0) {
+            PreviewDialog.getInstance().setLocation((int)(this.getBounds().getX()+this.getBounds().getWidth()+5), (int)(this.getBounds().getY()));
         }
 
-        if (!prevDialog.isVisible()) {
-            prevDialog.setVisible(true);
+        if (!PreviewDialog.getInstance().isVisible()) {
+            PreviewDialog.getInstance().setVisible(true);
         }
-        prevDialog.setBackgroundImage(selectedFile);
+
+        PreviewDialog.getInstance().setBackgroundImage(selectedFile);
+        
     }
 
     private void fillAnimationList() {
@@ -142,6 +99,19 @@ public class DesignerGUI extends javax.swing.JFrame {
         for (SymbolAdapter symbolAdapter : DisplayConfiguration.getInstance().getAdapter()) {
 
             ((DefaultListModel)this.defAnimationsList.getModel()).addElement(symbolAdapter);
+        }
+    }
+
+    /**
+     * is called from dialog if it closed to save created adapter
+     * must be done this way as dialog may not be modal because of preview window
+     * @param dialog
+     */
+    public void AddAnimationDialogClosed(AddAnimationDialog dialog) {
+
+        if (dialog.completedCreation()) {
+            DisplayConfiguration.getInstance().getAdapter().add(dialog.getCreatedAdapter());
+            ((DefaultListModel)this.defAnimationsList.getModel()).addElement(dialog.getCreatedAdapter());
         }
     }
 
@@ -160,7 +130,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         cardPanel = new javax.swing.JPanel();
         SensorPanel = new javax.swing.JPanel();
         BackgroundPanel = new javax.swing.JPanel();
-        jFileChooser1 = new javax.swing.JFileChooser();
+        jFileChooser1 = new peripheral.designer.ImageFileChooser();
         AnimationsPanel = new javax.swing.JPanel();
         DefAnimationsPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -237,6 +207,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         BackgroundPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 2 : Select Background Image of the Scene"));
 
         jFileChooser1.setControlButtonsAreShown(false);
+        jFileChooser1.setFileFilter(new ImageFilter());
 
         org.jdesktop.layout.GroupLayout BackgroundPanelLayout = new org.jdesktop.layout.GroupLayout(BackgroundPanel);
         BackgroundPanel.setLayout(BackgroundPanelLayout);
@@ -403,11 +374,6 @@ public class DesignerGUI extends javax.swing.JFrame {
 
         AddAnimationDialog aaD = new AddAnimationDialog(this);
         aaD.setVisible(true);
-
-        if (aaD.completedCreation()) {
-            DisplayConfiguration.getInstance().getAdapter().add(aaD.getCreatedAdapter());
-            ((DefaultListModel)this.defAnimationsList.getModel()).addElement(aaD.getCreatedAdapter());
-        }
     }//GEN-LAST:event_addAnimationButtonActionPerformed
 
     private void exitMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuActionPerformed
@@ -435,7 +401,7 @@ public class DesignerGUI extends javax.swing.JFrame {
 
             if (selectedFile != null && PreviewDialog.isExtentionSupported(selectedFile)) {
 
-                DisplayConfiguration.getInstance().setBackgroundImage(this.prevDialog.getBackgroundImage());
+                DisplayConfiguration.getInstance().setBackgroundImage(PreviewDialog.getInstance().getBackgroundImage());
 
                 currentIndex++;
                 cl.next(cardPanel);

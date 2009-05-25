@@ -174,7 +174,13 @@
             <Component class="javax.swing.JFileChooser" name="jFileChooser1">
               <Properties>
                 <Property name="controlButtonsAreShown" type="boolean" value="false"/>
+                <Property name="fileFilter" type="javax.swing.filechooser.FileFilter" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                  <Connection code="new ImageFilter()" type="code"/>
+                </Property>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new peripheral.designer.ImageFileChooser()"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>
