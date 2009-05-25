@@ -8,6 +8,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import peripheral.logic.sensor.exception.CSVDataException;
+import peripheral.logic.sensor.exception.SensorChannelException;
+import peripheral.logic.sensor.exception.SensorServerAddressException;
+
 public class CSVCheckout extends Thread {
 
 	// References
@@ -26,6 +30,7 @@ public class CSVCheckout extends Thread {
     private String prev_stopmark;
 
     public CSVCheckout (Sensor sensor) {
+    	
     	this.sensor = sensor;
     	
     	this.address = sensor.getServer().getAddress();
@@ -41,59 +46,73 @@ public class CSVCheckout extends Thread {
     	
     	// Set Thread's active flag
     	active = true;
-    	
-    	System.out.println("Channel " + sensor.getSensorChannels().get(0).getFullname() + " - Number of Measurements:" + sensor.getSensorChannels().get(0).getMeasQueue().size());
-    	
+    	    	
     	while(active){
-    		
-        	// Get startmark string
-        	startmark = sensor.getStartmark();
-        	
-        	// Evaluate startmark if ""
-        	if(startmark.compareTo("0")==0){
-        		startmark = estimateStartmark();
-        		prev_stopmark = startmark;
-        	}
     		
     		// Convert Sensor's current samplerate from float/s to long/ms 
         	// Needs to be done in here each while iteration to support variable sampling rate
     		float samplerate = sensor.getSamplerate()*1000;
     		long millisec = (long) samplerate;
-    
-			// Get new Measurements for each Channel and set new sensor startmark to mark of last reveived measurement,
-    		// which is done in parseMeasToQueue Method
     		
-    		for(SensorChannel channel : sensor.getSensorChannels()){
-  
-    			BufferedReader reader = checkout(Long.toString(channel.getMid()), startmark);
-    			parseMeasToQueue(channel, reader);
-        	}
-    		
-    		// Set Markers with mark of last acquired measurement
-    		prev_stopmark = temp_stopmark;
-			sensor.setStartmark(temp_stopmark);
-    		
-    		System.out.println("New Startmark of Sensor: " + sensor.getStartmark());
+    		// Get startmark string
+        	startmark = sensor.getStartmark();
     		
     		try{
-    			System.out.println("Channel " + sensor.getSensorChannels().get(0).getFullname() + " - Number of Measurements:" + sensor.getSensorChannels().get(0).getMeasQueue().size());
-        		System.out.println("Channel " + sensor.getSensorChannels().get(1).getFullname() + " - Number of Measurements:" + sensor.getSensorChannels().get(1).getMeasQueue().size());
-        		System.out.println("Channel " + sensor.getSensorChannels().get(2).getFullname() + " - Number of Measurements:" + sensor.getSensorChannels().get(2).getMeasQueue().size());
+    			
+            	// Find a startmark if startmark of sensor == ""
+            	if(startmark.compareTo("0")==0){
+            		startmark = findStartmark();
+            		prev_stopmark = startmark;
+            	}
+        
+    			// Get new Measurements for each Channel and set new sensor startmark to mark of last reveived measurement,
+        		// which is done in parseMeasToQueue Method
         		
-        		Thread.sleep(millisec);
+        		for(SensorChannel channel : sensor.getSensorChannels()){
+      
+        			BufferedReader reader = checkout(Long.toString(channel.getMid()), startmark);
+        			parseMeasToQueue(channel, reader);
+            	}
         		
-    		}catch (NullPointerException e){
-    			System.out.println("No measurements available yet. Please be patient...");
-    		}catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+    		} catch (SensorServerAddressException e){
+    			System.err.println("[" + sensor.getName() + "] - " + e.getMessage());
+    		} catch (SensorChannelException e) {
+    			System.err.println("[" + sensor.getName() + "] - " + e.getMessage());
+			} catch (CSVDataException e) {
+				System.err.println("[" + sensor.getName() + "] - " + e.getMessage());
+			} finally{
+    		
+    			// Set Markers with mark of last acquired measurement
+        		prev_stopmark = temp_stopmark;
+    			sensor.setStartmark(temp_stopmark);
+        		
+    			try{
+    				Thread.sleep(millisec);
+    			} catch (InterruptedException e){
+    				e.printStackTrace();
+    			}
+    			
+        		try{
+        			System.out.println("[" + sensor.getName() + "] - " + "New Startmark: " + sensor.getStartmark());
+
+        			System.out.println("[" + sensor.getSensorChannels().get(0).getFullname() + "] - " 
+        					+ "Number of Measurements:" + sensor.getSensorChannels().get(0).getMeasQueue().size());
+            		System.out.println("[" + sensor.getSensorChannels().get(0).getFullname() + "] - "
+            				+ "Number of Measurements:" + sensor.getSensorChannels().get(1).getMeasQueue().size());
+            		System.out.println("[" + sensor.getSensorChannels().get(0).getFullname() + "] - "
+            				+ "Number of Measurements:" + sensor.getSensorChannels().get(2).getMeasQueue().size());
+            		System.out.println();
+            		
+        		}catch (NullPointerException e){
+        			
+        		}catch (IndexOutOfBoundsException e){
+    				
+    			}
+    		}
     	}
     }
     
-    private String estimateStartmark(){
-    	
-    	// get MID
-    	String mid = Long.toString(sensor.getSensorChannels().get(0).getMid());
+    private String findStartmark() throws SensorChannelException, SensorServerAddressException {
     	
     	// Setup URL
     	URL url;
@@ -107,6 +126,10 @@ public class CSVCheckout extends Thread {
     	String result = "-1";
     	
     	try{
+        	// get MID, throws ArrayIndexOutOfBoundsException if Server probe is processed,
+    		// as server probe does not have any probes
+        	String mid = Long.toString(sensor.getSensorChannels().get(0).getMid());
+    		
     		url = new URL(address + ":" + port + "/nrss/data/csv?mid=" + mid);
     		
     		// Establish URLConnection
@@ -123,32 +146,35 @@ public class CSVCheckout extends Thread {
     		// Go to last line of retrieved CSV File
     		while((strLine = reader.readLine()) != null){
     			resultLine = strLine.split(",");
-    		}
-    		
+    		}	
     		result = resultLine[5];
 			
-    	}catch(MalformedURLException e){
-    		System.out.println("Please enter a valid URL: " + e.getMessage());
+    	} catch (MalformedURLException e){
+    		throw new SensorServerAddressException("Please enter a valid URL: " + e.getMessage());
     	} catch (IOException e) {
-    		System.out.println("Could not establish URLConnection: " + e.getMessage());
+    		throw new SensorServerAddressException("Error retrieving data from URLConnection: " + e.getMessage());
+		} catch (IndexOutOfBoundsException e){
+			throw new SensorChannelException("No SensorChannels available: " + e.getMessage());
 		}
     	
     	return result;
+   
     }
     
-    private BufferedReader checkout(String mid, String startmark ){
+    private BufferedReader checkout(String mid, String startmark ) throws SensorServerAddressException, CSVDataException {
     	
     	// Setup URL
     	URL url;
     	URLConnection conn;
     	DataInputStream is;
     	
-    	// Increase Startmark with 1
-    	long mark = Long.parseLong(startmark);
-    	mark = mark++;
-    	startmark = Long.toString(mark);
-    	
     	try{
+    		
+        	// Increase Startmark with 1
+        	long mark = Long.parseLong(startmark);
+        	mark = mark++;
+        	startmark = Long.toString(mark);
+    		
     		url = new URL(address + ":" + port + "/nrss/data/csv?mid=" + mid + "&startMark=" + startmark);
     		
     		// Establish URLConnection
@@ -158,12 +184,12 @@ public class CSVCheckout extends Thread {
 			// return BufferedReader
 			return new BufferedReader(new InputStreamReader(is));
 			
-    	}catch(MalformedURLException e){
-    		System.out.println("Please enter a valid URL: " + e.getMessage());
-    		return null;
+    	} catch(MalformedURLException e){
+    		throw new SensorServerAddressException("Please enter a valid URL: " + e.getMessage());
     	} catch (IOException e) {
-    		System.out.println("Could not establish URLConnection: " + e.getMessage());
-    		return null;
+    		throw new SensorServerAddressException("Error retrieving data from URLConnection: " + e.getMessage());
+		} catch (NumberFormatException e){
+			throw new CSVDataException("No Measurements performed for 24h, set Startmark manually.");
 		}
     }
     
@@ -173,11 +199,11 @@ public class CSVCheckout extends Thread {
 		String strLine;
 		String[] fullmeas = {""};
 		
-		// Check for new Measurements
-		long stop = Long.parseLong(prev_stopmark);
-		long current;
-		
 		try {
+			
+			// Check for new Measurements
+			long stop = Long.parseLong(prev_stopmark);
+			long current;
 			
 			// Read header line and get rid of it
 			strLine = reader.readLine();
@@ -203,8 +229,9 @@ public class CSVCheckout extends Thread {
 			temp_stopmark = fullmeas[5];
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (NumberFormatException e) {
+			System.out.println("[" + sensor.getName() + "] - " + "Nothing parsed: " + e.getMessage());
 		}
     }
     

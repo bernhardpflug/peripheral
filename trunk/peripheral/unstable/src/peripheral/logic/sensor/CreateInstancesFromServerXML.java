@@ -15,7 +15,7 @@ public class CreateInstancesFromServerXML {
 		xml.createInstancesFromXML();
 
 		// Check count of sensors
-		System.out.println("Server has " + server.getSensorList().size() + " Sensors.");
+		System.out.println("Server has " + server.getSensorList().size() + " Sensors.\n");
 		
 //		for(Sensor sensor : server.getSensorList()){
 //			System.out.println("Sensor " + sensor.getName() + " with PID " + sensor.getPid()
