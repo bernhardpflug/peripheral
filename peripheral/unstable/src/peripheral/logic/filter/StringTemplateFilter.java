@@ -1,16 +1,19 @@
 package peripheral.logic.filter;
 
 import java.util.ArrayList; 
+import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.Value; 
 
 public class StringTemplateFilter extends Filter {
 
     private Value template;
 
-    public StringTemplateFilter () {
+    public StringTemplateFilter (SymbolAdapter adapter) {
+        super(adapter);
     }
 
-    public Object doFilter (Object val) {
+    @Override
+    public Object doFilter () {
         return null;
     }
 
