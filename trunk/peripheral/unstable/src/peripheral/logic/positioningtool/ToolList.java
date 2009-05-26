@@ -7,6 +7,12 @@ public class ToolList <T extends PositioningTool> implements ActionTool {
 
     private java.util.Set<T> hiddenElements;
 
+    private T type;
+
+    public T getType() {
+        return type;
+    }
+
     public ToolList () {
     }
 
