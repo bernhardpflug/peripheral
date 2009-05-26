@@ -1,6 +1,7 @@
 package peripheral.logic.symboladapter;
 
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 import peripheral.logic.action.Action;
@@ -11,7 +12,11 @@ import peripheral.logic.sensor.Sensor;
 import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value;
 
-public class SymbolAdapter {
+public class SymbolAdapter implements Serializable{
+
+    public enum RequiredStep implements Serializable {
+        Rules
+    }
 
     private ActionTool tool;
 
@@ -23,7 +28,7 @@ public class SymbolAdapter {
 
     private java.util.Map<String,Value> varpool;
 
-    private java.util.List<UserInput> neededUserInput;
+    private transient java.util.List<UserInput> neededUserInput;
 
     private String name;
 
@@ -33,7 +38,7 @@ public class SymbolAdapter {
 
     private java.util.Set<Sensor> preselectedSensors;
 
-    private Map<String, Boolean> requiredSteps;
+    private Map<RequiredStep, Boolean> requiredSteps;
 
     private Action defaultAction;
 
@@ -50,7 +55,7 @@ public class SymbolAdapter {
 
         preselectedSensors = new java.util.HashSet<Sensor>();
 
-        requiredSteps = new java.util.HashMap<String,Boolean>();
+        requiredSteps = new java.util.HashMap<RequiredStep,Boolean>();
     }
 
 
@@ -127,7 +132,7 @@ public class SymbolAdapter {
         return preselectedSensors;
     }
 
-    public Map<String, Boolean> getRequiredSteps () {
+    public Map<RequiredStep, Boolean> getRequiredSteps () {
         return requiredSteps;
     }
 
@@ -137,6 +142,20 @@ public class SymbolAdapter {
     public String toString() {
         //returns name to be displayed in Animation list
         return this.name;
+    }
+
+    public void execute () {
+        for (Filter bf : getBeforeFilter()){
+            bf.doFilter();
+        }
+
+        for (Rule r : getRules()){
+            if (r.tryExecute()) break;
+        }
+
+        for (Filter af : getAfterFilter()){
+            af.doFilter();
+        }
     }
 
 }
