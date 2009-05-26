@@ -109,8 +109,8 @@ public class RulesRootPanel extends javax.swing.JPanel {
     }
 
     private JPanel createButtonPanel() {
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(null);
+        JPanel localButtonPanel = new JPanel();
+        localButtonPanel.setLayout(null);
 
         JButton addRuleButton = new JButton("Add Rule");
         addRuleButton.addActionListener(new ActionListener () {
@@ -121,11 +121,11 @@ public class RulesRootPanel extends javax.swing.JPanel {
             }
         });
 
-        buttonPanel.setSize(100,20);
+        localButtonPanel.setSize(100,20);
         addRuleButton.setSize(100, 20);
-        buttonPanel.add(addRuleButton);
+        localButtonPanel.add(addRuleButton);
 
-        return buttonPanel;
+        return localButtonPanel;
     }
     /**
      * called every time a rulePanel is repainted
@@ -167,7 +167,7 @@ public class RulesRootPanel extends javax.swing.JPanel {
 
     private void addNewRule() {
 
-        Rule newRule = new Rule();
+        Rule newRule = new Rule(symbolAdapter);
 
         symbolAdapter.getRules().add(newRule);
 
