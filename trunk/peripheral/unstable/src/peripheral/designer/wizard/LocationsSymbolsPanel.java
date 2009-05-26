@@ -11,21 +11,15 @@
 
 package peripheral.designer.wizard;
 
-import java.awt.Dimension;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.File;
-import java.text.ParseException;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
-import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JOptionPane;
 import peripheral.designer.ImageFileChooser;
-import peripheral.designer.ImageFilter;
+import peripheral.designer.preview.ChangeListener;
 import peripheral.designer.preview.PreviewDialog;
 import peripheral.logic.DisplayConfiguration;
 import peripheral.logic.positioningtool.Line;
@@ -39,7 +33,7 @@ import peripheral.logic.symboladapter.SymbolAdapter;
  *
  * @author Berni
  */
-public class LocationsSymbolsPanel extends javax.swing.JPanel {
+public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeListener{
 
     AddAnimationDialog parent;
     private JFileChooser fileChooser;
@@ -66,10 +60,11 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
         model.clear();
 
         model.addElement(new Point());
+        model.addElement(new Line());
 
         //for (PositioningTool pos : symbolAdapter)
 
-        //TODO where to save positioning tools
+        //TODO where to save positioning tools = actionTool
     }
 
     private void fillSymbolList(PositioningTool pos) {
@@ -109,8 +104,6 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
         else if (pos instanceof Line) {
             Line line = (Line)pos;
 
-            //abklären ob wir datatype klassen verwenden
-            /*
             this.xLabel.setText("X1");
             this.xTextField.setText(""+line.getStartPoint().x);
 
@@ -124,7 +117,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
             this.heightLabel.setText("Y2");
             this.heightTextField.setEnabled(true);
             this.heightTextField.setText(""+line.getEndPoint().y);
-             * */
+             
         }
         else if (pos instanceof Region) {
             Region region = (Region)pos;
@@ -164,7 +157,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
                 ((Point)pos).getPosition().x = value;
             }
             else if (pos instanceof Line) {
-                //TODO
+                ((Line)pos).getStartPoint().x = value;
             }
             else if (pos instanceof Region) {
                 //TODO
@@ -177,7 +170,27 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
                 ((Point)pos).getPosition().y = value;
             }
             else if (pos instanceof Line) {
+                ((Line)pos).getStartPoint().y = value;
+            }
+            else if (pos instanceof Region) {
                 //TODO
+            }
+
+        }
+        else if (field.getName().equals("widthTextField")) {
+
+            if (pos instanceof Line) {
+                ((Line)pos).getEndPoint().x = value;
+            }
+            else if (pos instanceof Region) {
+                //TODO
+            }
+
+        }
+        else if (field.getName().equals("heightTextField")) {
+
+            if (pos instanceof Line) {
+                ((Line)pos).getEndPoint().y = value;
             }
             else if (pos instanceof Region) {
                 //TODO
@@ -186,6 +199,17 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
         }
 
         PreviewDialog.getInstance().updatePreview();
+    }
+
+    /**
+     * Event that is thrown by preview dialog if dragging occurred
+     * @param tool
+     */
+    public void dragOccurred(PositioningTool tool) {
+
+        if (tool.equals(this.LocationList.getSelectedValue())) {
+            this.updateGUICoordinates(tool);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -338,9 +362,19 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
         });
 
         removeSymbolButton.setText("-");
+        removeSymbolButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeSymbolButtonActionPerformed(evt);
+            }
+        });
 
         alterSymbolButton.setText("...");
 
+        symbolList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                symbolListValueChanged(evt);
+            }
+        });
         jScrollPane2.setViewportView(symbolList);
 
         displaySymbolCheckBox.setSelected(true);
@@ -419,11 +453,16 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
             //fill symbols
             fillSymbolList(pos);
 
+
+            //if displayd symbol isn't null select it in symbols list
+            if (pos.getDisplayedSymbol() != null) {
+                this.symbolList.setSelectedValue(pos.getDisplayedSymbol(), true);
+            }
+
             //update values in textfields
             this.updateGUICoordinates(pos);
 
-            //save current state of checkbox to new selected position tool
-            pos.setSymbolDisplayed(this.displaySymbolCheckBox.isSelected());
+            this.displaySymbolCheckBox.setSelected(pos.isSymbolDisplayed());
 
             //give preview dialog list with all positioningtools to paint
             ArrayList list = new ArrayList();
@@ -450,9 +489,18 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
 
             if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 Symbol symbol = new Symbol(fileChooser.getSelectedFile());
+                
+                //if added symbol is first one mark it as display symbol
+                /*if (pos.getSymbols().isEmpty()) {
+                    pos.setDisplayedSymbol(symbol);
+                }*/
+
                 pos.getSymbols().add(symbol);
 
                 fillSymbolList(pos);
+
+                //select new one as selected
+                this.symbolList.setSelectedValue(symbol, true);
 
                 //display symbol in preview if checkbox enabled
                 PreviewDialog.getInstance().updatePreview();
@@ -471,11 +519,61 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel {
 
             PositioningTool pos = (PositioningTool)this.LocationList.getSelectedValue();
 
+            //setPreviewSymbol(pos);
             pos.setSymbolDisplayed(this.displaySymbolCheckBox.isSelected());
 
             PreviewDialog.getInstance().updatePreview();
         }
     }//GEN-LAST:event_displaySymbolCheckBoxStateChanged
+
+    private void symbolListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_symbolListValueChanged
+
+        //change displayed symbol to currently selected
+
+        PositioningTool pos = (PositioningTool)this.LocationList.getSelectedValue();
+
+        //only change selected symbol if new symbol is selected, don't if currently selected is null
+        //occurs with location changes
+        if (this.symbolList.getSelectedValue() != null) {
+            pos.setDisplayedSymbol((Symbol)this.symbolList.getSelectedValue());
+            PreviewDialog.getInstance().updatePreview();
+        }
+    }//GEN-LAST:event_symbolListValueChanged
+
+    private void removeSymbolButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeSymbolButtonActionPerformed
+
+        if (this.symbolList.getSelectedValue() != null) {
+
+            //if symbol is selected there must be also an position tool selected
+            PositioningTool pos = (PositioningTool)this.LocationList.getSelectedValue();
+            Symbol symbol = (Symbol)this.symbolList.getSelectedValue();
+
+            //delete symbol from positioning tool
+            pos.getSymbols().remove(symbol);
+
+            //update symbols list
+            this.fillSymbolList(pos);
+
+            //Check if currently deleted is displayed symbol
+            if (pos.getDisplayedSymbol().equals(symbol)) {
+
+                //if so check if list is empty afterwards
+                if (pos.getSymbols().isEmpty()) {
+                    //if so set selected symbol to null
+                    pos.setDisplayedSymbol(null);
+                }
+                else {
+                    //just set new selected symbol, valueChanged handels set of displayedSymbol
+                    this.symbolList.setSelectedValue((Symbol)pos.getSymbols().get(0),true);
+                }
+
+                //update preview as this affects changes in preview
+                PreviewDialog.getInstance().updatePreview();
+            }
+
+        }
+
+    }//GEN-LAST:event_removeSymbolButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

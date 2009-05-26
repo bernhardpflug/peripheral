@@ -261,12 +261,18 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
 
     public void mouseDragged(MouseEvent e) { 
 
-        if (currentlyDragging != null) {
-            java.awt.Point szeneCoords = translateCoords(e.getPoint());
+        java.awt.Point szeneCoords = translateCoords(e.getPoint());
 
+        if (currentlyDragging != null) {
+            
             currentlyDragging.dragAction(szeneCoords);
             this.repaint();
+
+            //fire event to inform about drag event
+            parent.dragOccurred(currentlyDragging);
         }
+
+        parent.setMouseCoords(""+szeneCoords.x, ""+szeneCoords.y);
     }
 
     public void mouseMoved(MouseEvent e) {
@@ -320,6 +326,10 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
 
         if (currentlyDragging != null) {
             currentlyDragging.dragStop();
+            
+            //fire event to inform about drag event
+            parent.dragOccurred(currentlyDragging);
+
             currentlyDragging = null;
         }
     }

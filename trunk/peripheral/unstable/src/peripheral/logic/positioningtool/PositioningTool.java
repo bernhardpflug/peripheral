@@ -2,6 +2,7 @@ package peripheral.logic.positioningtool;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import peripheral.logic.symboladapter.Symbol; 
 
@@ -9,9 +10,10 @@ public abstract class PositioningTool implements ActionTool {
 
     protected java.util.List<Symbol> symbols;
 
-    //graphical flag that defines whether this tool displays one of its defined symbols
-    private boolean symbolDisplayed = false;
+    //reference to symbol to paint
+    private Symbol displayedSymbol;
 
+    private boolean displaySymbol;
 
     public PositioningTool () {
         symbols = new ArrayList<Symbol>();
@@ -29,12 +31,44 @@ public abstract class PositioningTool implements ActionTool {
      * GRAPHICAL METHODS
      */
 
-    public void setSymbolDisplayed(boolean flag) {
-        symbolDisplayed = flag;
+    public void setDisplayedSymbol(Symbol symbol) {
+        displayedSymbol = symbol;
     }
 
-    public boolean getSymbolDisplayed() {
-        return symbolDisplayed;
+    public Symbol getDisplayedSymbol() {
+        return displayedSymbol;
+    }
+
+    public boolean isSymbolDisplayed() {
+        return displaySymbol;
+    }
+
+    public void setSymbolDisplayed(boolean flag) {
+        this.displaySymbol = flag;
+    }
+
+    /**
+     * calculate scaled bounds of given symbol image with respect to
+     * background image origin in panel
+     * @param symbolImage buffered image containing the symbol
+     * @param scale of the current szene
+     * @param origin of the symbol
+     * @param imageBounds distance from image to the border of the panel
+     * @return rectangle containing the bounds of the symbol
+     */
+    protected Rectangle getSymbolBounds(BufferedImage symbolImage,float scale,java.awt.Point origin, Rectangle imageBounds) {
+
+        Rectangle symbolBounds = new Rectangle();
+
+        int ImgW = (int)((float)symbolImage.getWidth()*scale);
+        int ImgH = (int)((float)symbolImage.getHeight()*scale);
+
+        int NorthWestCornerX = imageBounds.x + (int)((float)origin.x*scale);
+        int NorthWestCornerY = imageBounds.y + (int)((float)origin.y*scale);
+
+        symbolBounds.setBounds(NorthWestCornerX, NorthWestCornerY, ImgW, ImgH);
+
+        return symbolBounds;
     }
 
     /**
