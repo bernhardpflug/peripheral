@@ -8,6 +8,10 @@ public abstract class PointWrapperAction extends PointAction {
 
     private SymbolAction symbolAction;
 
+    public SymbolAction getSymbolAction() {
+        return symbolAction;
+    }
+
     private PointWrapperAction (SymbolAction symbolAction) {
     }
 
@@ -42,8 +46,19 @@ public abstract class PointWrapperAction extends PointAction {
      *  <br>  public String getDescription(){...<br>}
      *      </p>
      */
-    public PointWrapperAction getPointWrapperAction (SymbolAction symbolAction) {
-        return null;
+    public static PointWrapperAction getPointWrapperAction (SymbolAction symbolAction) {
+        return new PointWrapperAction(symbolAction){
+            @Override
+            public String getDescription() {
+                return this.getSymbolAction().getDescription();
+            }
+
+            @Override
+            public String getName() {
+                return this.getSymbolAction().getName();
+            }
+
+        };
     }
 
     public void update (Observable o, Object arg) {
