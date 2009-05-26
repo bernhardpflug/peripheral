@@ -1,7 +1,9 @@
 package peripheral.logic.positioningtool;
 
+import java.io.Serializable;
 
-public interface ActionTool {
+
+public interface ActionTool extends Serializable{
 
     public void calculateRelativeCoordinates ();
 
