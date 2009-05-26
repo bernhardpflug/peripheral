@@ -13,6 +13,7 @@ public class SymbolTranslateAction extends SymbolAction {
     }
 
     public SymbolTranslateAction (Value targetPosition) {
+        this.targetPosition = targetPosition;
     }
 
     public Point getTargetPosition () {
