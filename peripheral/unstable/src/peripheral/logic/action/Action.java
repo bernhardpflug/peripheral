@@ -1,12 +1,14 @@
 package peripheral.logic.action;
 
+import java.io.Serializable;
 import java.util.Observable;
 import peripheral.logic.value.UserInput;
 
 
-public abstract class Action {
+public abstract class Action implements Serializable {
 
-    protected java.util.Set<UserInput> userInput;
+    //@todo: sicherstellen, dass userInput wirklich nicht serialisiert werden muss
+    protected transient java.util.Set<UserInput> userInput;
 
     public Action () {
     }
