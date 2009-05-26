@@ -1,6 +1,5 @@
 package peripheral.logic.positioningtool;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -64,21 +63,19 @@ public class Point extends PositioningTool {
     public void paint(Graphics g, float scale, Rectangle imageBounds) {
 
         //in case of painting symbol paint for symbol
-        if (super.getSymbolDisplayed() && !symbols.isEmpty()) {
+        if (super.getDisplayedSymbol()!=null && super.isSymbolDisplayed()) {
 
-            Symbol symbol = (Symbol) symbols.get(0);
+            Symbol symbol = super.getDisplayedSymbol();
 
             //paint symbol with scale and imageBounds
-            try {
-                BufferedImage symbolImage = ImageIO.read(symbol.getFile());
 
-                Rectangle symbolBounds = getSymbolBounds(symbolImage, scale, imageBounds);
+            BufferedImage symbolImage = symbol.getBufferedImage();
 
-                g.drawImage(symbolImage, (int) symbolBounds.getX(), (int) symbolBounds.getY(), (int) symbolBounds.getX() + (int) symbolBounds.getWidth(), (int) symbolBounds.getY() + (int) symbolBounds.getHeight(),
-                        0, 0, symbolImage.getWidth(), symbolImage.getHeight(), null, null);
-            } catch (IOException ioex) {
-                ioex.printStackTrace();
-            }
+            Rectangle symbolBounds = getSymbolBounds(symbolImage, scale, position, imageBounds);
+
+            g.drawImage(symbolImage, (int) symbolBounds.getX(), (int) symbolBounds.getY(), (int) symbolBounds.getX() + (int) symbolBounds.getWidth(), (int) symbolBounds.getY() + (int) symbolBounds.getHeight(),
+                    0, 0, symbolImage.getWidth(), symbolImage.getHeight(), null, null);
+
         }
         //else just paint a cross with the point in the middle
         else {
@@ -91,56 +88,33 @@ public class Point extends PositioningTool {
         }
     }
 
-    /**
-     * calculate scaled bounds of given symbol image with respect to
-     * background image origin in panel
-     * @param symbolImage
-     * @param scale
-     * @param imageBounds
-     * @return
-     */
-    private Rectangle getSymbolBounds(BufferedImage symbolImage,float scale, Rectangle imageBounds) {
-
-        Rectangle symbolBounds = new Rectangle();
-
-        int ImgW = (int)((float)symbolImage.getWidth()*scale);
-        int ImgH = (int)((float)symbolImage.getHeight()*scale);
-
-        int NorthWestCornerX = imageBounds.x + (int)((float)position.x*scale);
-        int NorthWestCornerY = imageBounds.y + (int)((float)position.y*scale);
-
-        symbolBounds.setBounds(NorthWestCornerX, NorthWestCornerY, ImgW, ImgH);
-
-        return symbolBounds;
-    }
-
     @Override
     public boolean dragable(int x, int y) {
         
         //in case symbol is displayed size of symbol is drag area
-        if (super.getSymbolDisplayed() && !symbols.isEmpty()) {
+        if (super.getDisplayedSymbol()!=null && super.isSymbolDisplayed()) {
 
-            Symbol symbol = (Symbol) symbols.get(0);
+            Symbol symbol = super.getDisplayedSymbol();
             
             if (x >= position.x && x <= (position.x + symbol.getBufferedImage().getWidth()) &&
                     y >=position.y && y <= (position.y + symbol.getBufferedImage().getHeight())) {
 
-                System.out.println("in range");
                 return true;
             }
 
-            System.out.println("out of range");
             return false;
         }
         else {
             //if only point is displayed (cross) allow dragging within
             //cross range
-            if (x >= position.x -CROSSRANGE && x <= position.y + CROSSRANGE &&
+            System.out.println("Checking "+x+"/"+y+" for "+position);
+            if (x >= position.x -CROSSRANGE && x <= position.x + CROSSRANGE &&
                     y >= position.y - CROSSRANGE && y <= position.y + CROSSRANGE) {
-                System.out.println("jup");
+                System.out.println("in range");
                 return true;
             }
             else {
+                System.out.println("out of range");
                 return false;
             }
         }
