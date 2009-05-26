@@ -1,9 +1,9 @@
 package peripheral.logic.rule;
 
+import java.io.Serializable;
 
-public abstract class ConditionOperation {
 
-    private int Unnamed;
+public abstract class ConditionOperation implements Serializable {
 
     private Object rightSideOp;
 
