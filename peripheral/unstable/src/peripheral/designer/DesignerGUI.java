@@ -63,17 +63,17 @@ public class DesignerGUI extends javax.swing.JFrame {
     private void createDummyData() {
         SymbolAdapter slider1 = new SymbolAdapter();
         slider1.setName("RuleSlider1");
-        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue("EnableSmoothing",new Boolean(true))));
-        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue("LocationX",new Integer(0))));
-        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue("LocationY",new Integer(0))));
+        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue(slider1,"EnableSmoothing",new Boolean(true))));
+        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationX",new Integer(0))));
+        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationY",new Integer(0))));
 
-        slider1.getRequiredSteps().put(AddAnimationDialog.RULEPANEL, new Boolean(true));
+        slider1.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, new Boolean(true));
 
         DisplayConfiguration.getInstance().getAdapter().add(slider1);
 
         SymbolAdapter mover1 = new SymbolAdapter();
         mover1.setName("ContinousMover1");
-        mover1.getRequiredSteps().put(AddAnimationDialog.RULEPANEL, new Boolean(false));
+        mover1.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, new Boolean(false));
         DisplayConfiguration.getInstance().getAdapter().add(mover1);
 
 
