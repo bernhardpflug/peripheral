@@ -1,10 +1,12 @@
 package peripheral.logic.value;
 
+import peripheral.logic.symboladapter.SymbolAdapter;
+
 
 public class VarValue extends Value {
 
-    public VarValue (String varName) {
-        super(varName);
+    public VarValue (SymbolAdapter adapter, String varName) {
+        super(adapter, varName);
     }
 
     public Object getValue () {

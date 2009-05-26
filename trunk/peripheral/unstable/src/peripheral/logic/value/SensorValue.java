@@ -1,6 +1,8 @@
 package peripheral.logic.value;
 
+import peripheral.logic.datatype.Interval;
 import peripheral.logic.sensor.SensorChannel;
+import peripheral.logic.symboladapter.SymbolAdapter;
 
 public class SensorValue extends Value {
 
@@ -13,10 +15,14 @@ public class SensorValue extends Value {
      *    sensorChannel.addSensorValue(this)
      *      </p>
      */
-    public SensorValue (String varName, SensorChannel sensorChannel) {
-        super(varName);
+    public SensorValue (SymbolAdapter adapter, String varName, SensorChannel sensorChannel) {
+        super(adapter, varName);
 
-        this.sensorChannel = sensorChannel;
+        setSensorChannel(sensorChannel);
+    }
+
+    public SensorValue (SymbolAdapter adapter, String varName){
+        super(adapter, varName);
     }
 
     public SensorChannel getSensorChannel () {
@@ -25,6 +31,7 @@ public class SensorValue extends Value {
 
     public void setSensorChannel (SensorChannel val) {
         this.sensorChannel = val;
+        //this.sensorChannel.addSensorValue(this);
     }
 
     public void setActValue (Object val) {
@@ -35,6 +42,9 @@ public class SensorValue extends Value {
         return actValue;
     }
 
-
+    public Interval getLimits(){
+        //return sensor limits
+        return new Interval();
+    }
 }
 

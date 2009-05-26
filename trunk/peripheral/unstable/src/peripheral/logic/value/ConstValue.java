@@ -1,12 +1,14 @@
 package peripheral.logic.value;
 
+import peripheral.logic.symboladapter.SymbolAdapter;
+
 
 public class ConstValue extends Value {
 
     private Object value;
 
-    public ConstValue (String varName, Object value) {
-        super(varName);
+    public ConstValue (SymbolAdapter adapter, String varName, Object value) {
+        super(adapter, varName);
 
         this.value = value;
     }
