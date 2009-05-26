@@ -30,9 +30,9 @@ public class CreateInstancesFromServerXML {
 //		}
 		
 		for(Sensor sensor : server.getSensorList()){
-			if(sensor.getPid() == 12){
+//			if(sensor.getPid() == 12){
 				sensor.startCheckout();
-			}
+//			}
 		}
 	}
 
