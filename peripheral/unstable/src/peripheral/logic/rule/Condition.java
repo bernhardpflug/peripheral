@@ -1,8 +1,9 @@
 package peripheral.logic.rule;
 
+import java.io.Serializable;
 import peripheral.logic.value.SensorValue; 
 
-public class Condition {
+public class Condition implements Serializable {
 
     private SensorValue leftSideOp;
 
