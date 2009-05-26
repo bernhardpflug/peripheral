@@ -1,23 +1,27 @@
 package peripheral.logic.rule;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import peripheral.logic.action.Action;
+import peripheral.logic.action.ActionToolAction;
+import peripheral.logic.symboladapter.SymbolAdapter;
 
 
-public class Rule {
+public class Rule implements Serializable{
 
     private java.util.List<Condition> conditions;
 
-    private java.util.List<Action> actions;
+    private java.util.List<ActionToolAction> actions;
 
-    public Rule () {
+    private SymbolAdapter adapter;
 
+    public Rule (SymbolAdapter adapter) {
+        this.adapter = adapter;
         conditions = new ArrayList<Condition>();
 
-        actions = new ArrayList<Action>();
+        actions = new ArrayList<ActionToolAction>();
     }
 
-    public java.util.List<Action> getActions () {
+    public java.util.List<ActionToolAction> getActions () {
         return actions;
     }
 
@@ -25,12 +29,20 @@ public class Rule {
         return conditions;
     }
 
-    public void setConditions (java.util.List<Condition> val) {
-        this.conditions = val;
-    }
+    public boolean tryExecute (){
+        boolean execute = true;
 
-    public void addAction (Action action) {
-    }
+        for (Condition cond : getConditions()){
+            execute = execute && cond.eval();
+        }
 
+        if (execute){
+            for (ActionToolAction a : getActions()){
+                a.execute(adapter.getTool());
+            }
+        }
+
+        return execute;
+    }
 }
 
