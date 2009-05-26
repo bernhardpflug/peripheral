@@ -25,8 +25,6 @@ import peripheral.logic.symboladapter.SymbolAdapter;
  */
 public class AddAnimationDialog extends javax.swing.JDialog {
 
-    public static final String RULEPANEL = "rulepanel";
-
     //refrence to created symbol adapter
     SymbolAdapter symbolAdapter;
 
@@ -88,7 +86,7 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         currentIndex++;
         cl.next(cardPanel);
 
-        if (symbolAdapter.getRequiredSteps().get(AddAnimationDialog.RULEPANEL).booleanValue()) {
+        if (symbolAdapter.getRequiredSteps().get(SymbolAdapter.RequiredStep.Rules).booleanValue()) {
             this.ruleBasedAdapterFlag = true;
         }
 
@@ -179,7 +177,7 @@ public class AddAnimationDialog extends javax.swing.JDialog {
             if (selected != null) {
                 this.symbolAdapter = selected;
 
-                if (symbolAdapter.getRequiredSteps().get(AddAnimationDialog.RULEPANEL).booleanValue()) {
+                if (symbolAdapter.getRequiredSteps().get(SymbolAdapter.RequiredStep.Rules).booleanValue()) {
                     this.ruleBasedAdapterFlag = true;
                 }
 
