@@ -12,6 +12,7 @@ public class SymbolSwapAction extends SymbolAction {
     }
 
     public SymbolSwapAction (Value filename) {
+        this.filename = filename;
     }
 
     public String getFilename () {
