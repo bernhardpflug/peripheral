@@ -1,25 +1,39 @@
 package peripheral.logic.filter;
 
-import java.util.ArrayList; 
+import java.io.Serializable;
+import java.util.List;
+import peripheral.logic.symboladapter.SymbolAdapter;
+import peripheral.logic.value.VarValue;
 
-public class Filter {
+public abstract class Filter implements Serializable {
 
     private String outputVarName;
+    private VarValue inputVar;
+    protected SymbolAdapter adapter;
 
-    public Filter () {
+    public VarValue getInputVar() {
+        return inputVar;
     }
 
-    public Object doFilter (Object val) {
+    public void setInputVar(VarValue inputVar) {
+        this.inputVar = inputVar;
+    }
+
+    public Object getInputValue (){
+        return inputVar.getValue();
+    }
+
+    public Filter (SymbolAdapter adapter) {
+        this.adapter = adapter;
+    }
+
+    public Object doFilter () {
         return null;
     }
 
-    public ArrayList<java.lang.Class> getAcceptedInputTypes () {
-        return null;
-    }
+    public abstract List<java.lang.Class> getAcceptedInputTypes ();
 
-    public java.lang.Class getOutputType () {
-        return null;
-    }
+    public abstract java.lang.Class getOutputType ();
 
     public String getOutputVarName () {
         return outputVarName;
