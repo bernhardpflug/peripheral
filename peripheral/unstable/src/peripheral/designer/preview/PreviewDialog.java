@@ -12,9 +12,8 @@
 package peripheral.designer.preview;
 
 import java.awt.Dimension;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import peripheral.logic.positioningtool.PositioningTool;
 
@@ -22,11 +21,13 @@ import peripheral.logic.positioningtool.PositioningTool;
  *
  * @author Berni
  */
-public class PreviewDialog extends javax.swing.JDialog {
+public class PreviewDialog extends javax.swing.JDialog implements ChangeListener{
 
     private static final String [] supportedFileEndings = {"jpg","jpeg","gif","png","bmp","tif","tiff"};
 
     private static PreviewDialog instance;
+
+    private ArrayList<ChangeListener> previewListeners;
 
     public static PreviewDialog getInstance() {
 
@@ -46,6 +47,8 @@ public class PreviewDialog extends javax.swing.JDialog {
         getContentPane().add(previewPanel1,java.awt.BorderLayout.CENTER);
         previewPanel1.setPreferredSize(new Dimension(400,300));
         initComponents();
+
+        previewListeners = new ArrayList();
     }
 
     /** This method is called from within the constructor to
@@ -117,6 +120,24 @@ public class PreviewDialog extends javax.swing.JDialog {
     public void updatePreview() {
         previewPanel1.repaint();
         this.repaint();
+    }
+
+    /*
+     *  CHANGE LISTENER METHODS
+     */
+
+    public void addPreviewListener(ChangeListener l) {
+        this.previewListeners.add(l);
+    }
+
+    public void removePreviewListener(ChangeListener l) {
+        this.previewListeners.remove(l);
+    }
+
+    public void dragOccurred(PositioningTool tool) {
+        for (ChangeListener l : previewListeners) {
+            l.dragOccurred(tool);
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

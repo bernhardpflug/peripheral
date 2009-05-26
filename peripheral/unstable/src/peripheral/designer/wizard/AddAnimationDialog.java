@@ -12,12 +12,9 @@
 package peripheral.designer.wizard;
 
 import java.awt.CardLayout;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import peripheral.designer.DesignerGUI;
 import peripheral.designer.preview.PreviewDialog;
 import peripheral.logic.symboladapter.SymbolAdapter;
@@ -63,6 +60,9 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         //add window listener to inform frame if this dialog is closed
         //to be able to save new symboladapter
         this.addWindowListener(new MyWindowListener(parent,this));
+
+        //register positioning panel to preview dialog for listening to drag events
+        PreviewDialog.getInstance().addPreviewListener(createLocationsSymbolsPanel1);
     }
 
     public boolean completedCreation() {
@@ -211,10 +211,7 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         else if (currentIndex == 2) {
 
             if (!this.ruleBasedAdapterFlag) {
-                completedFlag = true;
-
-                this.setVisible(false);
-                this.dispose();
+                closeAnimationDialog();
             }
             else {
                 nextButton.setText("Finish");
@@ -228,10 +225,7 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         }
         //rules panel
         else if (currentIndex == 3) {
-            completedFlag = true;
-
-            this.setVisible(false);
-            this.dispose();
+            closeAnimationDialog();
         }
     }//GEN-LAST:event_nextButtonActionPerformed
 
@@ -275,6 +269,14 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_prevButtonActionPerformed
 
+    private void closeAnimationDialog() {
+
+        //indicate designer that symboladapter creation was successfull
+        completedFlag = true;
+
+        this.setVisible(false);
+        this.dispose();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel cardPanel;
@@ -303,6 +305,10 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         }
 
         public void windowClosed(WindowEvent e) {
+            //unregister changelistener from preview dialog
+            PreviewDialog.getInstance().removePreviewListener(createLocationsSymbolsPanel1);
+
+            //indicate designer that dialog closed
             parent.AddAnimationDialogClosed(dialog);
         }
 
