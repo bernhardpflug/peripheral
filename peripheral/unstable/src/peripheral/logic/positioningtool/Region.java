@@ -18,7 +18,7 @@ public class Region extends PositioningTool {
      *    
      *      </p>
      */
-    public Region (Dimension backgroundDimension) {
+    public Region () {
         super();
     }
 
