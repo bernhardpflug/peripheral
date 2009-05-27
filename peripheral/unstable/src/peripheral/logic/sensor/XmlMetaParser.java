@@ -96,7 +96,7 @@ public class XmlMetaParser {
 				
 				// Create Sensor instance
 				if(sensorname.compareTo("")!=0 && pid.compareTo("")!=0){
-					tempSensor = new Sensor(Long.parseLong(pid), sensorname, server, 1.0f);
+					tempSensor = new Sensor(Long.parseLong(pid), sensorname, server);
 				}
 				
 				// Create Channels if available

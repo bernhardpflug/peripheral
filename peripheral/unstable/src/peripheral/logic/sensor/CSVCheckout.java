@@ -42,7 +42,7 @@ public class CSVCheckout extends Thread {
     }
     
     public void run(){
-    	    	
+    	
     	while(true){
     		
     		if(isInterrupted())
@@ -50,28 +50,34 @@ public class CSVCheckout extends Thread {
     		
     		// Convert Sensor's current samplerate from float/s to long/ms 
         	// Needs to be done in here each while iteration to support variable sampling rate
-    		float samplerate = sensor.getSamplerate()*1000;
-    		long millisec = (long) samplerate;
+    		float pollingrate = sensor.getPollingrate()*1000;
+    		long millisec = (long) pollingrate;
     		
-    		// Get startmark string
+//    		// Get startmark string
         	startmark = sensor.getStartmark();
-    		
+//        	prev_stopmark = startmark;
+//    		
     		try{
     			
             	// Find a startmark if startmark of sensor == ""
             	if(startmark.compareTo("0")==0){
-            		startmark = getLastMark();
+          
+            		startmark = sensor.calculateStartmark();
             		prev_stopmark = startmark;	// Set to startmark as otherwise parseMeasToQueue() adds initial corrupt measurements
+
             	}
         
     			// Get new Measurements for each Channel and set new sensor startmark to mark of last reveived measurement,
         		// which is done in parseMeasToQueue Method
         		
         		for(SensorChannel channel : sensor.getSensorChannels()){
-      
+        			
         			BufferedReader reader = checkout(channel);
         			parseMeasToQueue(channel, reader);
+        			
             	}
+        		
+        		sensor.samplingStarted();
         		
     		} catch (SensorServerAddressException e){
     			System.err.println("[" + sensor.getName() + "] - " + e.getMessage());
@@ -83,9 +89,9 @@ public class CSVCheckout extends Thread {
     		
     			// Set Markers with mark of last acquired measurement and marker for stopmark of 
 				// last run to avoid duplicate entries if no new measurements arrived on server
-    			sensor.setStartmark(stopmark);
+				sensor.setStartmark(stopmark);
     			prev_stopmark = stopmark;
-        		
+    			
     			try{
     				Thread.sleep(millisec);
     			} catch (InterruptedException e){
@@ -109,62 +115,14 @@ public class CSVCheckout extends Thread {
         			
         		}catch (IndexOutOfBoundsException e){
     				
-    			}
-    		}
+    			}	
+    		} 
     	}
-    }
-    
-    private String getLastMark() throws SensorChannelException, SensorServerAddressException {
-    	
-    	// Setup URL
-    	URL url;
-    	URLConnection conn;
-    	DataInputStream is;
-    	
-    	// Setup BufferedReader to read InputStream
-    	BufferedReader reader;
-    	
-    	// Return String
-    	String result = "-1";
-    	
-    	try{
-        	// get MID, throws ArrayIndexOutOfBoundsException if Server probe is processed,
-    		// as server probe does not have any probes
-        	String mid = Long.toString(sensor.getSensorChannels().get(0).getMid());
-    		
-    		url = new URL(address + ":" + port + "/nrss/data/csv?mid=" + mid);
-    		
-    		// Establish URLConnection
-			conn = url.openConnection();
-			is = new DataInputStream(conn.getInputStream());
-			
-			// Instantiate BufferedReader
-			reader = new BufferedReader(new InputStreamReader(is));
-	    		
-    		// Temp Strings
-    		String strLine;
-    		String[] resultLine = {""};
-    		
-    		// Go to last line of retrieved CSV File
-    		while((strLine = reader.readLine()) != null){
-    			resultLine = strLine.split(",");
-    		}	
-    		result = resultLine[5];
-			
-    	} catch (MalformedURLException e){
-    		throw new SensorServerAddressException("Please enter a valid URL: " + e.getMessage());
-    	} catch (IOException e) {
-    		throw new SensorServerAddressException("Error retrieving data from URLConnection: " + e.getMessage());
-		} catch (IndexOutOfBoundsException e){
-			throw new SensorChannelException("No SensorChannels available: " + e.getMessage());
-		}
-    	
-    	return result;
-   
+
     }
     
     private BufferedReader checkout(SensorChannel channel) throws SensorServerAddressException, CSVDataException {
-    	
+		
     	// Setup URL
     	URL url;
     	URLConnection conn;
@@ -246,5 +204,15 @@ public class CSVCheckout extends Thread {
 			System.out.println("[" + sensor.getName() + "] - " + "Nothing parsed: " + e.getMessage());
 		}
     }
+
+    
+    // GETTERS AND SETTERS
+    public Sensor getSensor() {
+		return sensor;
+	}
+
+	public void setStartmark(String startmark) {
+		this.startmark = startmark;
+	}
 }
 
