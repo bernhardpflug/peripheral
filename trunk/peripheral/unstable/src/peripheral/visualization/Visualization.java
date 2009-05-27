@@ -1,11 +1,11 @@
 package peripheral.visualization;
 
-import java.awt.Image;
-import peripheral.logic.positioningtool.Point; 
+import java.awt.Dimension;
+import java.awt.Image; 
+import java.awt.Point;
 import peripheral.logic.positioningtool.Region; 
 import peripheral.logic.symboladapter.Symbol;
 
-import peripheral.logic.datatype.Rectangle; 
 
 
 
@@ -98,7 +98,7 @@ public interface Visualization {
      * @param theme
      * @param resolution
      */
-    public void init (Image theme, Rectangle resolution);
+    public void init (String backgroundImageFilename, Dimension resolution);
 
 }
 
