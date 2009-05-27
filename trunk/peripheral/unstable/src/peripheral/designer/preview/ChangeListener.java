@@ -5,8 +5,6 @@
 
 package peripheral.designer.preview;
 
-import peripheral.logic.positioningtool.PositioningTool;
-
 /**
  *
  * @author Berni
@@ -14,8 +12,20 @@ import peripheral.logic.positioningtool.PositioningTool;
 public interface ChangeListener {
 
     /**
-     * Event that is thrown if preview fulfills a drag event
-     * @param tool
+     * Event that is thrown if drag starts
+     * @param origin
      */
-    public void dragOccurred(PositioningTool tool);
+    public void dragStart(java.awt.Point origin);
+
+    /**
+     * called every time the position changes
+     * should work only after dragStart occured on dragable area
+     * @param newPosition
+     */
+    public void dragAction(java.awt.Point newPosition);
+
+    /**
+     * indicates end of drag action
+     */
+    public void dragStop();
 }

@@ -263,14 +263,10 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
 
         java.awt.Point szeneCoords = translateCoords(e.getPoint());
 
-        if (currentlyDragging != null) {
-            
-            currentlyDragging.dragAction(szeneCoords);
-            this.repaint();
+        //fire event that dragging position changed
+        parent.dragAction(szeneCoords);
 
-            //fire event to inform about drag event
-            parent.dragOccurred(currentlyDragging);
-        }
+        this.repaint();
 
         parent.setMouseCoords(""+szeneCoords.x, ""+szeneCoords.y);
     }
@@ -305,33 +301,15 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
 
     public void mousePressed(MouseEvent e) {
 
-        if (currentlyDragging == null) {
+        java.awt.Point szeneCoords = translateCoords(e.getPoint());
 
-            //go through all positioning tools and find first one that is dragable at given point
-            for (PositioningTool tool : tools) {
-
-                java.awt.Point szeneCoords = translateCoords(e.getPoint());
-
-                if (tool.dragable(szeneCoords.x, szeneCoords.y)) {
-
-                    currentlyDragging = tool;
-                    currentlyDragging.dragStart(szeneCoords);
-                    return;
-                }
-            }
-        }
+        //through drag start event with translated coordinates
+        parent.dragStart(szeneCoords);
     }
 
     public void mouseReleased(MouseEvent e) {
 
-        if (currentlyDragging != null) {
-            currentlyDragging.dragStop();
-            
-            //fire event to inform about drag event
-            parent.dragOccurred(currentlyDragging);
-
-            currentlyDragging = null;
-        }
+        parent.dragStop();
     }
 
     public void mouseEntered(MouseEvent e) {
