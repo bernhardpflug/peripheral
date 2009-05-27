@@ -146,21 +146,21 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
         else if (pos instanceof Region) {
             Region region = (Region)pos;
 
-            /*
+            
             this.xLabel.setText("X");
-            this.xTextField.setText(""+region.getBounds());
+            this.xTextField.setText(""+region.getBounds().x);
 
             this.yLabel.setText("Y");
-            this.yTextField.setText(""+line.getStartPoint().y);
+            this.yTextField.setText(""+region.getBounds().y);
 
             this.widthLabel.setText("Width");
             this.widthTextField.setEnabled(true);
-            this.widthTextField.setText(""+line.getEndPoint().x);
+            this.widthTextField.setText(""+region.getBounds().width);
 
             this.heightLabel.setText("Height");
             this.heightTextField.setEnabled(true);
-            this.heightTextField.setText(""+line.getEndPoint().y);
-             * */
+            this.heightTextField.setText(""+region.getBounds().height);
+            
         }
     }
 
@@ -184,7 +184,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
                 ((Line)pos).getStartPoint().x = value;
             }
             else if (pos instanceof Region) {
-                //TODO
+                ((Region)pos).getBounds().x = value;
             }
             
         }
@@ -197,7 +197,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
                 ((Line)pos).getStartPoint().y = value;
             }
             else if (pos instanceof Region) {
-                //TODO
+                ((Region)pos).getBounds().y = value;
             }
 
         }
@@ -207,7 +207,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
                 ((Line)pos).getEndPoint().x = value;
             }
             else if (pos instanceof Region) {
-                //TODO
+                ((Region)pos).getBounds().width = value;
             }
 
         }
@@ -217,7 +217,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
                 ((Line)pos).getEndPoint().y = value;
             }
             else if (pos instanceof Region) {
-                //TODO
+                ((Region)pos).getBounds().height = value;
             }
 
         }
@@ -669,6 +669,8 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
     /**
      * Class that allows to verify whether inputted value
      * is within bounds of background image
+     *
+     * NO LONGER USED
      */
     class BoundsVerifier extends InputVerifier {
 
@@ -684,37 +686,41 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
                 try {
                     int value = Integer.parseInt(ftf.getText());
 
-                    if (ftf.getName().equals("xTextField")) {
-                        if (value >= 0 && value <= DisplayConfiguration.getInstance().getWidth()) {
-                            panel.updatePositionToolCoordinates(ftf);
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    } else if (ftf.getName().equals("yTextField")) {
-                        if (value >= 0 && value <= DisplayConfiguration.getInstance().getHeight()) {
-                            panel.updatePositionToolCoordinates(ftf);
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                    else if (ftf.getName().equals("widthTextField")) {
-                        if (value >= 0 && value <= DisplayConfiguration.getInstance().getWidth()) {
-                            panel.updatePositionToolCoordinates(ftf);
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
-                    else if (ftf.getName().equals("heightTextField")) {
-                        if (value >= 0 && value <= DisplayConfiguration.getInstance().getHeight()) {
-                            panel.updatePositionToolCoordinates(ftf);
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
+                    panel.updatePositionToolCoordinates(ftf);
+
+                    return true;
+
+//                    if (ftf.getName().equals("xTextField")) {
+//                        if (value >= 0 && value <= DisplayConfiguration.getInstance().getWidth()) {
+//                            panel.updatePositionToolCoordinates(ftf);
+//                            return true;
+//                        } else {
+//                            return false;
+//                        }
+//                    } else if (ftf.getName().equals("yTextField")) {
+//                        if (value >= 0 && value <= DisplayConfiguration.getInstance().getHeight()) {
+//                            panel.updatePositionToolCoordinates(ftf);
+//                            return true;
+//                        } else {
+//                            return false;
+//                        }
+//                    }
+//                    else if (ftf.getName().equals("widthTextField")) {
+//                        if (value >= 0 && value <= DisplayConfiguration.getInstance().getWidth()) {
+//                            panel.updatePositionToolCoordinates(ftf);
+//                            return true;
+//                        } else {
+//                            return false;
+//                        }
+//                    }
+//                    else if (ftf.getName().equals("heightTextField")) {
+//                        if (value >= 0 && value <= DisplayConfiguration.getInstance().getHeight()) {
+//                            panel.updatePositionToolCoordinates(ftf);
+//                            return true;
+//                        } else {
+//                            return false;
+//                        }
+//                    }
                 } catch (NumberFormatException ex) {
                     return false;
                 }
