@@ -2,7 +2,7 @@ package peripheral.logic.positioningtool;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
-import peripheral.logic.datatype.Rectangle; 
+import java.awt.Rectangle;
 import peripheral.logic.symboladapter.Symbol; 
 
 public class Region extends PositioningTool {
