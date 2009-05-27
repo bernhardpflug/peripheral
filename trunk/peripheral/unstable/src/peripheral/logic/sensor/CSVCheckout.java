@@ -16,7 +16,6 @@ public class CSVCheckout extends Thread {
 
 	// References
     private Sensor sensor;
-    private boolean active;
     
     // String values for HTTPRequests
     private String address;
@@ -43,11 +42,11 @@ public class CSVCheckout extends Thread {
     }
     
     public void run(){
-    	
-    	// Set Thread's active flag
-    	active = true;
     	    	
-    	while(active){
+    	while(true){
+    		
+    		if(isInterrupted())
+    			break;
     		
     		// Convert Sensor's current samplerate from float/s to long/ms 
         	// Needs to be done in here each while iteration to support variable sampling rate
@@ -90,6 +89,8 @@ public class CSVCheckout extends Thread {
     			try{
     				Thread.sleep(millisec);
     			} catch (InterruptedException e){
+    				// If interrupt() is used
+    				interrupt();
     				e.printStackTrace();
     			}
     			
@@ -244,10 +245,6 @@ public class CSVCheckout extends Thread {
 		} catch (NumberFormatException e) {
 			System.out.println("[" + sensor.getName() + "] - " + "Nothing parsed: " + e.getMessage());
 		}
-    }
-    
-    public void setActive(boolean active){
-    	this.active = active;
     }
 }
 
