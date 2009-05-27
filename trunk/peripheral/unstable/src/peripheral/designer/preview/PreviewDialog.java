@@ -128,13 +128,13 @@ public class PreviewDialog extends javax.swing.JDialog implements ChangeListener
      */
 
     public void addPreviewListener(ChangeListener l) {
-        System.out.println("adding "+l);
+        
         this.previewListeners.add(l);
     }
 
     public void removePreviewListener(ChangeListener l) {
-        System.out.println("removing "+l+" with state "+this.previewListeners.remove(l));
         
+        this.previewListeners.remove(l);
     }
 
     /*
