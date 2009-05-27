@@ -143,6 +143,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         priorityDownButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         SavePanel = new javax.swing.JPanel();
+        saveConfigurationButton = new javax.swing.JButton();
         ApplicationMenu = new javax.swing.JMenuBar();
         FileMenu = new javax.swing.JMenu();
         exitMenu = new javax.swing.JMenuItem();
@@ -170,7 +171,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         buttonPanelLayout.setHorizontalGroup(
             buttonPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, buttonPanelLayout.createSequentialGroup()
-                .addContainerGap(554, Short.MAX_VALUE)
+                .addContainerGap(584, Short.MAX_VALUE)
                 .add(prevButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(nextButton)
@@ -195,11 +196,11 @@ public class DesignerGUI extends javax.swing.JFrame {
         SensorPanel.setLayout(SensorPanelLayout);
         SensorPanelLayout.setHorizontalGroup(
             SensorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 721, Short.MAX_VALUE)
+            .add(0, 717, Short.MAX_VALUE)
         );
         SensorPanelLayout.setVerticalGroup(
             SensorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 435, Short.MAX_VALUE)
+            .add(0, 446, Short.MAX_VALUE)
         );
 
         cardPanel.add(SensorPanel, "card2");
@@ -216,14 +217,14 @@ public class DesignerGUI extends javax.swing.JFrame {
             .add(BackgroundPanelLayout.createSequentialGroup()
                 .add(85, 85, 85)
                 .add(jFileChooser1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 541, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(95, Short.MAX_VALUE))
+                .addContainerGap(91, Short.MAX_VALUE))
         );
         BackgroundPanelLayout.setVerticalGroup(
             BackgroundPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(BackgroundPanelLayout.createSequentialGroup()
                 .add(63, 63, 63)
                 .add(jFileChooser1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 304, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
 
         cardPanel.add(BackgroundPanel, "card3");
@@ -258,7 +259,7 @@ public class DesignerGUI extends javax.swing.JFrame {
             DefAnimationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(DefAnimationsPanelLayout.createSequentialGroup()
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 347, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(8, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         AnimationPropertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("AnimationProperties"));
@@ -305,7 +306,7 @@ public class DesignerGUI extends javax.swing.JFrame {
                         .add(32, 32, 32)
                         .add(AnimationPropertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 299, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jLabel1))
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addContainerGap(74, Short.MAX_VALUE))
         );
         AnimationsPanelLayout.setVerticalGroup(
             AnimationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -325,9 +326,9 @@ public class DesignerGUI extends javax.swing.JFrame {
                     .add(AnimationsPanelLayout.createSequentialGroup()
                         .add(28, 28, 28)
                         .add(AnimationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(org.jdesktop.layout.GroupLayout.LEADING, AnimationPropertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, AnimationPropertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
                             .add(org.jdesktop.layout.GroupLayout.LEADING, DefAnimationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 383, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 14, Short.MAX_VALUE)
                 .add(jLabel1))
         );
 
@@ -335,15 +336,28 @@ public class DesignerGUI extends javax.swing.JFrame {
 
         SavePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 4 : Save this Configuration"));
 
+        saveConfigurationButton.setText("Save");
+        saveConfigurationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveConfigurationButtonActionPerformed(evt);
+            }
+        });
+
         org.jdesktop.layout.GroupLayout SavePanelLayout = new org.jdesktop.layout.GroupLayout(SavePanel);
         SavePanel.setLayout(SavePanelLayout);
         SavePanelLayout.setHorizontalGroup(
             SavePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 721, Short.MAX_VALUE)
+            .add(SavePanelLayout.createSequentialGroup()
+                .add(22, 22, 22)
+                .add(saveConfigurationButton)
+                .addContainerGap(638, Short.MAX_VALUE))
         );
         SavePanelLayout.setVerticalGroup(
             SavePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 435, Short.MAX_VALUE)
+            .add(SavePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .add(saveConfigurationButton)
+                .addContainerGap(412, Short.MAX_VALUE))
         );
 
         cardPanel.add(SavePanel, "card5");
@@ -497,6 +511,10 @@ public class DesignerGUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_editAnimationButtonActionPerformed
 
+    private void saveConfigurationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveConfigurationButtonActionPerformed
+        DisplayConfiguration.getInstance().save("displayConfig.ser");
+    }//GEN-LAST:event_saveConfigurationButtonActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -532,6 +550,7 @@ public class DesignerGUI extends javax.swing.JFrame {
     private javax.swing.JButton priorityDownButton;
     private javax.swing.JButton priorityUpButton;
     private javax.swing.JButton removeAnimationButton;
+    private javax.swing.JButton saveConfigurationButton;
     // End of variables declaration//GEN-END:variables
 
 }
