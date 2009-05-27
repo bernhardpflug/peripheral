@@ -16,7 +16,7 @@ public class DisplayConfiguration implements Serializable {
 
     private static DisplayConfiguration instance;
     private java.util.List<SymbolAdapter> adapter;
-    private String backgroundImageFilename;
+    private String backgroundImageFilename = "c:\\test.jpg";
     //@todo: make SensorServer and contained objects serializable
     private java.util.List<SensorServer> sensorServer;
     private transient BufferedImage backgroundImage;
