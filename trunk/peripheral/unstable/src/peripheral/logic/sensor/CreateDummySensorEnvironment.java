@@ -11,7 +11,7 @@ public class CreateDummySensorEnvironment {
 		SensorServer server = new SensorServer("http://127.0.0.1","8080", "admin");
 		
 		// Create Sensor
-		Sensor sensor = new Sensor(13, "Dummy Sensor", server, 1.0f);
+		Sensor sensor = new Sensor(13, "Dummy Sensor", server);
 		
 		// Create SensorChannel channel1
 		SensorChannel channel1 = new SensorChannel(34, "admin:Dummy Sensor:Dummy Stim:dummychannel1", sensor);

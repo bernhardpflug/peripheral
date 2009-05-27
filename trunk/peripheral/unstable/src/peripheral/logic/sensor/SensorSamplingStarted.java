@@ -3,16 +3,8 @@ package peripheral.logic.sensor;
 
 public class SensorSamplingStarted implements SensorEvent {
 
-	private float samplerate;
-	
-    public SensorSamplingStarted (float samplingrate) {
-    	this.samplerate = samplingrate;
+    public SensorSamplingStarted () {
     }
-    
-    // GETTERS AND SETTERS
-	public float getSamplerate() {
-		return samplerate;
-	}
 
 }
 

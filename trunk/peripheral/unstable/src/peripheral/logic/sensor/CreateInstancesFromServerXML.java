@@ -1,7 +1,9 @@
 package peripheral.logic.sensor;
 
 public class CreateInstancesFromServerXML {
-
+	
+	private static Sensor instance;
+	
 	public static void main(String[] args) {
 		
 		// Create Server
@@ -27,16 +29,21 @@ public class CreateInstancesFromServerXML {
 //		}
 		
 		for(Sensor sensor : server.getSensorList()){
-			if(sensor.getPid() == 12){
+			if(sensor.getPid() == 13){
+				instance = sensor;
 				sensor.startCheckout();
-				try {
-					Thread.currentThread().sleep(3000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 			}
 		}
+		
+//		while(true){
+//			try {
+//				Thread.sleep(10000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			instance.updateSamplerate();
+//		}
 	}
 
 }

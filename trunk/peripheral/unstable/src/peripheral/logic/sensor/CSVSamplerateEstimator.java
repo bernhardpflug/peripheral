@@ -22,37 +22,47 @@ public class CSVSamplerateEstimator extends Thread {
 	}
 	
 	public void run(){
-			calculateFromCSVFile();
+		
+			String startmark = sensor.getStartmark();
+			calculateFromCSVFile(startmark);
 	}
 	
-	private void calculateFromCSVFile(){
+	private void calculateFromCSVFile(String startmark){
 		
 		Stack<Long> timestamps = new Stack<Long>();
-		Stack<Long> temp = new Stack<Long>();
-		int count = 0;
 		
-		while(count<elements){
-			temp = pushNewMeasOnStack(timestamps);
-			timestamps = temp;
-			count = timestamps.capacity();
-		}
+		System.err.println("Startmark" + startmark);
+		
+		do {
+			timestamps = getNewMeasStack(startmark);
+			
+			try {
+				Thread.sleep( (long) sensor.getPollingrate()*1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
+		} while (timestamps.size()<elements+1);
+		
+		System.out.println("Size: " + timestamps.size());
 		
 		// sample rate mean
 		long mean = 0;
 		long tmp = 0;
 		
 		for(int i = 0; i < elements; i++){
-			if(timestamps.capacity()>1){
-				long pop = timestamps.pop();
-				long peek = timestamps.peek();
-				long diff = pop - peek;
-				tmp = tmp + diff;
-			}
+			long pop = timestamps.pop();
+			long peek = timestamps.peek();
+			long diff = pop - peek;
+			tmp = tmp + diff;
+			System.out.println("Run: " + i + " Temp: " + tmp + "Size: " + timestamps.size());
+			
 		}
 		
 		mean  = tmp/(elements);
 		
-		System.err.println("[SAMPLERATE] - " + "Newly Calculated Samplerate: " + mean + "\n");
+		sensor.setSamplerate((float)mean/1000);
+		System.err.println("[SAMPLERATE] - " + "Newly Calculated Samplerate: " + sensor.getSamplerate() + "\n");
 		
 		// 2009-05-02 10:06:17.436
 		// 2009-05-02 10:06:17.436
@@ -61,7 +71,7 @@ public class CSVSamplerateEstimator extends Thread {
 		// 2009-05-02 10:06:17.436
 	}
 	
-	private Stack<Long> pushNewMeasOnStack(Stack<Long> timestamps){
+	private Stack<Long> getNewMeasStack(String startmark) {
 		
 		// Strings for url
 		String address = sensor.getServer().getAddress();
@@ -75,13 +85,16 @@ public class CSVSamplerateEstimator extends Thread {
 		// Create Instance of BufferedReader to read inputstream
 		BufferedReader reader;
 		
+		// Stack to return
+		Stack<Long> resultstack = new Stack<Long>();
+		
 		try {
 			
 			String mid = String.valueOf(sensor.getSensorChannels().get(0).getMid());
 			
 			// TODO Set back to sensor.getStartmark()
-//			url = new URL(address + ":" + port + "/nrss/data/csv?mid=" + mid + "&startMark=" + sensor.getStartmark());
-			url = new URL(address + ":" + port + "/nrss/data/csv?mid=" + mid + "&startMark=" + "10000");
+			url = new URL(address + ":" + port + "/nrss/data/csv?mid=" + mid + "&startMark=" + startmark);
+//			url = new URL(address + ":" + port + "/nrss/data/csv?mid=" + mid + "&startMark=" + "10000");
 			conn = url.openConnection();
 			is = new DataInputStream(conn.getInputStream());
 			
@@ -101,7 +114,7 @@ public class CSVSamplerateEstimator extends Thread {
 				// Get Calendar fields from raw string
 				// 2009-05-02 10:06:17.436
 				int year = Integer.parseInt(raw.substring(0,4));
-				int month = Integer.parseInt(raw.substring(5,7)); 
+				int month = Integer.parseInt(raw.substring(5,7));
 				int day = Integer.parseInt(raw.substring(8,10));
 				int hour = Integer.parseInt(raw.substring(11,13));
 				int min = Integer.parseInt(raw.substring(14, 16));
@@ -114,8 +127,10 @@ public class CSVSamplerateEstimator extends Thread {
 				cal.set(year, month-1, day, hour, min, sec);
 				
 				long timestamp = cal.getTimeInMillis() + millis;
-				timestamps.push(timestamp);
+				resultstack.push(timestamp);
 			}
+			
+			reader.close();
 			
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -125,6 +140,6 @@ public class CSVSamplerateEstimator extends Thread {
 			e.printStackTrace();
 		}
 		
-		return timestamps;
+		return resultstack;
 	}
 }
