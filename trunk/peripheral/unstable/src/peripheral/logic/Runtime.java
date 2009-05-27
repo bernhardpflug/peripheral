@@ -1,6 +1,7 @@
 package peripheral.logic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import peripheral.logic.positioningtool.ActionTool;
@@ -9,9 +10,12 @@ import peripheral.logic.positioningtool.PositioningTool;
 import peripheral.logic.positioningtool.Region;
 import peripheral.logic.positioningtool.ToolList;
 import peripheral.logic.sensor.Sensor;
+import peripheral.logic.sensor.SensorServer;
 import peripheral.logic.sensor.SensorUpdateThread;
+import peripheral.logic.sensor.XmlMetaParser;
 import peripheral.logic.symboladapter.Symbol;
 import peripheral.logic.symboladapter.SymbolAdapter;
+import peripheral.visualization.VisApplet;
 import peripheral.visualization.Visualization;
 import processing.core.PApplet;
 
@@ -22,7 +26,10 @@ public class Runtime {
     private List<SensorUpdateThread> threads = new ArrayList<SensorUpdateThread>();
     private DisplayConfiguration displayConfig;
 
+    private Visualization viz;
+
     private Runtime() {
+        sensorAdapterMapping = new HashMap<Sensor, List<SymbolAdapter>>();
     }
 
     public static Runtime getInstance() {
@@ -37,32 +44,63 @@ public class Runtime {
         return sensorAdapterMapping;
     }
 
-    public void startup(String configFile) {
+    public void startup(Visualization viz, String configFile) {
+        this.viz = viz;
+
         DisplayConfiguration.load(configFile);
         displayConfig = DisplayConfiguration.getInstance();
 
         //@todo: uncomment when visualization is ready
-        //initVisualization();
+        initVisualization();
+
+       // startSensorServer();
 
         createSensorAdapterMapping();
         createSensorUpdateThreads();
 
-        //@todo: uncomment when visualization is ready
-        showVisualization();
+        startServers();
+    //startSensorCheckout();
+    }
+
+    private void startSensorServer() {
+        // Create Server
+        SensorServer server = new SensorServer("http://dyn167048.wlan.jku.at", "8080", "admin");
+
+        // Get Server's XML Parser
+        XmlMetaParser xml = server.getXmlMetaParser();
+        xml.createInstancesFromXML();
+
+        // Check count of sensors
+        System.out.println("Server has " + server.getSensorList().size() + " Sensors.\n");
+
+        for (SymbolAdapter s : DisplayConfiguration.getInstance().getAdapter()) {
+            for (Sensor sensor : server.getSensorList()) {
+                if (sensor.getPid() == 12) {
+                    s.getPreselectedSensors().add(sensor);
+                }
+            }
+        }
+
+        for (Sensor sensor : server.getSensorList()) {
+//			if(sensor.getPid() == 12){
+            sensor.startCheckout();
+//			}
+        }
     }
 
     public void shutdown() {
+        stopSensorCheckout();
+
         for (Thread th : threads) {
             th.interrupt();
         }
     }
 
     private void initVisualization() {
-        Visualization viz = null; //@todo: = VisualizationImpl.getVisualizationInstance()
         viz.init(
                 displayConfig.getBackgroundImageFilename(),
                 displayConfig.getDimension());
-
+ 
         ActionTool tool;
         ToolList<PositioningTool> toolList;
         for (SymbolAdapter adapter : displayConfig.getAdapter()) {
@@ -86,8 +124,8 @@ public class Runtime {
         }
     }
 
-    private void showVisualization (){
-        PApplet.main(new String[]{"--present", "NameFromAppletClass"});
+    private void showVisualization() {
+        
     }
 
     private void initPoint(Visualization viz, Point point) {
@@ -95,7 +133,7 @@ public class Runtime {
     }
 
     private void initRegion(Visualization viz, Region region) {
-        for (Symbol s : region.getUserSelectedSymbols()) {
+        for (Symbol s : region.getSymbols()) {
             viz.add(s, region);
         }
     }
@@ -120,6 +158,24 @@ public class Runtime {
     private void createSensorUpdateThreads() {
         for (Sensor sensor : sensorAdapterMapping.keySet()) {
             threads.add(new SensorUpdateThread(sensor));
+        }
+    }
+
+    private void startSensorCheckout() {
+        for (Sensor sensor : sensorAdapterMapping.keySet()) {
+            sensor.startCheckout();
+        }
+    }
+
+    private void stopSensorCheckout() {
+        for (Sensor sensor : sensorAdapterMapping.keySet()) {
+            sensor.stopCheckout();
+        }
+    }
+
+    private void startServers() {
+        for (Thread th : threads) {
+           // th.start();
         }
     }
 }
