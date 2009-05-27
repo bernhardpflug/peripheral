@@ -8,7 +8,7 @@ public abstract class Value implements Serializable {
 
     private Class valueType;
 
-    private SymbolAdapter adapter;
+    protected SymbolAdapter adapter;
 
     private String varName;
 
