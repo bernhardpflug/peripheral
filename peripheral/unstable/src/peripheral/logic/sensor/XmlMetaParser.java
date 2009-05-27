@@ -71,9 +71,6 @@ public class XmlMetaParser {
 			// Iterate through sensor nodes
 			for(int i = 0; i<sensors.getLength();i++){
 				
-				// Create empty Sensor
-				Sensor sensor;
-				
 				// Get child nodes of sensornode
 				NodeList s_children = sensors.item(i).getChildNodes();
 				

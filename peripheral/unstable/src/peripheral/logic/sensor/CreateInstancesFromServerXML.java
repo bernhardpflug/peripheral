@@ -1,8 +1,5 @@
 package peripheral.logic.sensor;
 
-import java.util.TreeMap;
-
-
 public class CreateInstancesFromServerXML {
 
 	public static void main(String[] args) {
@@ -30,9 +27,15 @@ public class CreateInstancesFromServerXML {
 //		}
 		
 		for(Sensor sensor : server.getSensorList()){
-//			if(sensor.getPid() == 12){
+			if(sensor.getPid() == 12){
 				sensor.startCheckout();
-//			}
+				try {
+					Thread.currentThread().sleep(3000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 

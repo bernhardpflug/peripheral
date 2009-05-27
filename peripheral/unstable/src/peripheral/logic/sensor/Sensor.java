@@ -8,9 +8,14 @@ public class Sensor extends Observable {
 
     private long pid;
     private String name;
+    
     private SensorServer server;
-    private float samplerate;
     private ArrayList<SensorChannel> channels;
+
+    // Channel's measQueue related values
+    private float samplerate;
+//    private int maxqueuesize;
+//    private int minqueuesize;
     private String startmark;
     
     private CSVCheckout csv;
@@ -39,7 +44,7 @@ public class Sensor extends Observable {
     }
     
     public void stopCheckout(){
-    	csv.setActive(false);
+    	csv.interrupt();
     }
     
     // GETTERS AND SETTERS
@@ -76,6 +81,10 @@ public class Sensor extends Observable {
     public void setStartmark(String lastmark){
     	this.startmark = lastmark;
     }
+
+	public CSVSamplerateEstimator getEstimator() {
+		return estimator;
+	}
     
 }
 
