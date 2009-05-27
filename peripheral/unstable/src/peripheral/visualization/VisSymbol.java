@@ -7,14 +7,14 @@ import peripheral.logic.symboladapter.*;
 import peripheral.logic.positioningtool.Region;
 
 public class VisSymbol {
-	private float alpha;
+	private float alpha, alphaSwap;
 	//uses interpolation (Ipl) steps of the current target aspects:
 	private float angleIpl;
 	private float scaleXIpl;
 	private float scaleYIpl;
 	private Point positionIpl;
 	private Symbol symbol;
-	private PImage img;
+	private PImage img, imgSwap;
 	private Region region;
 	private float brightness;
 	private boolean fadeIn, fadeOut, isVisible;
@@ -22,13 +22,13 @@ public class VisSymbol {
 	public VisSymbol(Symbol s, Region r)
 	{
 		this.symbol = s;
-		this.alpha = 0.f;
+		this.alpha = alphaSwap = 0.f;
 		this.angleIpl = s.getAngle();
 		this.scaleXIpl = s.getScaleX();
 		this.scaleYIpl = s.getScaleY();
 		this.positionIpl = new Point();
 		this.positionIpl.setLocation(s.getPosition().getPosition());
-		this.img = null;
+		this.img = this.imgSwap = null;
 		this.fadeIn = this.fadeOut = false;
 		this.isVisible = true;
 		this.region = r;
@@ -68,6 +68,17 @@ public class VisSymbol {
 		//===========================================
 		//is img visible?
 		checkVisibility();
+		
+		//===========================================
+		//swap necessary?
+		if (imgSwap != null){
+			alpha -= 0.02;
+			alphaSwap += 0.02;
+			if (alpha == 0.f){
+				img = imgSwap;
+				imgSwap = null;
+			}
+		}
 		
 		
 		//===========================================
@@ -158,5 +169,17 @@ public class VisSymbol {
 		if (region == null) return;
 		Rectangle r = region.getBounds();
 		isVisible = r.contains(positionIpl.getLocation());
+	}
+
+	public PImage getImgSwap() {
+		return imgSwap;
+	}
+
+	public void setImgSwap(PImage imgSwap) {
+		this.imgSwap = imgSwap;
+	}
+
+	public float getAlphaSwap() {
+		return alphaSwap;
 	}
 }

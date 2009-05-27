@@ -46,8 +46,16 @@ public class VisApplet extends PApplet implements Visualization {
 			ptr = symbols.get(i);
 			ptr.calcStep();
 			//brightness and alpha
-			tint((255.f / ptr.getBrightness()), (255.f / ptr.getAlpha()));
-			image(ptr.getImg(), (float)ptr.getPositionIpl().getX(), (float)ptr.getPositionIpl().getY());
+			tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlpha()));
+			if (ptr.getImg() != null)
+				image(ptr.getImg(), (float)ptr.getPositionIpl().getX(), (float)ptr.getPositionIpl().getY());
+			
+			//img swapping active:
+			if (ptr.getImgSwap() != null){
+				tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlphaSwap()));
+				image(ptr.getImgSwap(), (float)ptr.getPositionIpl().getX(), (float)ptr.getPositionIpl().getY());
+			}
+			
 		}
 		
 	}
@@ -96,8 +104,9 @@ public class VisApplet extends PApplet implements Visualization {
 	}
 
 	public void swap(Symbol s, String filename) {
-		// TODO Auto-generated method stub
-		
+		VisSymbol vs = findVSforS(s);
+		PImage temp = loadImage(filename);
+		vs.setImgSwap(temp);
 	}
 	
 	private VisSymbol findVSforS(Symbol s){
@@ -106,18 +115,17 @@ public class VisApplet extends PApplet implements Visualization {
 			if (vs.getSymbol() == s)
 				return vs;
 		}
+		System.out.println("findVSforS: no suitable VisSymbol found!");
 		return null;
 	}
 
 	public void init(String backgroundImageFilename, Dimension resolution) {
 		bgImage = loadImage(backgroundImageFilename);
 		screen = resolution;
-		
 	}
 
 	public void translate(Symbol s, java.awt.Point targetPosition) {
 		s.getPosition().setPosition(targetPosition);
-		
 	}
 
 }
