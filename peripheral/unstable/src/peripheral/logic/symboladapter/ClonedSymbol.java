@@ -1,11 +1,14 @@
 package peripheral.logic.symboladapter;
 
+import java.io.File;
+
 
 public class ClonedSymbol extends Symbol {
 
     private Symbol source;
 
-    public ClonedSymbol () {
+    public ClonedSymbol (File file) {
+        super(file);
     }
 
     public Symbol getSource () {
