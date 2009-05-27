@@ -59,7 +59,7 @@ public class Point extends PositioningTool {
 
 
     @Override
-    public void paint(Graphics g, float scale, Rectangle imageBounds) {
+    public void paint(Graphics g, float scale) {
 
         //in case of painting symbol paint for symbol
         if (super.getDisplayedSymbol()!=null && super.isSymbolDisplayed()) {
@@ -70,7 +70,7 @@ public class Point extends PositioningTool {
 
             BufferedImage symbolImage = symbol.getBufferedImage();
 
-            Rectangle symbolBounds = getSymbolBounds(symbolImage, scale, position, imageBounds);
+            Rectangle symbolBounds = getSymbolBounds(symbolImage, scale, position);
 
             g.drawImage(symbolImage, (int) symbolBounds.getX(), (int) symbolBounds.getY(), (int) symbolBounds.getX() + (int) symbolBounds.getWidth(), (int) symbolBounds.getY() + (int) symbolBounds.getHeight(),
                     0, 0, symbolImage.getWidth(), symbolImage.getHeight(), null, null);
@@ -79,8 +79,8 @@ public class Point extends PositioningTool {
         //else just paint a cross with the point in the middle
         else {
 
-            int scaledPosX = imageBounds.x + (int)((float)position.x*scale);
-            int scaledPosY = imageBounds.y + (int)((float)position.y*scale);
+            int scaledPosX = (int)((float)position.x*scale);
+            int scaledPosY = (int)((float)position.y*scale);
 
             g.drawLine(scaledPosX-(int)(CROSSRANGE*scale), scaledPosY-(int)(CROSSRANGE*scale), scaledPosX+(int)(CROSSRANGE*scale), scaledPosY+(int)(CROSSRANGE*scale));
             g.drawLine(scaledPosX-(int)(CROSSRANGE*scale), scaledPosY+(int)(CROSSRANGE*scale), scaledPosX+(int)(CROSSRANGE*scale), scaledPosY-(int)(CROSSRANGE*scale));

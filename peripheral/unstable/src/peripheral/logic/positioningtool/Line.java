@@ -62,12 +62,12 @@ public class Line extends PositioningTool {
      */
 
     @Override
-    public void paint(Graphics g, float scale, Rectangle imageBounds) {
+    public void paint(Graphics g, float scale) {
 
-        int scaledStartX = imageBounds.x + (int)((float)startPoint.x*scale);
-        int scaledStartY = imageBounds.y + (int)((float)startPoint.y*scale);
-        int scaledEndX = imageBounds.x + (int)((float)endPoint.x*scale);
-        int scaledEndY = imageBounds.y + (int)((float)endPoint.y*scale);
+        int scaledStartX = (int)((float)startPoint.x*scale);
+        int scaledStartY = (int)((float)startPoint.y*scale);
+        int scaledEndX = (int)((float)endPoint.x*scale);
+        int scaledEndY = (int)((float)endPoint.y*scale);
 
         //in case of painting symbol paint for symbol
         if (super.getDisplayedSymbol()!=null && super.isSymbolDisplayed()) {
@@ -79,7 +79,7 @@ public class Line extends PositioningTool {
             BufferedImage symbolImage = symbol.getBufferedImage();
 
             //ATTENTION: IF CHANGING DISPLAY FROM STARTPOINT HERE ALSO CHANGE IN DRAGABLE
-            Rectangle symbolBounds = getSymbolBounds(symbolImage, scale, startPoint, imageBounds);
+            Rectangle symbolBounds = getSymbolBounds(symbolImage, scale, startPoint);
 
             g.drawImage(symbolImage, (int) symbolBounds.getX(), (int) symbolBounds.getY(), (int) symbolBounds.getX() + (int) symbolBounds.getWidth(), (int) symbolBounds.getY() + (int) symbolBounds.getHeight(),
                     0, 0, symbolImage.getWidth(), symbolImage.getHeight(), null, null);

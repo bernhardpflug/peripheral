@@ -164,16 +164,22 @@ public class PreviewPanel extends JPanel implements Runnable, MouseMotionListene
 
             if (tools != null) {
 
+                //create new graphics object with bounds like backgroundimage
+                Graphics backgroundGraphics = g.create(imageBounds.x, imageBounds.y, imageBounds.width, imageBounds.height);
+
                 //go through list from back to forward to paint first symbol at the top
                 for (int i= tools.size()-1; i >=0; i--) {
                     PositioningTool pos = (PositioningTool)tools.get(i);
 
-                    pos.paint(g, scale, imageBounds);
+                    pos.paint(backgroundGraphics, scale);
                 }
+
+                backgroundGraphics.dispose();
             }
 
             g.setColor(Color.RED);
             g.drawRect(1,1,this.getX()-1,this.getY()-1);
+
         }
     }
 

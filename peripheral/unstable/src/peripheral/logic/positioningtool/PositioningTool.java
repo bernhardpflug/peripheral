@@ -53,18 +53,17 @@ public abstract class PositioningTool implements ActionTool {
      * @param symbolImage buffered image containing the symbol
      * @param scale of the current szene
      * @param origin of the symbol
-     * @param imageBounds distance from image to the border of the panel
      * @return rectangle containing the bounds of the symbol
      */
-    protected Rectangle getSymbolBounds(BufferedImage symbolImage,float scale,java.awt.Point origin, Rectangle imageBounds) {
+    protected Rectangle getSymbolBounds(BufferedImage symbolImage,float scale,java.awt.Point origin) {
 
         Rectangle symbolBounds = new Rectangle();
 
         int ImgW = (int)((float)symbolImage.getWidth()*scale);
         int ImgH = (int)((float)symbolImage.getHeight()*scale);
 
-        int NorthWestCornerX = imageBounds.x + (int)((float)origin.x*scale);
-        int NorthWestCornerY = imageBounds.y + (int)((float)origin.y*scale);
+        int NorthWestCornerX = (int)((float)origin.x*scale);
+        int NorthWestCornerY = (int)((float)origin.y*scale);
 
         symbolBounds.setBounds(NorthWestCornerX, NorthWestCornerY, ImgW, ImgH);
 
@@ -77,7 +76,7 @@ public abstract class PositioningTool implements ActionTool {
      * @param scale to be aware of different scaling
      * @param imageBounds to draw component from image origin coordinates
      */
-    public abstract void paint(Graphics g, float scale, Rectangle imageBounds);
+    public abstract void paint(Graphics g, float scale);
 
     /**
      * Returns whether this position tool has dragpoint on this position
