@@ -22,6 +22,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import peripheral.logic.sensor.Sensor;
 import peripheral.logic.sensor.SensorChannel;
+import peripheral.logic.sensor.SensorServer;
 import peripheral.logic.value.ConstValue;
 import peripheral.logic.value.SensorValue;
 import peripheral.logic.value.UserInput;
@@ -45,11 +46,11 @@ public class PropertyPanel extends JPanel {
 
         //TODO DELETE DELETE
         sensorTemplate = new ArrayList<SensorChannel>();
-        Sensor sensor1 = new Sensor(1,"sensor1", null, 1.0f);
+        Sensor sensor1 = new Sensor(1,"sensor1", new SensorServer("", "", ""), 1.0f);
         SensorChannel sa = new SensorChannel(1, "SensorX",sensor1);
         sensorTemplate.add(sa);
 
-        Sensor sensor2 = new Sensor(1,"sensor2", null, 2.0f);
+        Sensor sensor2 = new Sensor(1,"sensor2", new SensorServer("", "", ""), 2.0f);
         SensorChannel sa2 = new SensorChannel(2, "SensorX",sensor2);
         sensorTemplate.add(sa2);
 
