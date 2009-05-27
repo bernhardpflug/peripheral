@@ -40,6 +40,7 @@ public class AdapterTemplateFactory {
 
         SymbolAdapter contSlider = new SymbolAdapter();
         contSlider.setName("continuousSlider");
+        contSlider.setTool(new Point());
         contSlider.setDescription("A slider based on \na sensorvalue that continously \nmaps the sensorvalue\n onto a selected area");
         contSlider.getNeededUserInput().add(new UserInput("ui1","what the hell", new SensorValue(contSlider, "SensorValue",null)));
         contSlider.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(contSlider, "LocationX",new Integer(0))));
@@ -51,6 +52,7 @@ public class AdapterTemplateFactory {
 
         SymbolAdapter ruleSlider = new SymbolAdapter();
         ruleSlider.setName("ruleBasedSlider");
+        ruleSlider.setTool(new Line());
         ruleSlider.setDescription("A slider were rules \ncan be defined for mapping \nseveral sensorvalues onto\n the position of the picture");
         ruleSlider.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue(ruleSlider, "EnableSmoothing",new Boolean(true))));
         ruleSlider.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(ruleSlider, "LocationX",new Integer(0))));
