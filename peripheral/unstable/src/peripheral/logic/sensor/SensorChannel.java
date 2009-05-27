@@ -10,7 +10,11 @@ import peripheral.logic.value.SensorValue;
 
 public class SensorChannel implements Serializable{
 
-    private long mid;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private long mid;
     private String fullname;
     private Sensor sensor;
     private ConcurrentLinkedQueue<Measurement> measQueue;
