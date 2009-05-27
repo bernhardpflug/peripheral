@@ -21,6 +21,7 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import peripheral.designer.preview.PreviewDialog;
 import peripheral.designer.property.PropertyPanel;
 import peripheral.designer.wizard.AddAnimationDialog;
@@ -422,10 +423,9 @@ public class DesignerGUI extends javax.swing.JFrame {
             }
             else {
 
-//                JOptionPane.showMessageDialog(this, "Please select a supported image file\n" +
-//                        "Supported are jpg, bmp, gif, png files", "Unable to proceed", JOptionPane.ERROR_MESSAGE);
-                currentIndex++;
-                cl.next(cardPanel);
+                JOptionPane.showMessageDialog(this, "Please select a supported image file\n" +
+                        "Supported are jpg, bmp, gif, png files", "Unable to proceed", JOptionPane.ERROR_MESSAGE);
+                
             }
             
         }
