@@ -31,7 +31,7 @@ public class SensorValue extends Value {
 
     public void setSensorChannel (SensorChannel val) {
         this.sensorChannel = val;
-        //this.sensorChannel.addSensorValue(this);
+        this.sensorChannel.getSensorValues().add(this);
     }
 
     public void setActValue (Object val) {
