@@ -68,6 +68,7 @@ public class SelectAnimationPanel extends javax.swing.JPanel {
 
         descriptionTextArea.setColumns(20);
         descriptionTextArea.setEditable(false);
+        descriptionTextArea.setLineWrap(true);
         descriptionTextArea.setRows(5);
         jScrollPane2.setViewportView(descriptionTextArea);
 

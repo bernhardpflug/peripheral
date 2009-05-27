@@ -12,6 +12,7 @@
 package peripheral.designer.wizard;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import javax.swing.DefaultListModel;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
@@ -22,10 +23,12 @@ import peripheral.designer.ImageFileChooser;
 import peripheral.designer.preview.ChangeListener;
 import peripheral.designer.preview.PreviewDialog;
 import peripheral.logic.DisplayConfiguration;
+import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.positioningtool.Line;
 import peripheral.logic.positioningtool.Point;
 import peripheral.logic.positioningtool.PositioningTool;
 import peripheral.logic.positioningtool.Region;
+import peripheral.logic.positioningtool.ToolList;
 import peripheral.logic.symboladapter.Symbol;
 import peripheral.logic.symboladapter.SymbolAdapter;
 
@@ -38,6 +41,12 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
     AddAnimationDialog parent;
     private JFileChooser fileChooser;
 
+    //reference to ActionTool
+    ActionTool actionTool;
+
+    //reference that is set if positioning tool is dragged
+    private PositioningTool currentlyDragging;
+
     /** Creates new form createLocationsSymbolsPanel */
     public LocationsSymbolsPanel(AddAnimationDialog parent) {
         initComponents();
@@ -47,24 +56,39 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
         //define editable models for lists
         this.LocationList.setModel(new DefaultListModel());
         this.symbolList.setModel(new DefaultListModel());
+    }
+
+    public void setActionTool(ActionTool actionTool) {
+        this.actionTool = actionTool;
 
         fillLocationList();
+
+        DefaultListModel model = (DefaultListModel)this.LocationList.getModel();
+
+        if (!model.isEmpty()) {
+            this.LocationList.setSelectedIndex(0);
+        }
     }
 
     //fill location list with data from symboladapter
     private void fillLocationList() {
-        SymbolAdapter symbolAdapter = parent.getCreatedAdapter();
-
+        
         DefaultListModel model = (DefaultListModel)this.LocationList.getModel();
 
         model.clear();
 
-        model.addElement(new Point());
-        model.addElement(new Line());
+        if (actionTool instanceof ToolList) {
+            ToolList<PositioningTool> list = (ToolList<PositioningTool>)actionTool;
 
-        //for (PositioningTool pos : symbolAdapter)
-
-        //TODO where to save positioning tools = actionTool
+            for (PositioningTool tool : list.getVisibleElements()) {
+                model.addElement(tool);
+            }
+        }
+        else {
+            //in case it is no toollist it is subclass of positioning tool and can just be added
+            model.addElement(actionTool);
+        }
+        
     }
 
     private void fillSymbolList(PositioningTool pos) {
@@ -201,14 +225,44 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
         PreviewDialog.getInstance().updatePreview();
     }
 
-    /**
-     * Event that is thrown by preview dialog if dragging occurred
-     * @param tool
-     */
-    public void dragOccurred(PositioningTool tool) {
+    public void dragStart(java.awt.Point origin) {
 
-        if (tool.equals(this.LocationList.getSelectedValue())) {
-            this.updateGUICoordinates(tool);
+        if (currentlyDragging == null) {
+
+            //go through all positioning tools and find first one that is dragable at given point
+            for (java.util.Enumeration<PositioningTool> e = (Enumeration<PositioningTool>) ((DefaultListModel)this.LocationList.getModel()).elements(); e.hasMoreElements();) {
+
+                PositioningTool tool = e.nextElement();
+
+                if (tool.dragable(origin.x, origin.y)) {
+
+                    currentlyDragging = tool;
+                    currentlyDragging.dragStart(origin);
+                    return;
+                }
+            }
+        }
+    }
+
+    public void dragAction(java.awt.Point newPosition) {
+
+        //drag start was successfull drag choosen positioningtool and update its coordinates in GUI
+        if (currentlyDragging != null) {
+            currentlyDragging.dragAction(newPosition);
+
+            //if dragged symbol is currently selected update its GUI Coordinates
+            if (currentlyDragging.equals(this.LocationList.getSelectedValue())) {
+            this.updateGUICoordinates(currentlyDragging);
+        }
+        }
+    }
+
+    public void dragStop() {
+
+        if (currentlyDragging != null) {
+            currentlyDragging.dragStop();
+
+            currentlyDragging = null;
         }
     }
 
@@ -254,6 +308,11 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
         jScrollPane1.setViewportView(LocationList);
 
         addLocationButton.setText("+");
+        addLocationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addLocationButtonActionPerformed(evt);
+            }
+        });
 
         removeLocationButton.setText("-");
 
@@ -574,6 +633,12 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
         }
 
     }//GEN-LAST:event_removeSymbolButtonActionPerformed
+
+    private void addLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addLocationButtonActionPerformed
+        // TODO allow adding depeding on type of action tool
+        //add positioning tool depending on type and afterwards call
+        //fillLocationList()
+    }//GEN-LAST:event_addLocationButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

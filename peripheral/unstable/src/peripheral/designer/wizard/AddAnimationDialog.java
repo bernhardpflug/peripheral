@@ -17,6 +17,7 @@ import java.awt.event.WindowListener;
 import javax.swing.JOptionPane;
 import peripheral.designer.DesignerGUI;
 import peripheral.designer.preview.PreviewDialog;
+import peripheral.logic.positioningtool.PositioningTool;
 import peripheral.logic.symboladapter.SymbolAdapter;
 
 /**
@@ -39,7 +40,6 @@ public class AddAnimationDialog extends javax.swing.JDialog {
 
     //remember current panel
     private int currentIndex = 0;
-    private int lastIndex = 2;
 
     /** Creates new form addAnimationDialog */
     public AddAnimationDialog(DesignerGUI parent) {
@@ -59,8 +59,6 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         //to be able to save new symboladapter
         this.addWindowListener(new MyWindowListener(parent,this));
 
-        //register positioning panel to preview dialog for listening to drag events
-        PreviewDialog.getInstance().addPreviewListener(createLocationsSymbolsPanel1);
     }
 
     public boolean completedCreation() {
@@ -181,6 +179,9 @@ public class AddAnimationDialog extends javax.swing.JDialog {
                     this.ruleBasedAdapterFlag = true;
                 }
 
+                //set action tool for location panel after selection of a symboladpater
+                this.createLocationsSymbolsPanel1.setActionTool(symbolAdapter.getTool());
+
                 currentIndex++;
                 cl.next(cardPanel);
             }
@@ -202,11 +203,18 @@ public class AddAnimationDialog extends javax.swing.JDialog {
             if (!PreviewDialog.getInstance().isVisible()) {
                 PreviewDialog.getInstance().setVisible(true);
             }
+
+            //register positioning panel to preview dialog for listening to drag events
+            PreviewDialog.getInstance().addPreviewListener(createLocationsSymbolsPanel1);
+
             currentIndex++;
             cl.next(cardPanel);
         }
         //create points/areas
         else if (currentIndex == 2) {
+
+            //unregister changelistener from preview dialog
+            PreviewDialog.getInstance().removePreviewListener(createLocationsSymbolsPanel1);
 
             if (!this.ruleBasedAdapterFlag) {
                 closeAnimationDialog();
@@ -254,11 +262,17 @@ public class AddAnimationDialog extends javax.swing.JDialog {
                 nextButton.setText(">");
             }
 
+            //unregister changelistener from preview dialog
+            PreviewDialog.getInstance().removePreviewListener(createLocationsSymbolsPanel1);
+
             currentIndex--;
             cl.previous(cardPanel);
         }
         //rulepanel
         else if (currentIndex == 3) {
+
+            //register positioning panel to preview dialog for listening to drag events
+            PreviewDialog.getInstance().addPreviewListener(createLocationsSymbolsPanel1);
 
             nextButton.setText(">");
 
@@ -303,8 +317,10 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         }
 
         public void windowClosed(WindowEvent e) {
-            //unregister changelistener from preview dialog
-            PreviewDialog.getInstance().removePreviewListener(createLocationsSymbolsPanel1);
+
+            //when closing reset positioning tools
+            PreviewDialog.getInstance().setPositioningtoolsToPaint(new java.util.ArrayList<PositioningTool>(1));
+            PreviewDialog.getInstance().updatePreview();
 
             //indicate designer that dialog closed
             parent.AddAnimationDialogClosed(dialog);

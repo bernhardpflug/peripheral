@@ -12,6 +12,7 @@
 package peripheral.designer.preview;
 
 import java.awt.Dimension;
+import java.awt.Point;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -127,16 +128,34 @@ public class PreviewDialog extends javax.swing.JDialog implements ChangeListener
      */
 
     public void addPreviewListener(ChangeListener l) {
+        System.out.println("adding "+l);
         this.previewListeners.add(l);
     }
 
     public void removePreviewListener(ChangeListener l) {
-        this.previewListeners.remove(l);
+        System.out.println("removing "+l+" with state "+this.previewListeners.remove(l));
+        
     }
 
-    public void dragOccurred(PositioningTool tool) {
+    /*
+     * EVENT METHODS
+     * */
+
+    public void dragStart(Point origin) {
         for (ChangeListener l : previewListeners) {
-            l.dragOccurred(tool);
+            l.dragStart(origin);
+        }
+    }
+
+    public void dragAction(Point newPosition) {
+        for (ChangeListener l : previewListeners) {
+            l.dragAction(newPosition);
+        }
+    }
+
+    public void dragStop() {
+        for (ChangeListener l : previewListeners) {
+            l.dragStop();
         }
     }
 

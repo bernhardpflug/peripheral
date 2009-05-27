@@ -3,8 +3,6 @@ package peripheral.logic.positioningtool;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import javax.imageio.ImageIO;
 import peripheral.logic.symboladapter.Symbol; 
 
 public class Point extends PositioningTool {
@@ -50,6 +48,7 @@ public class Point extends PositioningTool {
         this.actSymbol = val;
     }
 
+    @Override
     public String toString() {
         return "Point";
     }
@@ -107,14 +106,14 @@ public class Point extends PositioningTool {
         else {
             //if only point is displayed (cross) allow dragging within
             //cross range
-            System.out.println("Checking "+x+"/"+y+" for "+position);
+            
             if (x >= position.x -CROSSRANGE && x <= position.x + CROSSRANGE &&
                     y >= position.y - CROSSRANGE && y <= position.y + CROSSRANGE) {
-                System.out.println("in range");
+                
                 return true;
             }
             else {
-                System.out.println("out of range");
+                
                 return false;
             }
         }
