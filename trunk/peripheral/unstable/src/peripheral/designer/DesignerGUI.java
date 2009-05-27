@@ -130,6 +130,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         prevButton = new javax.swing.JButton();
         cardPanel = new javax.swing.JPanel();
         SensorPanel = new javax.swing.JPanel();
+        sensorPanel1 = new peripheral.designer.SensorPanel();
         BackgroundPanel = new javax.swing.JPanel();
         jFileChooser1 = new peripheral.designer.ImageFileChooser();
         AnimationsPanel = new javax.swing.JPanel();
@@ -192,17 +193,8 @@ public class DesignerGUI extends javax.swing.JFrame {
         cardPanel.setLayout(new java.awt.CardLayout());
 
         SensorPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 1 : Select Sensorserver"));
-
-        org.jdesktop.layout.GroupLayout SensorPanelLayout = new org.jdesktop.layout.GroupLayout(SensorPanel);
-        SensorPanel.setLayout(SensorPanelLayout);
-        SensorPanelLayout.setHorizontalGroup(
-            SensorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 717, Short.MAX_VALUE)
-        );
-        SensorPanelLayout.setVerticalGroup(
-            SensorPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 446, Short.MAX_VALUE)
-        );
+        SensorPanel.setLayout(new java.awt.BorderLayout());
+        SensorPanel.add(sensorPanel1, java.awt.BorderLayout.CENTER);
 
         cardPanel.add(SensorPanel, "card2");
 
@@ -551,6 +543,7 @@ public class DesignerGUI extends javax.swing.JFrame {
     private javax.swing.JButton priorityUpButton;
     private javax.swing.JButton removeAnimationButton;
     private javax.swing.JButton saveConfigurationButton;
+    private peripheral.designer.SensorPanel sensorPanel1;
     // End of variables declaration//GEN-END:variables
 
 }
