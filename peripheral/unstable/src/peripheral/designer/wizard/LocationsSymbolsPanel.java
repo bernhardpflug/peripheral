@@ -77,16 +77,8 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
 
         model.clear();
 
-        if (actionTool instanceof ToolList) {
-            ToolList<PositioningTool> list = (ToolList<PositioningTool>)actionTool;
-
-            for (PositioningTool tool : list.getVisibleElements()) {
-                model.addElement(tool);
-            }
-        }
-        else {
-            //in case it is no toollist it is subclass of positioning tool and can just be added
-            model.addElement(actionTool);
+        for (PositioningTool tool : actionTool.getElements()) {
+            model.addElement(tool);
         }
         
     }

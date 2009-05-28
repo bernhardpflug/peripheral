@@ -27,6 +27,12 @@ public abstract class PositioningTool implements ActionTool {
     public void calculateRelativeCoordinates () {
     }
 
+    public ArrayList<PositioningTool> getElements() {
+        ArrayList list = new ArrayList(1);
+        list.add(this);
+        return list;
+    }
+
     /*
      * GRAPHICAL METHODS
      */
