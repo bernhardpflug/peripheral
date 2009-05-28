@@ -81,11 +81,13 @@ public class SensorUpdateThread extends Thread implements Observer{
     }
 
     public void update(Observable o, Object arg) {
-        if (arg instanceof SensorSamplingRateChanged) {
-            samplingRate = ((SensorSamplingRateChanged)arg).getSamplerate();
-        } else if (arg instanceof SensorSamplingStarted) {
-            this.start();
-        }
+    	// TODO SensorSamplingRateChanged gibts nimmer homma gsogt, oder? Hab an error griagt und glšscht - Cheers tobi
+    	
+//        if (arg instanceof SensorSamplingRateChanged) {
+//            samplingRate = ((SensorSamplingRateChanged)arg).getSamplerate();
+//        } else if (arg instanceof SensorSamplingStarted) {
+//            this.start();
+//        }
     }
 }
 
