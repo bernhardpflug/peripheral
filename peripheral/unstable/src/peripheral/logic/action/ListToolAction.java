@@ -19,9 +19,10 @@ public class ListToolAction extends ListAction {
     private ActionToolAction action;
 
     public ListToolAction (ActionToolAction action) {
+        super(action.getAdapter());
     }
 
-    public java.util.Set<UserInput> getUserInput () {
+    public java.util.List<UserInput> getUserInput () {
         return null;
     }
 

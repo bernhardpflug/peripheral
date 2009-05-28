@@ -1,14 +1,16 @@
 package peripheral.logic.action;
 
 import peripheral.logic.symboladapter.Symbol; 
+import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
 
 public class SymbolShowAction extends SymbolAction {
 
-    public SymbolShowAction () {
+    public SymbolShowAction (SymbolAdapter adapter) {
+        super(adapter);
     }
 
-    public java.util.Set<UserInput> getUserInput () {
+    public java.util.List<UserInput> getUserInput () {
         return null;
     }
 

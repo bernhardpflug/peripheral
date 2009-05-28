@@ -3,6 +3,7 @@ package peripheral.logic.action;
 import java.util.Observable;
 import peripheral.logic.positioningtool.ActionTool; 
 import peripheral.logic.positioningtool.Point;
+import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
 
 public abstract class PointWrapperAction extends PointAction {
@@ -13,7 +14,8 @@ public abstract class PointWrapperAction extends PointAction {
         return symbolAction;
     }
 
-    private PointWrapperAction (SymbolAction symbolAction) {
+    private PointWrapperAction (SymbolAdapter adapter, SymbolAction symbolAction) {
+        super(adapter);
         this.symbolAction = symbolAction;
     }
 
@@ -22,7 +24,7 @@ public abstract class PointWrapperAction extends PointAction {
      *    return symbolAction.getUserInput();
      *      </p>
      */
-    public java.util.Set<UserInput> getUserInput () {
+    public java.util.List<UserInput> getUserInput () {
         return null;
     }
 
@@ -49,8 +51,8 @@ public abstract class PointWrapperAction extends PointAction {
      *  <br>  public String getDescription(){...<br>}
      *      </p>
      */
-    public static PointWrapperAction getPointWrapperAction (SymbolAction symbolAction) {
-        return new PointWrapperAction(symbolAction){
+    public static PointWrapperAction getPointWrapperAction (SymbolAdapter adapter, SymbolAction symbolAction) {
+        return new PointWrapperAction(adapter, symbolAction){
             @Override
             public String getDescription() {
                 return this.getSymbolAction().getDescription();

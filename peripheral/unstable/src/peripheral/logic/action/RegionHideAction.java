@@ -2,14 +2,16 @@ package peripheral.logic.action;
 
 import java.util.Observable;
 import peripheral.logic.positioningtool.ActionTool; 
+import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
 
 public class RegionHideAction extends RegionAction {
 
-    public RegionHideAction () {
+    public RegionHideAction (SymbolAdapter adapter) {
+        super(adapter);
     }
 
-    public java.util.Set<UserInput> getUserInput () {
+    public java.util.List<UserInput> getUserInput () {
         return null;
     }
 
