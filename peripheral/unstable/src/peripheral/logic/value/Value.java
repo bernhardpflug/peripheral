@@ -12,26 +12,38 @@ public abstract class Value implements Serializable {
 
     protected String varName;
 
-    public Value (){}
+    /**
+     * used for subclass VarValue. VarValue need not be added to
+     * varpool, because it references a variable. otherwise a cycle
+     * reference would occur.
+     * 
+     * @param adapter
+     */
+    protected Value(SymbolAdapter adapter){
+        this.adapter = adapter;
+    }
 
     public Value (SymbolAdapter adapter, String name) {
-        this.adapter = adapter;
+        this(adapter);
         this.varName = name;
 
         this.adapter.getVarpool().put(name, this);
     }
 
-    public Object getValue () {
-        return null;
+    public Value (SymbolAdapter adapter, String name, Class valueType){
+        this(adapter, name);
+        this.valueType = valueType;
     }
+
+    public abstract Object getValue ();
 
     public Class getValueType () {
         return valueType;
     }
 
-    public void setValueType (Class val) {
+    /*public void setValueType (Class val) {
         this.valueType = val;
-    }
+    }*/
 
     public String getVarName () {
         return varName;
