@@ -6,7 +6,7 @@ import peripheral.logic.symboladapter.SymbolAdapter;
 public class VarValue extends Value {
 
     public VarValue (SymbolAdapter adapter, String varName) {
-        this.adapter = adapter;
+        super(adapter);
         this.varName = varName;
     }
 

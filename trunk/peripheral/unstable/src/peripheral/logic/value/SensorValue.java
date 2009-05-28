@@ -9,19 +9,14 @@ public class SensorValue extends Value {
     private SensorChannel sensorChannel;
     private Object actValue;
 
-    /**
-     *  <p style="margin-top: 0">
-     *    sensorChannel.addSensorValue(this)
-     *      </p>
-     */
-    public SensorValue(SymbolAdapter adapter, String varName, SensorChannel sensorChannel) {
-        super(adapter, varName);
+    public SensorValue(SymbolAdapter adapter, String varName, SensorChannel sensorChannel, Class valueType) {
+        super(adapter, varName, valueType);
 
         setSensorChannel(sensorChannel);
     }
 
-    public SensorValue(SymbolAdapter adapter, String varName) {
-        super(adapter, varName);
+    public SensorValue(SymbolAdapter adapter, String varName, SensorChannel sensorChannel) {
+        this(adapter, varName, sensorChannel, null);
     }
 
     public SensorChannel getSensorChannel() {
@@ -44,7 +39,7 @@ public class SensorValue extends Value {
 
     public Object getValue() {
         return "100";
-        //return actValue;
+    //return actValue;
     }
 
     public Interval getLimits() {
