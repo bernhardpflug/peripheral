@@ -7,7 +7,6 @@ import peripheral.logic.symboladapter.SymbolAdapter;
 public class SensorValue extends Value {
 
     private SensorChannel sensorChannel;
-
     private Object actValue;
 
     /**
@@ -15,34 +14,40 @@ public class SensorValue extends Value {
      *    sensorChannel.addSensorValue(this)
      *      </p>
      */
-    public SensorValue (SymbolAdapter adapter, String varName, SensorChannel sensorChannel) {
+    public SensorValue(SymbolAdapter adapter, String varName, SensorChannel sensorChannel) {
         super(adapter, varName);
 
         setSensorChannel(sensorChannel);
     }
 
-    public SensorValue (SymbolAdapter adapter, String varName){
+    public SensorValue(SymbolAdapter adapter, String varName) {
         super(adapter, varName);
     }
 
-    public SensorChannel getSensorChannel () {
+    public SensorChannel getSensorChannel() {
         return sensorChannel;
     }
 
-    public void setSensorChannel (SensorChannel val) {
+    public void setSensorChannel(SensorChannel val) {
         this.sensorChannel = val;
-        this.sensorChannel.getSensorValues().add(this);
+        if (val != null) {
+            this.sensorChannel.getSensorValues().add(this);
+
+            //@todo: delete; only for testing purposes
+            this.adapter.getPreselectedSensors().add(this.sensorChannel.getSensor());
+        }
     }
 
-    public void setActValue (Object val) {
+    public void setActValue(Object val) {
         this.actValue = val;
     }
 
-    public Object getValue () {
-        return actValue;
+    public Object getValue() {
+        return "100";
+        //return actValue;
     }
 
-    public Interval getLimits(){
+    public Interval getLimits() {
         //return sensor limits
         return new Interval();
     }
