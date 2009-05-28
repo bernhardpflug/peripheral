@@ -21,7 +21,7 @@ public interface Visualization {
      *  <br>if Region: relative coordinates??
      *      </p>
      */
-    public void translate (Symbol s, Point targetPosition);
+    public void translateSymbol (Symbol s, Point targetPosition);
 
     /**
      *  <p style="margin-top: 0">
@@ -29,28 +29,28 @@ public interface Visualization {
      *    the bounds have to be checked.
      *      </p>
      */
-    public void scale (Symbol s, float factorX, float factorY);
+    public void scaleSymbol (Symbol s, float factorX, float factorY);
 
     /**
      *  <p style="margin-top: 0">
      *    
      *      </p>
      */
-    public void swap (Symbol s, String filename);
+    public void swapSymbol (Symbol s, String filename);
 
     /**
      *  <p style="margin-top: 0">
      *    shows Symbol s with fade-in effect
      *      </p>
      */
-    public void show (Symbol s);
+    public void showSymbol (Symbol s);
 
     /**
      *  <p style="margin-top: 0">
      *    hides Symbol s with fade-out effect
      *      </p>
      */
-    public void hide (Symbol s);
+    public void hideSymbol (Symbol s);
 
     /**
      *  <p style="margin-top: 0">
@@ -66,7 +66,7 @@ public interface Visualization {
      *  <br>  rotate (s, 180) --&gt; rotate to 180&#176;, not 270&#176;
      *      </p>
      */
-    public void rotate (Symbol s, float angle);
+    public void rotateSymbol (Symbol s, float angle);
 
     public void brightness (Symbol s, float amount);
 
@@ -79,7 +79,7 @@ public interface Visualization {
      *        Animator.
      *      </p>
      */
-    public void add (Symbol s, Region region);
+    public void addSymbol (Symbol s, Region region);
 
     /**
      *  <p style="margin-top: 0">
@@ -90,7 +90,7 @@ public interface Visualization {
      *        fade-out effect specified by the according Animator.
      *      </p>
      */
-    public void remove (Symbol s);
+    public void removeSymbol (Symbol s);
 
     /**
      * instantiate Visualizer + setup

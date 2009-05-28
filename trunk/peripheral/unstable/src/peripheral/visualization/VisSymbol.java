@@ -3,6 +3,9 @@ package peripheral.visualization;
 import processing.core.*;
 import java.awt.Point;
 import java.awt.Rectangle;
+
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+
 import peripheral.logic.symboladapter.*;
 import peripheral.logic.positioningtool.Region;
 
@@ -75,14 +78,30 @@ public class VisSymbol {
 			alpha -= 0.02;
 			alphaSwap += 0.02;
 			if (alpha == 0.f){
+				alpha = 1.f;
+				alphaSwap = 0.f;
 				img = imgSwap;
 				imgSwap = null;
 			}
 		}
 		
+		//===========================================
+		//calc rotation		
+		//symbol.setAngle(symbol.getAngle()%360); angleIpl = angleIpl%360;		
+		if (symbol.getAngle() > angleIpl) angleIpl+=0.1;
+		else if (symbol.getAngle() < angleIpl) angleIpl-=0.1;
 		
 		//===========================================
-		//TODO: calc rotation, 
+		//calc scaling
+		if (Math.abs(symbol.getScaleX() - scaleXIpl) > 0.05){
+			if (symbol.getScaleX() > scaleXIpl) scaleXIpl+=0.05;
+			else scaleXIpl-=0.05;
+		}
+		if (Math.abs(symbol.getScaleY() - scaleYIpl) > 0.05){
+			if (symbol.getScaleY() > scaleYIpl) scaleYIpl+=0.05;
+			else scaleYIpl-=0.05;
+		}
+		
 	}
 
 	public float getAlpha() {
