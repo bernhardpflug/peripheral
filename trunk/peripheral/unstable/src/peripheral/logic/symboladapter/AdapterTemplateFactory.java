@@ -75,8 +75,8 @@ public class AdapterTemplateFactory {
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, true);
 
-        SymbolAction symbolAction = new SymbolSwapAction();
-        PointWrapperAction wrapperAction = PointWrapperAction.getPointWrapperAction(symbolAction);
+        SymbolAction symbolAction = new SymbolSwapAction(adapter);
+        PointWrapperAction wrapperAction = PointWrapperAction.getPointWrapperAction(adapter, symbolAction);
         adapter.setDefaultAction(wrapperAction);
 
         templates.add(adapter);
@@ -110,9 +110,9 @@ public class AdapterTemplateFactory {
 
         Rule rule = new Rule(adapter);
         rule.getConditions().add(new TrueCondition());
-        symbolAction = new SymbolSwapAction(new VarValue(adapter, "filename"));
-        wrapperAction = PointWrapperAction.getPointWrapperAction(symbolAction);
-        rule.getActions().add(wrapperAction);
+        symbolAction = new SymbolSwapAction(adapter, new VarValue(adapter, "filename"));
+        wrapperAction = PointWrapperAction.getPointWrapperAction(adapter, symbolAction);
+        rule.addAction(wrapperAction);
         adapter.getRules().add(rule);
 
         templates.add(adapter);
@@ -147,9 +147,9 @@ public class AdapterTemplateFactory {
 
         rule = new Rule(adapter);
         rule.getConditions().add(new TrueCondition());
-        symbolAction = new SymbolTranslateAction(new VarValue(adapter, "position"));
-        wrapperAction = PointWrapperAction.getPointWrapperAction(symbolAction);
-        rule.getActions().add(wrapperAction);
+        symbolAction = new SymbolTranslateAction(adapter, new VarValue(adapter, "position"));
+        wrapperAction = PointWrapperAction.getPointWrapperAction(adapter, symbolAction);
+        rule.addAction(wrapperAction);
         adapter.getRules().add(rule);
 
         templates.add(adapter);
