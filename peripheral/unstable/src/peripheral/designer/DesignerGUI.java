@@ -14,13 +14,9 @@ package peripheral.designer;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import peripheral.designer.preview.PreviewDialog;
@@ -29,7 +25,6 @@ import peripheral.designer.wizard.AddAnimationDialog;
 import peripheral.logic.DisplayConfiguration;
 import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.positioningtool.Point;
-import peripheral.logic.positioningtool.PositioningTool;
 import peripheral.logic.positioningtool.Region;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.ConstValue;
@@ -44,6 +39,8 @@ public class DesignerGUI extends javax.swing.JFrame {
     //remember current panel
     private int currentIndex = 0;
 
+    //reference original adapter where copy has been modified in dialog
+    private SymbolAdapter modifying;
 
     /** Creates new form DesignerGUI */
     public DesignerGUI() {
@@ -118,8 +115,42 @@ public class DesignerGUI extends javax.swing.JFrame {
     public void AddAnimationDialogClosed(AddAnimationDialog dialog) {
 
         if (dialog.completedCreation()) {
-            DisplayConfiguration.getInstance().getAdapter().add(dialog.getCreatedAdapter());
-            ((DefaultListModel)this.defAnimationsList.getModel()).addElement(dialog.getCreatedAdapter());
+            SymbolAdapter created = dialog.getCreatedAdapter();
+            
+            DefaultListModel model = (DefaultListModel)this.defAnimationsList.getModel();
+
+            //in case existing has been modified overwrite existing with new created
+            if (dialog.modifiedExisting()) {
+
+                int index = model.indexOf(this.modifying);
+
+                //overwrite index of dataList and Gui list with new value
+                model.set(index, created);
+                DisplayConfiguration.getInstance().getAdapter().set(index, created);
+
+            }
+            //else add new one to lists
+            else {
+
+                model.addElement(created);
+                DisplayConfiguration.getInstance().getAdapter().add(created);
+            }
+            
+            //selected created element
+            this.defAnimationsList.setSelectedValue(created, true);
+            
+            //show its positioning tools in preview
+            PreviewDialog.getInstance().setPositioningtoolsToPaint(created.getTool().getElements());
+            PreviewDialog.getInstance().updatePreview();
+        }
+        else {
+            //display tools from selected adapter list
+            SymbolAdapter selected = (SymbolAdapter)this.defAnimationsList.getSelectedValue();
+
+            if (selected != null) {
+                PreviewDialog.getInstance().setPositioningtoolsToPaint(selected.getTool().getElements());
+                PreviewDialog.getInstance().updatePreview();
+            }
         }
     }
 
@@ -180,7 +211,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         buttonPanelLayout.setHorizontalGroup(
             buttonPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, buttonPanelLayout.createSequentialGroup()
-                .addContainerGap(584, Short.MAX_VALUE)
+                .addContainerGap(554, Short.MAX_VALUE)
                 .add(prevButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(nextButton)
@@ -217,14 +248,14 @@ public class DesignerGUI extends javax.swing.JFrame {
             .add(BackgroundPanelLayout.createSequentialGroup()
                 .add(85, 85, 85)
                 .add(jFileChooser1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 541, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(91, Short.MAX_VALUE))
+                .addContainerGap(95, Short.MAX_VALUE))
         );
         BackgroundPanelLayout.setVerticalGroup(
             BackgroundPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(BackgroundPanelLayout.createSequentialGroup()
                 .add(63, 63, 63)
                 .add(jFileChooser1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 304, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(79, Short.MAX_VALUE))
+                .addContainerGap(68, Short.MAX_VALUE))
         );
 
         cardPanel.add(BackgroundPanel, "card3");
@@ -273,6 +304,11 @@ public class DesignerGUI extends javax.swing.JFrame {
         });
 
         removeAnimationButton.setText("-");
+        removeAnimationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeAnimationButtonActionPerformed(evt);
+            }
+        });
 
         editAnimationButton.setText("...");
         editAnimationButton.addActionListener(new java.awt.event.ActionListener() {
@@ -282,8 +318,18 @@ public class DesignerGUI extends javax.swing.JFrame {
         });
 
         priorityUpButton.setText("UP");
+        priorityUpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                priorityUpButtonActionPerformed(evt);
+            }
+        });
 
         priorityDownButton.setText("DOWN");
+        priorityDownButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                priorityDownButtonActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Tip: The order in the list defines the order of painting the symbols of an adapter");
 
@@ -306,7 +352,7 @@ public class DesignerGUI extends javax.swing.JFrame {
                         .add(32, 32, 32)
                         .add(AnimationPropertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 299, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jLabel1))
-                .addContainerGap(74, Short.MAX_VALUE))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
         AnimationsPanelLayout.setVerticalGroup(
             AnimationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -326,9 +372,9 @@ public class DesignerGUI extends javax.swing.JFrame {
                     .add(AnimationsPanelLayout.createSequentialGroup()
                         .add(28, 28, 28)
                         .add(AnimationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(org.jdesktop.layout.GroupLayout.LEADING, AnimationPropertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, AnimationPropertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
                             .add(org.jdesktop.layout.GroupLayout.LEADING, DefAnimationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 383, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 14, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(jLabel1))
         );
 
@@ -350,14 +396,14 @@ public class DesignerGUI extends javax.swing.JFrame {
             .add(SavePanelLayout.createSequentialGroup()
                 .add(22, 22, 22)
                 .add(saveConfigurationButton)
-                .addContainerGap(638, Short.MAX_VALUE))
+                .addContainerGap(624, Short.MAX_VALUE))
         );
         SavePanelLayout.setVerticalGroup(
             SavePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(SavePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(saveConfigurationButton)
-                .addContainerGap(412, Short.MAX_VALUE))
+                .addContainerGap(389, Short.MAX_VALUE))
         );
 
         cardPanel.add(SavePanel, "card5");
@@ -388,6 +434,10 @@ public class DesignerGUI extends javax.swing.JFrame {
 
         AddAnimationDialog aaD = new AddAnimationDialog(this);
         aaD.setVisible(true);
+
+        //remove all positioningtools from preview
+        PreviewDialog.getInstance().setPositioningtoolsToPaint(null);
+        PreviewDialog.getInstance().updatePreview();
     }//GEN-LAST:event_addAnimationButtonActionPerformed
 
     private void exitMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuActionPerformed
@@ -513,22 +563,110 @@ public class DesignerGUI extends javax.swing.JFrame {
         if (editAdapter != null) {
 
             AddAnimationDialog aaD = new AddAnimationDialog(this);
-            aaD.modifyExisting(editAdapter);
-            aaD.setVisible(true);
 
-            //in case editing canceled remove item from list (to support editing cancel symboladpater must be cloneable)
-            if (!aaD.completedCreation()) {
-                
-                DisplayConfiguration.getInstance().getAdapter().remove(aaD.getCreatedAdapter());
-                ((DefaultListModel)this.defAnimationsList.getModel()).removeElement(aaD.getCreatedAdapter());
-                
-            }
+            //let user work on a copy of current adapter, only if editing is commited replace it with new one (see AddAnimatonDialogClosed)
+            aaD.modifyExisting(editAdapter.createCopy());
+
+            //set reference that can be read after dialog close
+            this.modifying = editAdapter;
+
+            aaD.setVisible(true);
         }
     }//GEN-LAST:event_editAnimationButtonActionPerformed
 
     private void saveConfigurationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveConfigurationButtonActionPerformed
         DisplayConfiguration.getInstance().save("displayConfig.ser");
     }//GEN-LAST:event_saveConfigurationButtonActionPerformed
+
+    private void removeAnimationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAnimationButtonActionPerformed
+
+        if (this.defAnimationsList.getSelectedValue() != null) {
+
+            SymbolAdapter toDel = (SymbolAdapter)this.defAnimationsList.getSelectedValue();
+            DisplayConfiguration.getInstance().getAdapter().remove(toDel);
+
+            DefaultListModel model = (DefaultListModel)this.defAnimationsList.getModel();
+            int delIndex = model.indexOf(toDel);
+
+            //if deleted is not at first position select upper item
+            if (delIndex > 0) {
+                this.defAnimationsList.setSelectedIndex(delIndex -1);
+            }
+            else {
+                if (model.size() > 1) {
+                    this.defAnimationsList.setSelectedIndex(1);
+                }
+            }
+            model.removeElement(toDel);
+        }
+    }//GEN-LAST:event_removeAnimationButtonActionPerformed
+
+    private void priorityUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_priorityUpButtonActionPerformed
+
+        if (this.defAnimationsList.getSelectedValue() != null) {
+            SymbolAdapter adapter = (SymbolAdapter) this.defAnimationsList.getSelectedValue();
+
+            int position = this.defAnimationsList.getSelectedIndex();
+
+            //only allow priority increase if not at first position
+            if (position > 0) {
+
+                //for both lists just swap current element with bordering element, so there is no problem with indizes changes
+
+                //change in datalist
+                List<SymbolAdapter> adapterList = DisplayConfiguration.getInstance().getAdapter();
+
+                SymbolAdapter destination = adapterList.get(position-1);
+
+                //swap elements
+                adapterList.set(position-1, adapter);
+                adapterList.set(position, destination);
+
+                //change in JList
+                DefaultListModel model = (DefaultListModel)this.defAnimationsList.getModel();
+
+                model.set(position-1, adapter);
+                model.set(position,destination);
+
+                //select originally selected value as selected
+                this.defAnimationsList.setSelectedValue(adapter, true);
+            }
+        }
+    }//GEN-LAST:event_priorityUpButtonActionPerformed
+
+    private void priorityDownButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_priorityDownButtonActionPerformed
+
+        if (this.defAnimationsList.getSelectedValue() != null) {
+
+            SymbolAdapter adapter = (SymbolAdapter) this.defAnimationsList.getSelectedValue();
+
+            int position = this.defAnimationsList.getSelectedIndex();
+
+            List<SymbolAdapter> adapterList = DisplayConfiguration.getInstance().getAdapter();
+
+            //only allow priority decrease if not at last position
+            if (position < adapterList.size()-1) {
+
+                //for both lists just swap current element with bordering element, so there is no problem with indizes changes
+
+                //change in datalist
+                SymbolAdapter destination = adapterList.get(position+1);
+
+                //swap elements
+                adapterList.set(position+1, adapter);
+                adapterList.set(position, destination);
+
+                //change in JList
+                DefaultListModel model = (DefaultListModel)this.defAnimationsList.getModel();
+
+                model.set(position+1, adapter);
+                model.set(position,destination);
+
+                //select originally selected value as selected
+                this.defAnimationsList.setSelectedValue(adapter, true);
+            }
+        }
+    }//GEN-LAST:event_priorityDownButtonActionPerformed
 
     /**
     * @param args the command line arguments
