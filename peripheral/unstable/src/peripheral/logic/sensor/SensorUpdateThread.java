@@ -7,20 +7,13 @@ import peripheral.logic.value.SensorValue;
 
 public class SensorUpdateThread extends Thread implements Observer{
 
-    private float samplingRate;
     private Sensor sensor;
 
     public SensorUpdateThread(Sensor sensor) {
+        this.sensor = sensor;
         sensor.addObserver(this);
     }
 
-    public float getSamplingRate() {
-        return samplingRate;
-    }
-
-    public void setSamplingRate(float val) {
-        this.samplingRate = val;
-    }
 
     public Sensor getSensor() {
         return sensor;
@@ -56,12 +49,12 @@ public class SensorUpdateThread extends Thread implements Observer{
             //run through all channels of the sensor and change the act-value of
             //the assigned sensor values
             for (SensorChannel channel : sensor.getSensorChannels()) {
-                Object actValue = channel.getMeasQueue().poll();
-                if (actValue != null) {
+                Measurement actMeasurement = channel.getMeasQueue().poll();
+                if (actMeasurement != null) {
                     sensorChanged = true;
-                    List<SensorValue> sensorValues = null; //@todo: = channel.getSensorValues();
+                    List<SensorValue> sensorValues = channel.getSensorValues();
                     for (SensorValue sv : sensorValues) {
-                        sv.setActValue(actValue);
+                        sv.setActValue(actMeasurement.getValue());
                     }
                 }
             }
@@ -71,7 +64,7 @@ public class SensorUpdateThread extends Thread implements Observer{
             }
             
             try {
-                //unit of samplingRate??
+                float samplingRate = sensor.getSamplerate();
                 sleep((long) (samplingRate * 1000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -81,13 +74,9 @@ public class SensorUpdateThread extends Thread implements Observer{
     }
 
     public void update(Observable o, Object arg) {
-    	// TODO SensorSamplingRateChanged gibts nimmer homma gsogt, oder? Hab an error griagt und glšscht - Cheers tobi
-    	
-//        if (arg instanceof SensorSamplingRateChanged) {
-//            samplingRate = ((SensorSamplingRateChanged)arg).getSamplerate();
-//        } else if (arg instanceof SensorSamplingStarted) {
-//            this.start();
-//        }
+        if (arg instanceof SensorSamplingStarted) {
+            this.start();
+        }
     }
 }
 
