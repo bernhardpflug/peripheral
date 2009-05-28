@@ -42,7 +42,7 @@ public class Runtime {
     public Visualization getVisualization(){
         //return viz;
 
-        //@todo: uncomment and return real viz-instance
+        //@todo: comment out and return real viz-instance
         return new Visualization(){
 
             public void add(Symbol s, Region region) {
@@ -163,7 +163,7 @@ public class Runtime {
                 displayConfig.getDimension());
  
         ActionTool tool;
-        ToolList<PositioningTool> toolList;
+        ToolList toolList;
         for (SymbolAdapter adapter : displayConfig.getAdapter()) {
             tool = adapter.getTool();
 
@@ -172,7 +172,7 @@ public class Runtime {
             } else if (tool instanceof Region) {
                 initRegion(viz, (Region) tool);
             } else if (tool instanceof ToolList) {
-                toolList = (ToolList<PositioningTool>) tool;
+                toolList = (ToolList) tool;
 
                 for (PositioningTool pt : toolList.getVisibleElements()) {
                     if (pt instanceof Point) {
