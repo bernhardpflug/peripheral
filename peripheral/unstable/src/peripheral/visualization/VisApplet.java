@@ -12,7 +12,7 @@ public class VisApplet extends PApplet implements Visualization {
     private static final long serialVersionUID = 1L; //	whatever that's needed for
     private Vector<VisSymbol> symbols;
     private PImage bgImage;
-    private Dimension screen;
+    private Dimension visDim;
 
     public VisApplet() {
         symbols = new Vector<VisSymbol>();
@@ -21,32 +21,31 @@ public class VisApplet extends PApplet implements Visualization {
 
     public void setup() {
         peripheral.logic.Runtime.getInstance().startup(this, "displayConfig.ser");
-   
-        size((int) screen.getWidth(), (int) screen.getHeight(), P3D);
+        size(screen.width, screen.height, P2D);
+        //size((int) screen.getWidth(), (int) screen.getHeight(), P3D);
         frameRate(60);
         noStroke();
     }
 
-    /*public void mouseClicked(){	//used for the mover demo
-
-    }*/
     public void draw() {
-        //background(bgImage);
-        background(255);
-        this.color(0);
-        this.rect(100, 100, 200, 200);
+    	//TODO: interpolate coords to actual screen resolution
+        background(bgImage);
         VisSymbol ptr;
         for (int i = 0; i < symbols.size(); i++) {
             ptr = symbols.get(i);
             ptr.calcStep();
-            //brightness and alpha
-            tint((255.f / ptr.getBrightness()), (255.f / ptr.getAlpha()));
-            image(ptr.getImg(), (float) ptr.getPositionIpl().getX(), (float) ptr.getPositionIpl().getY());
+            //draw the image in all its aspects
+            pushMatrix();
+            	tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlpha()));
+	            translate((float)ptr.getPositionIpl().getX(), (float)ptr.getPositionIpl().getY());
+	            scale(ptr.getScaleXIpl(), ptr.getScaleYIpl());
+	            rotate(radians(ptr.getAngleIpl()));
+	            image(ptr.getImg(), ptr.getImg().width/2, ptr.getImg().height/2);
+            popMatrix();
         }
-
     }
 
-    public void add(Symbol s, Region region) {
+    public void addSymbol(Symbol s, Region region) {
         VisSymbol vs = new VisSymbol(s, region);
         vs.setImg(loadImage(s.getFile().getPath()));
         vs.setFadeIn(true);
@@ -62,34 +61,36 @@ public class VisApplet extends PApplet implements Visualization {
         // TODO Auto-generated method stub
     }
 
-    public void hide(Symbol s) {
+    public void hideSymbol(Symbol s) {
         VisSymbol vs = findVSforS(s);
         vs.setVisible(false);
     }
 
-    public void remove(Symbol s) {
+    public void removeSymbol(Symbol s) {
         VisSymbol vs = findVSforS(s);
         symbols.remove(vs);
 
     }
 
-    public void rotate(Symbol s, float angle) {
+    public void rotateSymbol(Symbol s, float angle) {
         s.setAngle(angle);
     }
 
-    public void scale(Symbol s, float factorX, float factorY) {
+    public void scaleSymbol(Symbol s, float factorX, float factorY) {
         s.setScaleX(factorX);
         s.setScaleY(factorY);
     }
 
-    public void show(Symbol s) {
+    public void showSymbol(Symbol s) {
         VisSymbol vs = findVSforS(s);
         vs.setVisible(true);
 
     }
 
-    public void swap(Symbol s, String filename) {
-        // TODO Auto-generated method stub
+    public void swapSymbol(Symbol s, String filename) {
+        VisSymbol vs = findVSforS(s);
+        PImage tempImg = loadImage(filename);
+        vs.setImgSwap(tempImg);
     }
 
     private VisSymbol findVSforS(Symbol s) {
@@ -99,16 +100,17 @@ public class VisApplet extends PApplet implements Visualization {
                 return vs;
             }
         }
+        System.out.println("findVSforS: no suitable symbol found.");
         return null;
     }
 
     public void init(String backgroundImageFilename, Dimension resolution) {
 
         bgImage = loadImage(backgroundImageFilename);
-        screen = resolution;
+        visDim = resolution;
     }
 
-    public void translate(Symbol s, java.awt.Point targetPosition) {
+    public void translateSymbol(Symbol s, java.awt.Point targetPosition) {
         s.getPosition().setPosition(targetPosition);
 
     }
