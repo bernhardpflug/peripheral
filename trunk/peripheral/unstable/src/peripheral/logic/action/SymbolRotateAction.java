@@ -1,51 +1,52 @@
 package peripheral.logic.action;
 
-import peripheral.logic.symboladapter.Symbol; 
+import java.util.ArrayList;
+import java.util.List;
+import peripheral.logic.symboladapter.Symbol;
 import peripheral.logic.symboladapter.SymbolAdapter;
+import peripheral.logic.value.ConstValue;
 import peripheral.logic.value.UserInput;
-import peripheral.logic.value.Value; 
+import peripheral.logic.value.Value;
 
-/**
- *  <p style="margin-top: 0">
- *    Visualization.rotate(s, angle);<br>s.setAngle(angle);
- *      </p>
- *      <p style="margin-top: 0">
- *    <br>
- *      </p>
- */
+
 public class SymbolRotateAction extends SymbolAction {
 
     private Value angle;
 
-    public SymbolRotateAction (SymbolAdapter adapter) {
+    public SymbolRotateAction(SymbolAdapter adapter) {
         super(adapter);
     }
 
-    public SymbolRotateAction (SymbolAdapter adapter, Value angle) {
+    public SymbolRotateAction(SymbolAdapter adapter, Value angle) {
         this(adapter);
         this.angle = angle;
     }
 
-    public float getAngle () {
-        return 0;
+    public float getAngle() {
         //extract concrete value from Value-Object
-        //return angle;
+        return Float.parseFloat(angle.getValue().toString());
     }
 
-    public java.util.List<UserInput> getUserInput () {
-        return null;
+    public java.util.List<UserInput> getUserInput() {
+        List<UserInput> ui = new ArrayList<UserInput>();
+        if (angle == null) {
+            ui.add(new UserInput("Angle", "Angle to which the symbol should be rotated.", new ConstValue(adapter, "angle", 0.0f, float.class)));
+        }
+        return ui;
     }
 
-    public String getName () {
-        return null;
+    public String getDescription() {
+        return "Rotates a symbol to a specified angle";
     }
 
-    public String getDescription () {
-        return null;
+     /**
+     * calls rotate on visualization
+     * visualization has to update the symbol according to the new angle
+     *
+     * @param s
+     */
+    public void execute(Symbol s) {
+        peripheral.logic.Runtime.getInstance().getVisualization().rotate(s, getAngle());
     }
-
-    public void execute (Symbol s) {
-    }
-
 }
 

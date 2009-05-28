@@ -9,7 +9,10 @@ public abstract class SymbolAction extends Action {
         super(adapter);
     }
 
-    public void execute (Symbol s) {
+    public abstract void execute (Symbol s);
+
+    public String getName(){
+        return getClass().getName();
     }
 
 }
