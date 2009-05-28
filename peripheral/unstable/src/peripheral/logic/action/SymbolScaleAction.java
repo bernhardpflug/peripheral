@@ -1,7 +1,10 @@
 package peripheral.logic.action;
 
+import java.util.ArrayList;
+import java.util.List;
 import peripheral.logic.symboladapter.Symbol;
 import peripheral.logic.symboladapter.SymbolAdapter;
+import peripheral.logic.value.ConstValue;
 import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value;
 
@@ -21,42 +24,39 @@ public class SymbolScaleAction extends SymbolAction {
     }
 
     public float getFactorX() {
-        return 0;
         //extract concrete value from Value-Object
-        //return factorX;
+        return Float.parseFloat(factorX.getValue().toString());
     }
 
     public float getFactorY() {
-        return 0;
         //extract concrete value from Value-Object
-        //return factorY;
+        return Float.parseFloat(factorY.getValue().toString());
     }
 
     public java.util.List<UserInput> getUserInput() {
-        return null;
-    }
-
-    public String getName() {
-        return null;
+        List<UserInput> ui = new ArrayList<UserInput>();
+        if (factorX == null) {
+            ui.add(new UserInput("Factor x-Axis", "Factor to which the symbol should be scaled on the x-axis.", new ConstValue(adapter, "factorX", 1.0f, float.class)));
+        }
+        if (factorY == null){
+            ui.add(new UserInput("Factor x-Axis", "Factor to which the symbol should be scaled on the y-axis.", new ConstValue(adapter, "factorY", 1.0f, float.class)));
+        }
+        return ui;
     }
 
     public String getDescription() {
-        return null;
+        return "Scales a symbol according to two given scaling factors. One for the x- and one for the y-axis.";
     }
 
+
     /**
-     *  <p style="margin-top: 0">
-     *    Visualization.scale(s, factorX, factorY);<br>s.setScaleX(factorX);
-     *  <br>s.setScaleY(factorY);
-     *      </p>
-     *      <p style="margin-top: 0">
-     *    
-     *      </p>
-     *      <p style="margin-top: 0">
-     *    <br>
-     *      </p>
+     * calls scale on visualization
+     * visualization has to update the symbols according to the new factors
+     *
+     * @param s
      */
     public void execute(Symbol s) {
+        peripheral.logic.Runtime.getInstance().getVisualization().scale(s, getFactorX(), getFactorY());
     }
 }
 
