@@ -92,7 +92,7 @@ public class AdapterTemplateFactory {
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
-        Value val = new SensorValue(adapter, "sensorValue");
+        Value val = new SensorValue(adapter, "sensorValue", null);
         UserInput input = new UserInput("Sensorwert", "Wert vom Sensor", val);
         adapter.getNeededUserInput().add(input);
 
@@ -128,7 +128,7 @@ public class AdapterTemplateFactory {
         adapter.setTool(new Line());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
-        val = new SensorValue(adapter, "sensorValue");
+        val = new SensorValue(adapter, "sensorValue", null);
         input = new UserInput("Sensorwert", "Wert vom Sensor", val);
         adapter.getNeededUserInput().add(input);
 
@@ -147,7 +147,7 @@ public class AdapterTemplateFactory {
 
         rule = new Rule(adapter);
         rule.getConditions().add(new TrueCondition());
-        symbolAction = new SymbolTranslateAction(adapter, new VarValue(adapter, "position"));
+        symbolAction = new SymbolTranslateAction(adapter, new VarValue(adapter, "positionX"), new VarValue(adapter, "positionY"));
         wrapperAction = PointWrapperAction.getPointWrapperAction(adapter, symbolAction);
         rule.addAction(wrapperAction);
         adapter.getRules().add(rule);
