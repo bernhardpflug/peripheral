@@ -169,7 +169,7 @@ public class AdapterTemplateFactory {
     }
 
     public SymbolAdapter createInstanceFor (SymbolAdapter template) {
-        return null;
+        return template.createCopy();
     }
 
 }
