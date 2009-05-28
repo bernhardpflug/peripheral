@@ -56,7 +56,7 @@ public class SymbolScaleAction extends SymbolAction {
      * @param s
      */
     public void execute(Symbol s) {
-        peripheral.logic.Runtime.getInstance().getVisualization().scale(s, getFactorX(), getFactorY());
+        peripheral.logic.Runtime.getInstance().getVisualization().scaleSymbol(s, getFactorX(), getFactorY());
     }
 }
 

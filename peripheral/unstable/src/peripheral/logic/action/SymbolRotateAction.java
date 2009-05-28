@@ -46,7 +46,7 @@ public class SymbolRotateAction extends SymbolAction {
      * @param s
      */
     public void execute(Symbol s) {
-        peripheral.logic.Runtime.getInstance().getVisualization().rotate(s, getAngle());
+        peripheral.logic.Runtime.getInstance().getVisualization().rotateSymbol(s, getAngle());
     }
 }
 
