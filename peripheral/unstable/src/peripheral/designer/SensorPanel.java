@@ -37,7 +37,7 @@ public class SensorPanel extends javax.swing.JPanel {
 
         initTestSensorServerButton = new javax.swing.JButton();
 
-        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        setLayout(null);
 
         initTestSensorServerButton.setText("Init TestSensorServer");
         initTestSensorServerButton.addActionListener(new java.awt.event.ActionListener() {
@@ -45,7 +45,8 @@ public class SensorPanel extends javax.swing.JPanel {
                 initTestSensorServerButtonActionPerformed(evt);
             }
         });
-        add(initTestSensorServerButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, -1, -1));
+        add(initTestSensorServerButton);
+        initTestSensorServerButton.setBounds(30, 40, 137, 23);
     }// </editor-fold>//GEN-END:initComponents
 
     private void initTestSensorServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_initTestSensorServerButtonActionPerformed
