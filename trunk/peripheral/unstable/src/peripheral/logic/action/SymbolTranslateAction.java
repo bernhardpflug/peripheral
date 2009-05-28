@@ -56,7 +56,7 @@ public class SymbolTranslateAction extends SymbolAction {
      * @param s
      */
     public void execute(Symbol s) {
-        peripheral.logic.Runtime.getInstance().getVisualization().translate(s, new Point(getTargetPositionX(), getTargetPositionY()));
+        peripheral.logic.Runtime.getInstance().getVisualization().translateSymbol(s, new Point(getTargetPositionX(), getTargetPositionY()));
     }
 }
 

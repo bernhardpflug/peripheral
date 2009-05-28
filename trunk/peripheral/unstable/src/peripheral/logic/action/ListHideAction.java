@@ -2,71 +2,62 @@ package peripheral.logic.action;
 
 import java.util.Observable;
 import java.util.Set;
-import peripheral.logic.positioningtool.ActionTool; 
+import peripheral.logic.positioningtool.ActionTool;
+import peripheral.logic.positioningtool.Point;
 import peripheral.logic.positioningtool.PositioningTool;
+import peripheral.logic.positioningtool.Region;
+import peripheral.logic.positioningtool.ToolList;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
-import peripheral.logic.value.Value; 
+import peripheral.logic.value.Value;
+import peripheral.logic.Runtime;
 
 public class ListHideAction extends ListAction {
 
     private Value elementsToHide;
 
-    public ListHideAction (SymbolAdapter adapter) {
+    public ListHideAction(SymbolAdapter adapter) {
         super(adapter);
     }
 
-    public ListHideAction (SymbolAdapter adapter, Value elementsToHide) {
+    public ListHideAction(SymbolAdapter adapter, Value elementsToHide) {
         this(adapter);
         this.elementsToHide = elementsToHide;
     }
 
-    public java.util.List<UserInput> getUserInput () {
+    public java.util.List<UserInput> getUserInput() {
         return null;
     }
 
-    public String getName () {
+    public String getName() {
         return null;
     }
 
-    public String getDescription () {
+    public String getDescription() {
         return null;
     }
 
-    /**
-     *  <p style="margin-top: 0">
-     *        ToolList toolList = (ToolList)tool;<br><br>for (PositioningTool pt : 
-     *        elementsToHide){<br>
-     *      </p>
-     *      <p style="margin-top: 0">
-     *        if (pt instanceof Point){<br>
-     *      </p>
-     *      <p style="margin-top: 0">
-     *        Visualization.hide(((Point)pt).getActSymbol());<br>}else if (pt 
-     *        instanceof Region){<br>RegionAction act = new RegionHideAction();<br>act.execute((Region)pt);
-     *      </p>
-     *      <p style="margin-top: 0">
-     *        <br>
-     *        }
-     *      </p>
-     *      <p style="margin-top: 0">
-     *        <br>
-     *        }
-     *      </p>
-     *      <p style="margin-top: 0">
-     *        <br>
-     *        toolList.getHiddenPoints().addAll(elementsToHide);<br>toolList.getVisiblePoints().removeAll(elementsToHide);
-     *      </p>
-     */
-    public void execute (ActionTool tool) {
+    public void execute(ActionTool tool) {
+        Set<PositioningTool> elementsToHide = getElementsToHide();
+        ToolList toolList = (ToolList) tool;
+
+        for (PositioningTool pt : elementsToHide) {
+            if (pt instanceof Point) {
+                Runtime.getInstance().getVisualization().hideSymbol(((Point) pt).getActSymbol());
+            } else if (pt instanceof Region) {
+                RegionAction act = new RegionHideAction(adapter);
+                act.execute((Region) pt);
+            }
+        }
+        toolList.getHiddenElements().addAll(elementsToHide);
+        toolList.getVisibleElements().removeAll(elementsToHide);
     }
 
-    public void update (Observable o, Object arg) {
+    public void update(Observable o, Object arg) {
     }
 
-    public Set<PositioningTool> getElementsToHide () {
+    public Set<PositioningTool> getElementsToHide() {
         return null;
     }
-
 }
 

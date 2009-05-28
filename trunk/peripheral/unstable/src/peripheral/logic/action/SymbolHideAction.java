@@ -20,7 +20,7 @@ public class SymbolHideAction extends SymbolAction {
     }
 
     public void execute (Symbol s) {
-        peripheral.logic.Runtime.getInstance().getVisualization().hide(s);
+        peripheral.logic.Runtime.getInstance().getVisualization().hideSymbol(s);
     }
 
 }

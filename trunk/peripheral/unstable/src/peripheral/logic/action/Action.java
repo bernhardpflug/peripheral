@@ -41,6 +41,8 @@ public abstract class Action implements Serializable, Observer {
      *    fires, when a user input of the action has been changed. method has to 
      *    be overriden in concrete subclasses to extract the needed parameters.
      *      </p>
+     *
+     *   method no longer needed!? because values of userInputs are directly changed in propertypanel
      */
     public void update (Observable o, Object arg) {
     }

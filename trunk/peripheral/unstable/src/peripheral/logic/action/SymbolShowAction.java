@@ -20,7 +20,7 @@ public class SymbolShowAction extends SymbolAction {
     }
 
     public void execute (Symbol s) {
-        peripheral.logic.Runtime.getInstance().getVisualization().show(s);
+        peripheral.logic.Runtime.getInstance().getVisualization().showSymbol(s);
     }
 
 }

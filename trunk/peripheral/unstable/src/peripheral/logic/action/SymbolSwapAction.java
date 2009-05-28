@@ -40,7 +40,7 @@ public class SymbolSwapAction extends SymbolAction {
     }
 
     public void execute (Symbol s) {
-        Runtime.getInstance().getVisualization().swap(s, getFilename());
+        Runtime.getInstance().getVisualization().swapSymbol(s, getFilename());
     }
 
 }
