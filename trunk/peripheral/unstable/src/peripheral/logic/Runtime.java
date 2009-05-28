@@ -45,7 +45,7 @@ public class Runtime {
         //@todo: comment out and return real viz-instance
         return new Visualization(){
 
-            public void add(Symbol s, Region region) {
+            public void addSymbol(Symbol s, Region region) {
                 Logging.getLogger().finer("Visualization: added symbol");
             }
 
@@ -57,7 +57,7 @@ public class Runtime {
                 Logging.getLogger().finer("Visualization: changed contrast to " + amount);
             }
 
-            public void hide(Symbol s) {
+            public void hideSymbol(Symbol s) {
                 Logging.getLogger().finer("Visualization: hid symbol");
             }
 
@@ -65,27 +65,27 @@ public class Runtime {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
 
-            public void remove(Symbol s) {
+            public void removeSymbol(Symbol s) {
                 Logging.getLogger().finer("Visualization: removed symbol");
             }
 
-            public void rotate(Symbol s, float angle) {
+            public void rotateSymbol(Symbol s, float angle) {
                 Logging.getLogger().finer("Visualization: rotated symbol at angle " + angle);
             }
 
-            public void scale(Symbol s, float factorX, float factorY) {
+            public void scaleSymbol(Symbol s, float factorX, float factorY) {
                 Logging.getLogger().finer("Visualization: scaled symbol at factor(x,y) (" + factorX + "," + factorY + ")");
             }
 
-            public void show(Symbol s) {
+            public void showSymbol(Symbol s) {
                 Logging.getLogger().finer("Visualization: showed symbol");
             }
 
-            public void swap(Symbol s, String filename) {
+            public void swapSymbol(Symbol s, String filename) {
                 Logging.getLogger().finer("Visualization: swapped image of symbol. new image: " + filename);
             }
 
-            public void translate(Symbol s, java.awt.Point targetPosition) {
+            public void translateSymbol(Symbol s, java.awt.Point targetPosition) {
                 Logging.getLogger().finer("Visualization: translated symbol to position " + targetPosition);
             }
 
@@ -190,12 +190,12 @@ public class Runtime {
     }
 
     private void initPoint(Visualization viz, Point point) {
-        viz.add(point.getActSymbol(), null);
+        viz.addSymbol(point.getActSymbol(), null);
     }
 
     private void initRegion(Visualization viz, Region region) {
         for (Symbol s : region.getSymbols()) {
-            viz.add(s, region);
+            viz.addSymbol(s, region);
         }
     }
 
