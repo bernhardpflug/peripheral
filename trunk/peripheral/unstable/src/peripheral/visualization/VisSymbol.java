@@ -57,12 +57,12 @@ public class VisSymbol {
 		}
 		//===========================================
 		//compute easing
-		float dx = (float)symbol.getPosition().getPosition().getX() - (float)positionIpl.getX();
-		float iplX = 0.f, iplY = 0.f;
+		float iplX = (float)positionIpl.getX(), iplY = (float)positionIpl.getY();
+		float dx = (float)symbol.getPosition().getPosition().getX() - iplX;
 		if(Math.abs(dx) > 1) {
 			iplX += dx * 0.05; //-> easing val
 		}
-		float dy = (float)symbol.getPosition().getPosition().getY() - (float)positionIpl.getY();
+		float dy = (float)symbol.getPosition().getPosition().getY() - iplY;
 		if(Math.abs(dy) > 1) {
 			iplY += dy * 0.05;
 		}
