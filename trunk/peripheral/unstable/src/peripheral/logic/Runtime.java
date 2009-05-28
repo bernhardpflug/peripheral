@@ -1,5 +1,6 @@
 package peripheral.logic;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,9 +16,7 @@ import peripheral.logic.sensor.SensorUpdateThread;
 import peripheral.logic.sensor.XmlMetaParser;
 import peripheral.logic.symboladapter.Symbol;
 import peripheral.logic.symboladapter.SymbolAdapter;
-import peripheral.visualization.VisApplet;
 import peripheral.visualization.Visualization;
-import processing.core.PApplet;
 
 public class Runtime {
 
@@ -26,7 +25,7 @@ public class Runtime {
     private List<SensorUpdateThread> threads = new ArrayList<SensorUpdateThread>();
     private DisplayConfiguration displayConfig;
 
-    private Visualization viz;
+    private static Visualization viz;
 
     private Runtime() {
         sensorAdapterMapping = new HashMap<Sensor, List<SymbolAdapter>>();
@@ -40,6 +39,59 @@ public class Runtime {
         return theInstance;
     }
 
+    public static Visualization getVisualization(){
+        //return viz;
+
+        //@todo: uncomment and return real viz-instance
+        return new Visualization(){
+
+            public void add(Symbol s, Region region) {
+                Logging.getLogger().finer("Visualization: added symbol");
+            }
+
+            public void brightness(Symbol s, float amount) {
+                Logging.getLogger().finer("Visualization: changed brightness to " + amount);
+            }
+
+            public void contrast(Symbol s, float amount) {
+                Logging.getLogger().finer("Visualization: changed contrast to " + amount);
+            }
+
+            public void hide(Symbol s) {
+                Logging.getLogger().finer("Visualization: hid symbol");
+            }
+
+            public void init(String backgroundImageFilename, Dimension resolution) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            public void remove(Symbol s) {
+                Logging.getLogger().finer("Visualization: removed symbol");
+            }
+
+            public void rotate(Symbol s, float angle) {
+                Logging.getLogger().finer("Visualization: rotated symbol at angle " + angle);
+            }
+
+            public void scale(Symbol s, float factorX, float factorY) {
+                Logging.getLogger().finer("Visualization: scaled symbol at factor(x,y) (" + factorX + "," + factorY + ")");
+            }
+
+            public void show(Symbol s) {
+                Logging.getLogger().finer("Visualization: showed symbol");
+            }
+
+            public void swap(Symbol s, String filename) {
+                Logging.getLogger().finer("Visualization: swapped image of symbol. new image: " + filename);
+            }
+
+            public void translate(Symbol s, java.awt.Point targetPosition) {
+                Logging.getLogger().finer("Visualization: translated symbol to position " + targetPosition);
+            }
+
+        };
+    }
+
     public Map<Sensor, java.util.List<SymbolAdapter>> getSensorAdapterMapping() {
         return sensorAdapterMapping;
     }
@@ -51,14 +103,17 @@ public class Runtime {
         displayConfig = DisplayConfiguration.getInstance();
 
         //@todo: uncomment when visualization is ready
-        initVisualization();
+        //initVisualization();
 
-       // startSensorServer();
+        //@todo: delete: only for testing purpose
+        executeAdapters();
 
-        createSensorAdapterMapping();
-        createSensorUpdateThreads();
+        // startSensorServer();
 
-        startServers();
+        //createSensorAdapterMapping();
+        //createSensorUpdateThreads();
+
+        //startServers();
     //startSensorCheckout();
     }
 
@@ -93,6 +148,12 @@ public class Runtime {
 
         for (Thread th : threads) {
             th.interrupt();
+        }
+    }
+
+    private void executeAdapters(){
+        for (SymbolAdapter s : DisplayConfiguration.getInstance().getAdapter()){
+            s.execute();
         }
     }
 
