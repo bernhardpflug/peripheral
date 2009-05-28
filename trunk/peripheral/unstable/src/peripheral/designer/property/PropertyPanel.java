@@ -46,11 +46,11 @@ public class PropertyPanel extends JPanel {
 
         //TODO DELETE DELETE
         sensorTemplate = new ArrayList<SensorChannel>();
-        Sensor sensor1 = new Sensor(1,"sensor1", new SensorServer("", "", ""), 1.0f);
+        Sensor sensor1 = new Sensor(1,"sensor1", new SensorServer("", "", ""));
         SensorChannel sa = new SensorChannel(1, "SensorX",sensor1);
         sensorTemplate.add(sa);
 
-        Sensor sensor2 = new Sensor(1,"sensor2", new SensorServer("", "", ""), 2.0f);
+        Sensor sensor2 = new Sensor(1,"sensor2", new SensorServer("", "", ""));
         SensorChannel sa2 = new SensorChannel(2, "SensorX",sensor2);
         sensorTemplate.add(sa2);
 
