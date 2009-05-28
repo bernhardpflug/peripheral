@@ -3,6 +3,7 @@ package peripheral.logic.action;
 import java.util.Observable;
 import peripheral.logic.datatype.SymbolList;
 import peripheral.logic.positioningtool.ActionTool; 
+import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value; 
 
@@ -10,13 +11,16 @@ public class RegionAddNewAction extends RegionAction {
 
     private Value symbolsToAdd;
 
-    public RegionAddNewAction () {
+    public RegionAddNewAction (SymbolAdapter adapter) {
+        super(adapter);
     }
 
-    public RegionAddNewAction (Value symbolsToAdd) {
+    public RegionAddNewAction (SymbolAdapter adapter, Value symbolsToAdd) {
+        this(adapter);
+        this.symbolsToAdd = symbolsToAdd;
     }
 
-    public java.util.Set<UserInput> getUserInput () {
+    public java.util.List<UserInput> getUserInput () {
         return null;
     }
 

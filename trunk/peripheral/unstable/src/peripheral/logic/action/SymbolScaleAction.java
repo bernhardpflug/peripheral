@@ -1,6 +1,7 @@
 package peripheral.logic.action;
 
 import peripheral.logic.symboladapter.Symbol;
+import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value;
 
@@ -9,10 +10,14 @@ public class SymbolScaleAction extends SymbolAction {
     private Value factorX;
     private Value factorY;
 
-    public SymbolScaleAction() {
+    public SymbolScaleAction(SymbolAdapter adapter) {
+        super(adapter);
     }
 
-    public SymbolScaleAction(Value factorX, Value factorY) {
+    public SymbolScaleAction(SymbolAdapter adapter, Value factorX, Value factorY) {
+        this(adapter);
+        this.factorX = factorX;
+        this.factorY = factorY;
     }
 
     public float getFactorX() {
@@ -27,7 +32,7 @@ public class SymbolScaleAction extends SymbolAction {
         //return factorY;
     }
 
-    public java.util.Set<UserInput> getUserInput() {
+    public java.util.List<UserInput> getUserInput() {
         return null;
     }
 

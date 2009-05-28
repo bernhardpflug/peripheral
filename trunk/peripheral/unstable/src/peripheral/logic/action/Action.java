@@ -1,16 +1,23 @@
 package peripheral.logic.action;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Observable;
+import java.util.Observer;
+import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
 
 
-public abstract class Action implements Serializable {
+public abstract class Action implements Serializable, Observer {
 
     //@todo: sicherstellen, dass userInput wirklich nicht serialisiert werden muss
-    protected transient java.util.Set<UserInput> userInput;
+    //protected transient java.util.List<UserInput> userInput;
 
-    public Action () {
+    protected SymbolAdapter adapter;
+
+    public Action (SymbolAdapter adapter) {
+        //userInput = new ArrayList<UserInput>();
+        this.adapter = adapter;
     }
 
     /**
@@ -19,11 +26,15 @@ public abstract class Action implements Serializable {
      *  <br>  ui.addObserver(this);<br>}
      *      </p>
      */
-    public abstract java.util.Set<UserInput> getUserInput ();
+    public abstract java.util.List<UserInput> getUserInput ();
 
     public abstract String getName ();
 
     public abstract String getDescription ();
+
+    public SymbolAdapter getAdapter() {
+        return adapter;
+    }
 
     /**
      *  <p style="margin-top: 0">

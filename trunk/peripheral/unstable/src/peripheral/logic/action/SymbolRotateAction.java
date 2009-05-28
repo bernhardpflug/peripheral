@@ -1,6 +1,7 @@
 package peripheral.logic.action;
 
 import peripheral.logic.symboladapter.Symbol; 
+import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value; 
 
@@ -16,7 +17,13 @@ public class SymbolRotateAction extends SymbolAction {
 
     private Value angle;
 
-    public SymbolRotateAction () {
+    public SymbolRotateAction (SymbolAdapter adapter) {
+        super(adapter);
+    }
+
+    public SymbolRotateAction (SymbolAdapter adapter, Value angle) {
+        this(adapter);
+        this.angle = angle;
     }
 
     public float getAngle () {
@@ -25,7 +32,7 @@ public class SymbolRotateAction extends SymbolAction {
         //return angle;
     }
 
-    public java.util.Set<UserInput> getUserInput () {
+    public java.util.List<UserInput> getUserInput () {
         return null;
     }
 
@@ -38,10 +45,6 @@ public class SymbolRotateAction extends SymbolAction {
     }
 
     public void execute (Symbol s) {
-    }
-
-    public SymbolRotateAction (Value angle) {
-
     }
 
 }

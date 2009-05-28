@@ -1,42 +1,51 @@
 package peripheral.logic.action;
 
+import java.util.ArrayList;
+import java.util.List;
+import peripheral.logic.Logging;
 import peripheral.logic.symboladapter.Symbol; 
 import peripheral.logic.value.UserInput;
-import peripheral.logic.value.Value; 
+import peripheral.logic.value.Value;
+import peripheral.logic.Runtime;
+import peripheral.logic.symboladapter.SymbolAdapter;
+import peripheral.logic.value.ConstValue;
 
 public class SymbolSwapAction extends SymbolAction {
 
-    private Value filename;
+    private Value filename = null;
 
-    public SymbolSwapAction () {
+    public SymbolSwapAction (SymbolAdapter adapter) {
+        super(adapter);
     }
 
-    public SymbolSwapAction (Value filename) {
+    public SymbolSwapAction (SymbolAdapter adapter, Value filename) {
+        this(adapter);
         this.filename = filename;
     }
 
     public String getFilename () {
-        return null;
+        return filename.getValue().toString();
     }
 
-    public java.util.Set<UserInput> getUserInput () {
-        return null;
+    @Override
+    public java.util.List<UserInput> getUserInput () {
+        List<UserInput> ui = new ArrayList<UserInput>();
+        if (filename == null){
+            ui.add(new UserInput("Filename", "Filename of image to swap", new ConstValue(adapter, "filename", "")));
+        }
+        return ui;
     }
 
     public String getName () {
-        return null;
+        return "SymbolSwapAction";
     }
 
     public String getDescription () {
-        return null;
+        return "Swaps the image of the selected symbol to the specified new image.";
     }
 
-    /**
-     *  <p style="margin-top: 0">
-     *    Visualization.swap(s, file);
-     *      </p>
-     */
     public void execute (Symbol s) {
+        Runtime.getVisualization().swap(s, getFilename());
     }
 
 }

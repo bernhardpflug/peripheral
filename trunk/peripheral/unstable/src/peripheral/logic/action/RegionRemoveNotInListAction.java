@@ -2,6 +2,7 @@ package peripheral.logic.action;
 
 import java.util.Observable;
 import peripheral.logic.positioningtool.ActionTool; 
+import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value; 
 
@@ -9,17 +10,20 @@ public class RegionRemoveNotInListAction extends RegionAction {
 
     private Value symbolsToRetain;
 
-    public RegionRemoveNotInListAction () {
+    public RegionRemoveNotInListAction (SymbolAdapter adapter) {
+        super(adapter);
     }
 
-    public RegionRemoveNotInListAction (Value symbolsToRetain) {
+    public RegionRemoveNotInListAction (SymbolAdapter adapter, Value symbolsToRetain) {
+        this(adapter);
+        this.symbolsToRetain = symbolsToRetain;
     }
 
     public Value getSymbolsToRetain () {
         return symbolsToRetain;
     }
 
-    public java.util.Set<UserInput> getUserInput () {
+    public java.util.List<UserInput> getUserInput () {
         return null;
     }
 

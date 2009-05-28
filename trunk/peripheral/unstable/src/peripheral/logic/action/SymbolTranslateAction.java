@@ -2,6 +2,7 @@ package peripheral.logic.action;
 
 import peripheral.logic.positioningtool.Point; 
 import peripheral.logic.symboladapter.Symbol; 
+import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value; 
 
@@ -9,10 +10,12 @@ public class SymbolTranslateAction extends SymbolAction {
 
     private Value targetPosition;
 
-    public SymbolTranslateAction () {
+    public SymbolTranslateAction (SymbolAdapter adapter) {
+        super(adapter);
     }
 
-    public SymbolTranslateAction (Value targetPosition) {
+    public SymbolTranslateAction (SymbolAdapter adapter, Value targetPosition) {
+        this(adapter);
         this.targetPosition = targetPosition;
     }
 
@@ -22,7 +25,7 @@ public class SymbolTranslateAction extends SymbolAction {
         //return targetPosition;
     }
 
-    public java.util.Set<UserInput> getUserInput () {
+    public java.util.List<UserInput> getUserInput () {
         return null;
     }
 

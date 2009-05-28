@@ -4,6 +4,7 @@ import java.util.Observable;
 import java.util.Set;
 import peripheral.logic.positioningtool.ActionTool; 
 import peripheral.logic.positioningtool.PositioningTool;
+import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value; 
 
@@ -13,13 +14,17 @@ public class ListShowAction extends ListAction {
 
     private Value hideOthers;
 
-    public ListShowAction () {
+    public ListShowAction (SymbolAdapter adapter) {
+        super(adapter);
     }
 
-    public ListShowAction (Value elementsToShow, Value hideOthers) {
+    public ListShowAction (SymbolAdapter adapter, Value elementsToShow, Value hideOthers) {
+        this(adapter);
+        this.elementsToShow = elementsToShow;
+        this.hideOthers = hideOthers;
     }
 
-    public java.util.Set<UserInput> getUserInput () {
+    public java.util.List<UserInput> getUserInput () {
         return null;
     }
 

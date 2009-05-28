@@ -1,6 +1,7 @@
 package peripheral.logic.action;
 
 import peripheral.logic.symboladapter.Symbol; 
+import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value; 
 
@@ -8,10 +9,13 @@ public class SymbolContrastAction extends SymbolAction {
 
     private Value amount;
 
-    public SymbolContrastAction () {
+    public SymbolContrastAction (SymbolAdapter adapter) {
+        super(adapter);
     }
 
-    public SymbolContrastAction (Value amount) {
+    public SymbolContrastAction (SymbolAdapter adapter, Value amount) {
+        this(adapter);
+        this.amount = amount;
     }
 
     public float getAmount () {
@@ -20,7 +24,7 @@ public class SymbolContrastAction extends SymbolAction {
         //return amount;
     }
 
-    public java.util.Set<UserInput> getUserInput () {
+    public java.util.List<UserInput> getUserInput () {
         return null;
     }
 
