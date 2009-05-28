@@ -21,8 +21,12 @@ public class Rule implements Serializable{
         actions = new ArrayList<ActionToolAction>();
     }
 
-    public java.util.List<ActionToolAction> getActions () {
+    /*public java.util.List<ActionToolAction> getActions () {
         return actions;
+    }*/
+
+    public void addAction(ActionToolAction action){
+
     }
 
     public java.util.List<Condition> getConditions () {
@@ -37,7 +41,7 @@ public class Rule implements Serializable{
         }
 
         if (execute){
-            for (ActionToolAction a : getActions()){
+            for (ActionToolAction a : actions){
                 a.execute(adapter.getTool());
             }
         }
