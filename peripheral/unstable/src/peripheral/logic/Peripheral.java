@@ -16,11 +16,11 @@ public class Peripheral {
     public static void main(String[] args) {
         //@todo: read configuration-filename from args
 
-        Runtime.getInstance().startup("displayConfiguration.ser");
+        Runtime.getInstance().startup(null, "displayConfig.ser");
 
         try {
             System.out.println("Press <Enter> to terminate visualization.");
-            System.in.read();
+            //System.in.read();
         } catch (Exception e) {
             e.printStackTrace();
         }
