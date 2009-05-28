@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
@@ -26,6 +27,10 @@ import peripheral.designer.preview.PreviewDialog;
 import peripheral.designer.property.PropertyPanel;
 import peripheral.designer.wizard.AddAnimationDialog;
 import peripheral.logic.DisplayConfiguration;
+import peripheral.logic.positioningtool.ActionTool;
+import peripheral.logic.positioningtool.Point;
+import peripheral.logic.positioningtool.PositioningTool;
+import peripheral.logic.positioningtool.Region;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.ConstValue;
 import peripheral.logic.value.UserInput;
@@ -64,6 +69,7 @@ public class DesignerGUI extends javax.swing.JFrame {
     private void createDummyData() {
         SymbolAdapter slider1 = new SymbolAdapter();
         slider1.setName("RuleSlider1");
+        slider1.setTool(new Point());
         slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue(slider1,"EnableSmoothing",new Boolean(true))));
         slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationX",new Integer(0))));
         slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationY",new Integer(0))));
@@ -74,6 +80,7 @@ public class DesignerGUI extends javax.swing.JFrame {
 
         SymbolAdapter mover1 = new SymbolAdapter();
         mover1.setName("ContinousMover1");
+        mover1.setTool(new Region());
         mover1.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, new Boolean(false));
         DisplayConfiguration.getInstance().getAdapter().add(mover1);
 
@@ -464,6 +471,8 @@ public class DesignerGUI extends javax.swing.JFrame {
     private void defAnimationsListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_defAnimationsListValueChanged
 
         if (defAnimationsList.getSelectedValue() != null) {
+
+            //PROPERTYPANEL
             //in case of list selection change display properties of selected
             //symbol adapter
             List<UserInput> userInputs = ((SymbolAdapter)defAnimationsList.getSelectedValue()).getNeededUserInput();
@@ -474,12 +483,26 @@ public class DesignerGUI extends javax.swing.JFrame {
             AnimationPropertiesPanel.add(propertyPanel, java.awt.BorderLayout.CENTER);
 
             this.validate();
+
+            //PREVIEW DIALOG
+            //get all Positioningtools of currently selected Symboladapter
+            ActionTool actionTool = ((SymbolAdapter)defAnimationsList.getSelectedValue()).getTool();
+
+            PreviewDialog.getInstance().setPositioningtoolsToPaint(actionTool.getElements());
+            PreviewDialog.getInstance().updatePreview();
         }
         else {
+
+            //PROPERTYPANEL
             AnimationPropertiesPanel.removeAll();
             AnimationPropertiesPanel.add(new JLabel("No Animation selected"), java.awt.BorderLayout.CENTER);
 
             this.validate();
+
+            //PREVIEW DIALOG
+            //if no symboladapter is selected display just background
+            PreviewDialog.getInstance().setPositioningtoolsToPaint(null);
+            PreviewDialog.getInstance().updatePreview();
         }
     }//GEN-LAST:event_defAnimationsListValueChanged
 
