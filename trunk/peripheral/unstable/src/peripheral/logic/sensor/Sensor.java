@@ -1,13 +1,13 @@
 package peripheral.logic.sensor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
 
 import peripheral.logic.sensor.exception.SensorChannelException;
 import peripheral.logic.sensor.exception.SensorServerAddressException;
 
-
-public class Sensor extends Observable {
+public class Sensor extends Observable implements Serializable {
 
 	// Basic sensor attributes
     private long pid;
