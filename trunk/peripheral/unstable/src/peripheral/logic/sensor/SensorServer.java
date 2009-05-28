@@ -1,14 +1,15 @@
 package peripheral.logic.sensor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class SensorServer {
+public class SensorServer implements Serializable {
 
     private String address;
     private String port;
     private String username;
     private ArrayList<Sensor> sensors;
-    private XmlMetaParser parser;
+    private transient XmlMetaParser parser;
 
     public SensorServer (String address, String port, String username) {
     	this.address = address;
