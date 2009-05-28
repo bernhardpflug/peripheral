@@ -10,7 +10,9 @@ public abstract class Value implements Serializable {
 
     protected SymbolAdapter adapter;
 
-    private String varName;
+    protected String varName;
+
+    public Value (){}
 
     public Value (SymbolAdapter adapter, String name) {
         this.adapter = adapter;
