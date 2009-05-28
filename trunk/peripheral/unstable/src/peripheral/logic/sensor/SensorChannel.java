@@ -59,5 +59,27 @@ public class SensorChannel implements Serializable{
         return sensorValues;
     }
 
+    public Class getDatatype(){
+        String jddacType = metadata.get("datatype");
+
+        if (jddacType.equalsIgnoreCase("String")){
+            return String.class;
+        }
+        else if (jddacType.equalsIgnoreCase("Integer64")){
+            return long.class;
+        }
+        else if (jddacType.startsWith("Integer")){
+            return int.class;
+        }
+        else if (jddacType.equalsIgnoreCase("Float32")){
+            return float.class;
+        }
+        else if (jddacType.equalsIgnoreCase("Float64")){
+            return double.class;
+        }
+
+        return Object.class;
+    }
+
 }
 
