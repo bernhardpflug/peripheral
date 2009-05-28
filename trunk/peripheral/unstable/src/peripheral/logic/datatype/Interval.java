@@ -1,6 +1,6 @@
 package peripheral.logic.datatype;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 
 
 public class Interval {
@@ -32,7 +32,7 @@ public class Interval {
     }
 
     public Percentage getPercentage (double val){
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }
 
