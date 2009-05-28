@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import peripheral.designer.DesignerGUI;
 import peripheral.designer.preview.PreviewDialog;
 import peripheral.logic.positioningtool.PositioningTool;
+import peripheral.logic.symboladapter.AdapterTemplateFactory;
 import peripheral.logic.symboladapter.SymbolAdapter;
 
 /**
@@ -65,6 +66,10 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         return completedFlag;
     }
 
+    public boolean modifiedExisting() {
+        return modifyFlag;
+    }
+
     public SymbolAdapter getCreatedAdapter() {
         return symbolAdapter;
     }
@@ -75,22 +80,22 @@ public class AddAnimationDialog extends javax.swing.JDialog {
      * (before setVisible)
      * this causes disappearance of first panel and fill in of already defined
      * properties
-     * @param symbolAdapter to edit
+     * @param copyToEditsymbolAdapter to edit
      */
-    public void modifyExisting(SymbolAdapter symbolAdapter) {
+    public void modifyExisting(SymbolAdapter copyToEdit) {
 
         //leave first panel out
         CardLayout cl = ((java.awt.CardLayout)cardPanel.getLayout());
         currentIndex++;
         cl.next(cardPanel);
 
-        if (symbolAdapter.getRequiredSteps().get(SymbolAdapter.RequiredStep.Rules).booleanValue()) {
+        if (copyToEdit.getRequiredSteps().get(SymbolAdapter.RequiredStep.Rules).booleanValue()) {
             this.ruleBasedAdapterFlag = true;
         }
 
         modifyFlag = true;
 
-        this.symbolAdapter = symbolAdapter;
+        this.symbolAdapter = copyToEdit;
     }
 
     /** This method is called from within the constructor to
@@ -170,17 +175,16 @@ public class AddAnimationDialog extends javax.swing.JDialog {
             prevButton.setEnabled(true);
 
             //only allow proceeding if an adapter has been selected
-            SymbolAdapter selected = this.selectAnimationPanel1.getSelectedAdapter();
+            SymbolAdapter selectedTemplate = this.selectAnimationPanel1.getSelectedAdapter();
 
-            if (selected != null) {
-                this.symbolAdapter = selected;
+            if (selectedTemplate != null) {
+
+                //create instance for selected template to work on
+                this.symbolAdapter = AdapterTemplateFactory.getInstance().createInstanceFor(selectedTemplate);
 
                 if (symbolAdapter.getRequiredSteps().get(SymbolAdapter.RequiredStep.Rules).booleanValue()) {
                     this.ruleBasedAdapterFlag = true;
                 }
-
-                //set action tool for location panel after selection of a symboladpater
-                this.createLocationsSymbolsPanel1.setActionTool(symbolAdapter.getTool());
 
                 currentIndex++;
                 cl.next(cardPanel);
@@ -198,6 +202,9 @@ public class AddAnimationDialog extends javax.swing.JDialog {
             if (!this.ruleBasedAdapterFlag) {
                 nextButton.setText("Finish");
             }
+
+            //set action tool for location panel after selection of a symboladpater
+            this.createLocationsSymbolsPanel1.setActionTool(symbolAdapter.getTool());
 
             //display preview dialog for position panel
             if (!PreviewDialog.getInstance().isVisible()) {

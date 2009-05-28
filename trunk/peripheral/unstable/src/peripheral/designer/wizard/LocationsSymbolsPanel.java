@@ -22,15 +22,12 @@ import javax.swing.JOptionPane;
 import peripheral.designer.ImageFileChooser;
 import peripheral.designer.preview.ChangeListener;
 import peripheral.designer.preview.PreviewDialog;
-import peripheral.logic.DisplayConfiguration;
 import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.positioningtool.Line;
 import peripheral.logic.positioningtool.Point;
 import peripheral.logic.positioningtool.PositioningTool;
 import peripheral.logic.positioningtool.Region;
-import peripheral.logic.positioningtool.ToolList;
 import peripheral.logic.symboladapter.Symbol;
-import peripheral.logic.symboladapter.SymbolAdapter;
 
 /**
  *
