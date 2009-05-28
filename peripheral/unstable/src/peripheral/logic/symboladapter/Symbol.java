@@ -3,18 +3,17 @@ package peripheral.logic.symboladapter;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.Serializable;
 import javax.imageio.ImageIO;
 import peripheral.logic.action.SymbolAction;
 import peripheral.logic.positioningtool.Point; 
 
-public class Symbol {
+public class Symbol implements Serializable{
 
 
     private File file;
 
-    private BufferedImage bufferedImage;
+    private transient BufferedImage bufferedImage;
 
     private float angle;
 
