@@ -25,7 +25,7 @@ public class Runtime {
     private List<SensorUpdateThread> threads = new ArrayList<SensorUpdateThread>();
     private DisplayConfiguration displayConfig;
 
-    private static Visualization viz;
+    private Visualization viz;
 
     private Runtime() {
         sensorAdapterMapping = new HashMap<Sensor, List<SymbolAdapter>>();
@@ -39,7 +39,7 @@ public class Runtime {
         return theInstance;
     }
 
-    public static Visualization getVisualization(){
+    public Visualization getVisualization(){
         //return viz;
 
         //@todo: uncomment and return real viz-instance
