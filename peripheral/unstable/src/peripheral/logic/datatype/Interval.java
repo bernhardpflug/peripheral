@@ -1,6 +1,8 @@
 package peripheral.logic.datatype;
 
-public class Interval {
+import java.io.Serializable;
+
+public class Interval implements Serializable {
 
     private double lowerBound = 0;
     private double upperBound = 0;
@@ -41,5 +43,12 @@ public class Interval {
 
         return new Percentage(val/(up-low));
     }
+
+    @Override
+    public String toString() {
+        return "[" + lowerBound + "," + upperBound + "]";
+    }
+
+
 }
 
