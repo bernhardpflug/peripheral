@@ -18,6 +18,13 @@ public class ToolList implements ActionTool {
         else{
             throw new IllegalArgumentException("type must be one of Point.class or Region.class");
         }
+
+        if (type.equals(Point.class)){
+            visibleElements.add(new Point());
+        }
+        else {
+            visibleElements.add(new Region());
+        }
     }
 
     public java.util.ArrayList<PositioningTool> getHiddenElements() {
