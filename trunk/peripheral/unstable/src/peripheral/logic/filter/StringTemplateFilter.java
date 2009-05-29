@@ -1,47 +1,59 @@
 package peripheral.logic.filter;
 
-import java.util.ArrayList; 
+import peripheral.logic.Logging;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.ConstValue;
-import peripheral.logic.value.Value; 
 
 public class StringTemplateFilter extends Filter {
 
-    private Value template;
+    //private Value template;
+    public StringTemplateFilter(SymbolAdapter adapter, String outputVarName) {
+        super(adapter, outputVarName);
 
-    public StringTemplateFilter (SymbolAdapter adapter) {
-        super(adapter);
+        FilterInput fi = new FilterInput("inputValue", new Class[]{Number.class, String.class});
+        filterInputs.put(fi.getName(), fi);
+
+        fi = new FilterInput("template", new Class[]{String.class});
+        filterInputs.put(fi.getName(), fi);
+
+        outputValue = new ConstValue(adapter, outputVarName, "###VAL###", String.class);
     }
 
     @Override
-    public Object doFilter () {
-        String template = this.template.getValue().toString();
-        System.out.println("StringTemplateFilter, template=" + template);
+    public void doFilter() {
+        String template = (String) getFilterInputValue("template");
+        Object inputValue = (Object) getFilterInputValue("inputValue");
+        Logging.getLogger().finer("StringTemplateFilter, template=" + template);
 
-        template = template.replaceAll("###VAL###", this.getInputValue().toString());
+        template = template.replaceAll("###VAL###", inputValue.toString());
 
-        new ConstValue(adapter, this.getOutputVarName(), template);
+        outputValue.setValue(template);
 
-        System.out.println("StringTemplateFilter, templateAfterReplace=" + template);
-
-        return template;
+        Logging.getLogger().finer("StringTemplateFilter, templateAfterReplace=" + template);
     }
 
-    public ArrayList<java.lang.Class> getAcceptedInputTypes () {
+    /*public ArrayList<java.lang.Class> getAcceptedInputTypes() {
         return null;
     }
 
-    public java.lang.Class getOutputType () {
+    public java.lang.Class getOutputType() {
         return null;
     }
 
-    public Value getTemplate () {
-        return template;
-    }
+    public static List<Class> getNeededInputValTypes() {
+        List<Class> l = new ArrayList<Class>();
 
-    public void setTemplate (Value val) {
-        this.template = val;
-    }
+        l.add(String.class);
 
+        return l;
+    }*/
+
+    /*public Value getTemplate () {
+    return template;
+    }*/
+
+    /*public void setTemplate (Value val) {
+    this.template = val;
+    }*/
 }
 

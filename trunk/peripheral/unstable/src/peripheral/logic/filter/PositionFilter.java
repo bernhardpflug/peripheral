@@ -6,8 +6,7 @@
 package peripheral.logic.filter;
 
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
+import peripheral.logic.Logging;
 import peripheral.logic.datatype.Percentage;
 import peripheral.logic.positioningtool.Line;
 import peripheral.logic.symboladapter.SymbolAdapter;
@@ -19,26 +18,34 @@ import peripheral.logic.value.ConstValue;
  */
 public class PositionFilter extends Filter{
 
-    private Line line;
+    public PositionFilter(SymbolAdapter adapter, String outputVarName) {
+        super(adapter, outputVarName);
 
-    public PositionFilter (SymbolAdapter adapter, Line line){
-        super(adapter);
-        this.line = line;
+        FilterInput fi = new FilterInput("percentage", new Class[]{Percentage.class});
+        filterInputs.put(fi.getName(), fi);
+
+        fi = new FilterInput("line", new Class[]{Line.class});
+        filterInputs.put(fi.getName(), fi);
+
+        outputValue = new ConstValue(adapter, outputVarName, new Point(), Point.class);
     }
 
     @Override
-    public Object doFilter() {
-        Percentage percentage = (Percentage)this.getInputValue();
+    public void doFilter() {
+        Percentage percentage = (Percentage) getFilterInputValue("percentage");
+        Line line = (Line) getFilterInputValue("line");
+
         Point pos = new Point();
 
         pos.x = line.getStartPoint().x + (int)((line.getEndPoint().x - line.getStartPoint().x)*percentage.getVal());
         pos.y = line.getStartPoint().y + (int)((line.getEndPoint().y - line.getStartPoint().y)*percentage.getVal());
 
-        new ConstValue(adapter, getOutputVarName(), pos);
-        return pos;
+        outputValue.setValue(pos);
+
+        Logging.getLogger().finer("percentage=" + percentage + "; line=" + line + "; position=" + pos);
     }
 
-    @Override
+    /*@Override
     public List<Class> getAcceptedInputTypes() {
         List<Class> acc = new ArrayList<Class>();
 
@@ -50,7 +57,7 @@ public class PositionFilter extends Filter{
     @Override
     public Class getOutputType() {
         return Point.class;
-    }
+    }*/
 
 
 }
