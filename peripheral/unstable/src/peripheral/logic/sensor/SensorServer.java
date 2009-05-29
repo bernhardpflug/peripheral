@@ -2,14 +2,23 @@ package peripheral.logic.sensor;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Observable;
 
-public class SensorServer implements Serializable {
+public class SensorServer extends Observable implements Serializable {
 
     private String address;
     private String port;
     private String username;
     private ArrayList<Sensor> sensors;
-    private transient XmlMetaParser parser;
+    
+    private status connectionStatus;
+    
+    public static enum status {
+    	offline,
+    	connecting,
+    	online,
+    	error
+    };
 
     public SensorServer (String address, String port, String username) {
     	this.address = address;
@@ -17,7 +26,12 @@ public class SensorServer implements Serializable {
     	this.username = username;
     	this.sensors = new ArrayList<Sensor>();
     	
-    	this.parser = new XmlMetaParser(this);
+    	connectionStatus = status.offline;
+    }
+    
+    public void connect(){
+    	XmlMetaParser parser = new XmlMetaParser(this);
+    	parser.start();
     }
     
     // GETTERS AND SETTERS
@@ -36,10 +50,16 @@ public class SensorServer implements Serializable {
     public String getUsername () {
         return username;
     }
-    
-    public XmlMetaParser getXmlMetaParser(){
-    	return parser;
-    }
+
+	public status getConnectionStatus() {
+		return connectionStatus;
+	}
+
+	public void setConnectionStatus(status conn_status) {
+		this.connectionStatus = conn_status;
+		setChanged();
+		notifyObservers(new ServerConnectionStatusChangedEvent());
+	}
 
 }
 
