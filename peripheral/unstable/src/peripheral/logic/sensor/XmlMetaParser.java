@@ -16,8 +16,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import peripheral.logic.Logging;
+import peripheral.logic.sensor.SensorServer.status;
 
-public class XmlMetaParser {
+
+public class XmlMetaParser extends Thread{
 
     private SensorServer server;
     private Sensor tempSensor;
@@ -26,10 +29,17 @@ public class XmlMetaParser {
     	this.server = server;
     }
     
+    public void run(){
+    	createInstancesFromXML();
+    }
+    
     public void createInstancesFromXML () {
+    	
+    	server.setConnectionStatus(status.connecting);
     	
     	DataInputStream xml = getXmlFromServer();
     	parseXmlAndCreateInstances(xml);
+    	
     }
     
     protected DataInputStream getXmlFromServer(){
@@ -49,9 +59,11 @@ public class XmlMetaParser {
 			is = new DataInputStream(conn.getInputStream());
 			
 		} catch (MalformedURLException e) {
-			System.err.println("Malformed URL: " + e.getMessage());
+			Logging.getLogger().fine("Malformed URL: " + e.getMessage());
+			server.setConnectionStatus(status.error);
 		} catch (IOException e) {
-			System.err.println("Corrput inputstream retrieved from Server: " + e.getMessage());
+			server.setConnectionStatus(status.error);
+			Logging.getLogger().fine("Corrput inputstream retrieved from Server: " + e.getMessage());
 		}
     	
     	return is;
@@ -179,14 +191,21 @@ public class XmlMetaParser {
 				
 				// Add sensor to server
 				server.getSensorList().add(tempSensor);
+				server.setConnectionStatus(status.online);
 			}
 			
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+			Logging.getLogger().fine(e.getMessage());
+			server.setConnectionStatus(status.error);
 		} catch (SAXException e) {
-			e.printStackTrace();
+			Logging.getLogger().fine(e.getMessage());
+			server.setConnectionStatus(status.error);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logging.getLogger().fine(e.getMessage());
+			server.setConnectionStatus(status.error);
+		} catch (IllegalArgumentException e){
+			Logging.getLogger().fine(e.getMessage());
+			server.setConnectionStatus(status.error);
 		}
     }
 
