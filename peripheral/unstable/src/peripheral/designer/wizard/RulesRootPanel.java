@@ -95,7 +95,7 @@ public class RulesRootPanel extends javax.swing.JPanel {
             addNewRule();
         }
         
-        parent.validate();
+        this.windowChanged();
     }
 
     private void createConditionPanels() {
