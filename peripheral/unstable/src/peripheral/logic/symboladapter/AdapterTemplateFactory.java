@@ -112,7 +112,7 @@ public class AdapterTemplateFactory {
         rule.getConditions().add(new TrueCondition());
         symbolAction = new SymbolSwapAction(adapter, new VarValue(adapter, "filename"));
         wrapperAction = PointWrapperAction.getPointWrapperAction(adapter, symbolAction);
-        rule.addAction(wrapperAction);
+        rule.getActions().add(wrapperAction);
         adapter.getRules().add(rule);
 
         templates.add(adapter);
@@ -149,7 +149,7 @@ public class AdapterTemplateFactory {
         rule.getConditions().add(new TrueCondition());
         symbolAction = new SymbolTranslateAction(adapter, new VarValue(adapter, "positionX"), new VarValue(adapter, "positionY"));
         wrapperAction = PointWrapperAction.getPointWrapperAction(adapter, symbolAction);
-        rule.addAction(wrapperAction);
+        rule.getActions().add(wrapperAction);
         adapter.getRules().add(rule);
 
         templates.add(adapter);
