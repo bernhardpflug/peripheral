@@ -1,32 +1,42 @@
 package peripheral.logic.rule;
 
+import peripheral.designer.conditions.ContainedByRightSideComponent;
+import peripheral.logic.Logging;
 
-public abstract class ContainedByCondition extends ConditionOperation {
+public class ContainedByCondition extends ConditionOperation {
 
-    private float upperLimit;
+    private transient ContainedByRightSideComponent rightSideComponent;
+    private double lowerBound;
+    private double upperBound;
 
-    public ContainedByCondition () {
+    public ContainedByCondition() {
     }
 
-    public boolean eval (Condition cond) {
-        return true;
+    public boolean eval(Condition cond) {
+        double value = Double.parseDouble(cond.getLeftSideOp().getValue().toString());
+
+        return (value >= lowerBound) && (value <= upperBound);
     }
 
-    public String getOperationName () {
-        return null;
+    public String getOperationName() {
+        return "between";
     }
 
-    public java.awt.Component getRightSideComponent () {
-        return null;
+    public java.awt.Component getRightSideComponent() {
+        if (rightSideComponent == null) {
+            rightSideComponent = new ContainedByRightSideComponent();
+        }
+        return rightSideComponent;
     }
 
-    public float getUpperLimit () {
-        return upperLimit;
-    }
+    @Override
+    public void saveValuesFromRightSideComponent() {
+        if (rightSideComponent != null) {
+            lowerBound = rightSideComponent.getLowerBound();
+            upperBound = rightSideComponent.getUpperBound();
 
-    public void setUpperLimit (float val) {
-        this.upperLimit = val;
+            Logging.getLogger().finer("saved values: lowerBound=" + lowerBound + ", upperBound=" + upperBound);
+        }
     }
-
 }
 
