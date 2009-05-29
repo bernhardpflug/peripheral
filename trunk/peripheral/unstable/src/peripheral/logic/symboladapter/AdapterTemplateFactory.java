@@ -3,9 +3,10 @@ package peripheral.logic.symboladapter;
 import java.util.ArrayList;
 import peripheral.logic.action.PointWrapperAction;
 import peripheral.logic.action.SymbolAction;
+import peripheral.logic.action.SymbolScaleAction;
 import peripheral.logic.action.SymbolSwapAction;
 import peripheral.logic.action.SymbolTranslateAction;
-import peripheral.logic.datatype.Interval;
+import peripheral.logic.filter.MultiplyFilter;
 import peripheral.logic.filter.PercentageFilter;
 import peripheral.logic.filter.PositionFilter;
 import peripheral.logic.filter.StringTemplateFilter;
@@ -14,19 +15,18 @@ import peripheral.logic.positioningtool.Point;
 import peripheral.logic.rule.Rule;
 import peripheral.logic.rule.TrueCondition;
 import peripheral.logic.value.ConstValue;
+import peripheral.logic.value.SensorIntervalVarValue;
 import peripheral.logic.value.SensorValue;
 import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value;
 import peripheral.logic.value.VarValue;
 
-
 public class AdapterTemplateFactory {
 
     private static AdapterTemplateFactory instance;
-
     private java.util.List<SymbolAdapter> templates;
 
-    private AdapterTemplateFactory () {
+    private AdapterTemplateFactory() {
 
         templates = new ArrayList<SymbolAdapter>();
 
@@ -42,9 +42,9 @@ public class AdapterTemplateFactory {
         contSlider.setName("continuousSlider");
         contSlider.setTool(new Point());
         contSlider.setDescription("A slider based on \na sensorvalue that continously \nmaps the sensorvalue\n onto a selected area");
-        contSlider.getNeededUserInput().add(new UserInput("ui1","what the hell", new SensorValue(contSlider, "SensorValue",null)));
-        contSlider.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(contSlider, "LocationX",new Integer(0))));
-        contSlider.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(contSlider, "LocationY",new Integer(0))));
+        contSlider.getNeededUserInput().add(new UserInput("ui1", "what the hell", new SensorValue(contSlider, "SensorValue", null, Number.class)));
+        contSlider.getNeededUserInput().add(new UserInput("ui2", "what the hell", new ConstValue(contSlider, "LocationX", new Integer(0), Integer.class)));
+        contSlider.getNeededUserInput().add(new UserInput("ui2", "what the hell", new ConstValue(contSlider, "LocationY", new Integer(0), Integer.class)));
 
         contSlider.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, new Boolean(false));
 
@@ -54,16 +54,16 @@ public class AdapterTemplateFactory {
         ruleSlider.setName("ruleBasedSlider");
         ruleSlider.setTool(new Line());
         ruleSlider.setDescription("A slider were rules \ncan be defined for mapping \nseveral sensorvalues onto\n the position of the picture");
-        ruleSlider.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue(ruleSlider, "EnableSmoothing",new Boolean(true))));
-        ruleSlider.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(ruleSlider, "LocationX",new Integer(0))));
-        ruleSlider.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(ruleSlider, "LocationY",new Integer(0))));
+        ruleSlider.getNeededUserInput().add(new UserInput("ui1", "what the hell", new ConstValue(ruleSlider, "EnableSmoothing", new Boolean(true), Boolean.class)));
+        ruleSlider.getNeededUserInput().add(new UserInput("ui2", "what the hell", new ConstValue(ruleSlider, "LocationX", new Integer(0), Integer.class)));
+        ruleSlider.getNeededUserInput().add(new UserInput("ui2", "what the hell", new ConstValue(ruleSlider, "LocationY", new Integer(0), Integer.class)));
 
         ruleSlider.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, new Boolean(true));
 
         templates.add(ruleSlider);
     }
 
-    private void createTemplates (){
+    private void createTemplates() {
         /**
          * swapper adapter 1
          */
@@ -76,7 +76,7 @@ public class AdapterTemplateFactory {
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, true);
 
         SymbolAction symbolAction = new SymbolSwapAction(adapter);
-        PointWrapperAction wrapperAction = PointWrapperAction.getPointWrapperAction(adapter, symbolAction);
+        PointWrapperAction wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.setDefaultAction(wrapperAction);
 
         templates.add(adapter);
@@ -92,26 +92,28 @@ public class AdapterTemplateFactory {
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
-        Value val = new SensorValue(adapter, "sensorValue", null);
+        Value val = new SensorValue(adapter, "sensorValue", null, Number.class);
         UserInput input = new UserInput("Sensorwert", "Wert vom Sensor", val);
         adapter.getNeededUserInput().add(input);
 
-        val = new ConstValue(adapter, "filenameTemplate", "file_###VAL###.png");
+        val = new ConstValue(adapter, "filenameTemplate", "file_###VAL###.png", String.class);
         input = new UserInput("Dateinamen-Template", "", val);
         adapter.getNeededUserInput().add(input);
 
-        StringTemplateFilter stf = new StringTemplateFilter(adapter);
-        val = new VarValue(adapter, "sensorValue");
-        stf.setInputVar((VarValue)val);
-        val = new VarValue(adapter, "filenameTemplate");
-        stf.setTemplate(val);
-        stf.setOutputVarName("filename");
+        StringTemplateFilter stf = new StringTemplateFilter(adapter, "filename");
+        VarValue varVal = new VarValue(adapter, "sensorValue");
+        stf.putFilterInputValue("inputValue", varVal);
+        //stf.setInputVar((VarValue)val);
+        varVal = new VarValue(adapter, "filenameTemplate");
+        //stf.setTemplate(val);
+        stf.putFilterInputValue("template", varVal);
+        //stf.setOutputVarName("filename");
         adapter.getBeforeFilter().add(stf);
 
         Rule rule = new Rule(adapter);
         rule.getConditions().add(new TrueCondition());
         symbolAction = new SymbolSwapAction(adapter, new VarValue(adapter, "filename"));
-        wrapperAction = PointWrapperAction.getPointWrapperAction(adapter, symbolAction);
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
         rule.getActions().add(wrapperAction);
         adapter.getRules().add(rule);
 
@@ -128,34 +130,71 @@ public class AdapterTemplateFactory {
         adapter.setTool(new Line());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
-        val = new SensorValue(adapter, "sensorValue", null);
+        val = new SensorValue(adapter, "sensorValue", null, Number.class);
         input = new UserInput("Sensorwert", "Wert vom Sensor", val);
         adapter.getNeededUserInput().add(input);
 
-        //wie greift man auf lower/upper bound des sensors zu?
-        Interval interval = null;
-
-        PercentageFilter pf = new PercentageFilter(adapter, (SensorValue)val);
-        pf.setInputVar(new VarValue(adapter, "sensorValue"));
-        pf.setOutputVarName("percentage");
+        //PercentageFilter pf = new PercentageFilter(adapter, (SensorValue)val);
+        PercentageFilter pf = new PercentageFilter(adapter, "percentage");
+        //pf.setInputVar(new VarValue(adapter, "sensorValue"));
+        pf.putFilterInputValue("inputValue", new VarValue(adapter, "sensorValue"));
+        pf.putFilterInputValue("interval", new SensorIntervalVarValue(adapter, "sensorValue"));
+        //pf.setOutputVarName("percentage");
         adapter.getBeforeFilter().add(pf);
 
-        PositionFilter posf = new PositionFilter(adapter, (Line)adapter.getTool());
-        posf.setInputVar(new VarValue(adapter, "percentage"));
-        posf.setOutputVarName("position");
+        //PositionFilter posf = new PositionFilter(adapter, (Line)adapter.getTool());
+        PositionFilter posf = new PositionFilter(adapter, "position");
+        //posf.setInputVar(new VarValue(adapter, "percentage"));
+        posf.putFilterInputValue("percentage", new VarValue(adapter, "percentage"));
+        new ConstValue(adapter, "line", (Line) adapter.getTool(), Line.class);
+        posf.putFilterInputValue("line", new VarValue(adapter, "line"));
+        //posf.setOutputVarName("position");
         adapter.getBeforeFilter().add(posf);
 
         rule = new Rule(adapter);
         rule.getConditions().add(new TrueCondition());
-        symbolAction = new SymbolTranslateAction(adapter, new VarValue(adapter, "positionX"), new VarValue(adapter, "positionY"));
-        wrapperAction = PointWrapperAction.getPointWrapperAction(adapter, symbolAction);
+        symbolAction = new SymbolTranslateAction(adapter, new VarValue(adapter, "position"));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        rule.getActions().add(wrapperAction);
+        adapter.getRules().add(rule);
+
+        templates.add(adapter);
+
+        /**
+         * scaler 1
+         */
+        adapter = new SymbolAdapter();
+
+        adapter.setName("Vertical scaler based on sensor value");
+        adapter.setDescription("Scaler, bei dem der vertikale Skalierungsfaktor durch einen Sensorwert festgelegt wird.");
+
+        adapter.setTool(new Point());
+        adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
+
+        val = new SensorValue(adapter, "sensorValue", null, Number.class);
+        input = new UserInput("Sensorwert", "Wert vom Sensor", val);
+        adapter.getNeededUserInput().add(input);
+
+        val = new ConstValue(adapter, "multiplyFactor", 1.0, Number.class);
+        input = new UserInput("MultiplyFactor", "Faktor, mit dem der eingehende Sensorwert multipliziert wird. Skalierungsfaktor ergibt sich aus Sensorwert*MultiplyFactor", val);
+        adapter.getNeededUserInput().add(input);
+
+        MultiplyFilter mf = new MultiplyFilter(adapter, "factorY");
+        mf.putFilterInputValue("factor1", new VarValue(adapter, "sensorValue"));
+        mf.putFilterInputValue("factor2", new VarValue(adapter, "multiplyFactor"));
+        adapter.getBeforeFilter().add(mf);
+
+        rule = new Rule(adapter);
+        rule.getConditions().add(new TrueCondition());
+        symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "factorX", 1.0, Float.class), new VarValue(adapter, "factorY"));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
         rule.getActions().add(wrapperAction);
         adapter.getRules().add(rule);
 
         templates.add(adapter);
     }
 
-    public static AdapterTemplateFactory getInstance () {
+    public static AdapterTemplateFactory getInstance() {
 
         if (instance == null) {
             instance = new AdapterTemplateFactory();
@@ -164,13 +203,12 @@ public class AdapterTemplateFactory {
         return instance;
     }
 
-    public java.util.List<SymbolAdapter> getTemplates () {
+    public java.util.List<SymbolAdapter> getTemplates() {
         return templates;
     }
 
-    public SymbolAdapter createInstanceFor (SymbolAdapter template) {
+    public SymbolAdapter createInstanceFor(SymbolAdapter template) {
         return template.createCopy();
     }
-
 }
 
