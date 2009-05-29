@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 import peripheral.logic.symboladapter.Symbol;
 
 
-public class Line extends PositioningTool {
+public class Line extends Point {
 
     private java.awt.Point startPoint;
 
