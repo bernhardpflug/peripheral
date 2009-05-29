@@ -96,7 +96,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
 
     private void updateGUICoordinates(PositioningTool pos) {
 
-        if (pos instanceof Point) {
+        if ((pos instanceof Point) && ! (pos instanceof Line)) {
 
             Point point = (Point)pos;
 
@@ -166,7 +166,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
 
         if (field.getName().equals("xTextField")) {
 
-            if (pos instanceof Point) {
+            if (((pos instanceof Point) && ! (pos instanceof Line))) {
                 ((Point)pos).getPosition().x = value;
             }
             else if (pos instanceof Line) {
@@ -179,7 +179,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
         }
         else if (field.getName().equals("yTextField")) {
 
-            if (pos instanceof Point) {
+            if (((pos instanceof Point) && ! (pos instanceof Line))) {
                 ((Point)pos).getPosition().y = value;
             }
             else if (pos instanceof Line) {

@@ -272,6 +272,10 @@ public class AddAnimationDialog extends javax.swing.JDialog {
             //unregister changelistener from preview dialog
             PreviewDialog.getInstance().removePreviewListener(createLocationsSymbolsPanel1);
 
+            //remove positioningtools from preview
+            PreviewDialog.getInstance().setPositioningtoolsToPaint(null);
+            PreviewDialog.getInstance().updatePreview();
+
             currentIndex--;
             cl.previous(cardPanel);
         }
@@ -326,7 +330,7 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         public void windowClosed(WindowEvent e) {
 
             //when closing reset positioning tools
-            PreviewDialog.getInstance().setPositioningtoolsToPaint(new java.util.ArrayList<PositioningTool>(1));
+            PreviewDialog.getInstance().setPositioningtoolsToPaint(null);
             PreviewDialog.getInstance().updatePreview();
 
             //indicate designer that dialog closed
