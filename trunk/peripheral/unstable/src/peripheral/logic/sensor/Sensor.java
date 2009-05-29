@@ -16,7 +16,7 @@ public class Sensor extends Observable implements Serializable {
     // Object references
     private SensorServer server;
     private ArrayList<SensorChannel> channels;
-    private CSVCheckout csv;
+    private transient CSVCheckout csv;
 
     // Variables for data retrieval
     private float samplerate = 1.0f;
