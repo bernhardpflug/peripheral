@@ -29,6 +29,13 @@ public class SensorServer extends Observable implements Serializable {
     	connectionStatus = status.offline;
     }
     
+    public void reconnect(){
+    	sensors = new ArrayList<Sensor>();
+    	
+    	XmlMetaParser parser = new XmlMetaParser(this);
+    	parser.start();
+    }
+    
     public void connect(){
     	XmlMetaParser parser = new XmlMetaParser(this);
     	parser.start();

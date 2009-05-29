@@ -8,12 +8,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import peripheral.logic.datatype.Interval;
 import peripheral.logic.value.SensorValue;
 
-
 public class SensorChannel implements Serializable{
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private long mid;
     private String fullname;
