@@ -5,11 +5,13 @@
 
 package peripheral.logic.datatype;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Andi
  */
-public class Percentage {
+public class Percentage implements Serializable {
     private double val = 0;
 
     public Percentage(double val) {
@@ -29,4 +31,11 @@ public class Percentage {
             this.val = 1.0;
         }
     }
+
+    @Override
+    public String toString() {
+        return String.valueOf(val*100) + "%";
+    }
+
+
 }
