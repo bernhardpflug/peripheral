@@ -62,7 +62,7 @@ public class Runtime {
             }
 
             public void init(String backgroundImageFilename, Dimension resolution) {
-                throw new UnsupportedOperationException("Not supported yet.");
+                Logging.getLogger().finer("Visualization-init: background-image: " + backgroundImageFilename + "; resolution: " + resolution);
             }
 
             public void removeSymbol(Symbol s) {
@@ -103,27 +103,24 @@ public class Runtime {
         displayConfig = DisplayConfiguration.getInstance();
 
         //@todo: uncomment when visualization is ready
-        //initVisualization();
+        initVisualization();
 
         //@todo: delete: only for testing purpose
         executeAdapters();
-
-        // startSensorServer();
+        ////@todo: delete: only for testing purpose
+        //startSensorServer();
 
         //createSensorAdapterMapping();
         //createSensorUpdateThreads();
 
         //startServers();
-    //startSensorCheckout();
+        //startSensorCheckout();
     }
 
     private void startSensorServer() {
         // Create Server
         SensorServer server = new SensorServer("http://dyn167048.wlan.jku.at", "8080", "admin");
-
-        // Get Server's XML Parser
-        XmlMetaParser xml = server.getXmlMetaParser();
-        xml.createInstancesFromXML();
+        server.connect();
 
         // Check count of sensors
         System.out.println("Server has " + server.getSensorList().size() + " Sensors.\n");
@@ -158,6 +155,8 @@ public class Runtime {
     }
 
     private void initVisualization() {
+        Visualization viz = getVisualization();
+
         viz.init(
                 displayConfig.getBackgroundImageFilename(),
                 displayConfig.getDimension());
@@ -183,10 +182,6 @@ public class Runtime {
                 }
             }
         }
-    }
-
-    private void showVisualization() {
-        
     }
 
     private void initPoint(Visualization viz, Point point) {
@@ -234,10 +229,10 @@ public class Runtime {
         }
     }
 
-    private void startServers() {
+    /*private void startServers() {
         for (Thread th : threads) {
            // th.start();
         }
-    }
+    }*/
 }
 
