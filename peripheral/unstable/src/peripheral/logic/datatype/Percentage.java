@@ -13,7 +13,7 @@ public class Percentage {
     private double val = 0;
 
     public Percentage(double val) {
-        this.val = val;
+        setVal(val);
     }
 
     public Percentage() {
@@ -25,5 +25,8 @@ public class Percentage {
 
     public void setVal(double val) {
         this.val = val;
+        if (val > 1.0){
+            this.val = 1.0;
+        }
     }
 }

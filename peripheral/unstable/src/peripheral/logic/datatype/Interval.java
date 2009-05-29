@@ -1,38 +1,45 @@
 package peripheral.logic.datatype;
 
-
-
-
 public class Interval {
 
-    private double lowerBound;
+    private double lowerBound = 0;
+    private double upperBound = 0;
 
-    private double upperBound;
-
-    public Interval () {
+    public Interval() {
     }
 
-    public Interval (double lowerBound, double upperBound) {
+    public Interval(double lowerBound, double upperBound) throws Exception {
+        setBounds(lowerBound, upperBound);
     }
 
-    public double getLowerBound () {
+    public double getLowerBound() {
         return lowerBound;
     }
 
-    public void setLowerBound (double val) {
-        this.lowerBound = val;
-    }
-
-    public double getUpperBound () {
+    public double getUpperBound() {
         return upperBound;
     }
 
-    public void setUpperBound (double val) {
-        this.upperBound = val;
+    public void setBounds(double lowerBound, double upperBound) throws Exception {
+        if (lowerBound > upperBound) {
+            throw new Exception("Lower bound must be lower or equal then upper bound.");
+        }
+
+        this.lowerBound = lowerBound;
+        this.upperBound = upperBound;
     }
 
-    public Percentage getPercentage (double val){
-        throw new UnsupportedOperationException();
+    public Percentage getPercentage(double value) {
+        double offset = 0;
+        if (lowerBound < 0){
+            offset = -lowerBound;
+        }
+
+        double low = lowerBound + offset;
+        double up = upperBound + offset;
+        double val = value + offset;
+
+        return new Percentage(val/(up-low));
     }
 }
 
