@@ -21,13 +21,13 @@ public class Rule implements Serializable{
         actions = new ArrayList<ActionToolAction>();
     }
 
-    /*public java.util.List<ActionToolAction> getActions () {
+    public java.util.List<ActionToolAction> getActions () {
         return actions;
-    }*/
-
-    public void addAction(ActionToolAction action){
-
     }
+
+    /*public void addAction(ActionToolAction action){
+
+    }*/
 
     public java.util.List<Condition> getConditions () {
         return conditions;

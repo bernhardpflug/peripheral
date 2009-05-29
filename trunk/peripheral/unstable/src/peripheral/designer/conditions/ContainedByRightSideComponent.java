@@ -52,11 +52,11 @@ public class ContainedByRightSideComponent extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     public double getLowerBound (){
-        return Double.parseDouble(this.textFieldLowerBound.getText());
+        return Double.parseDouble(this.textFieldLowerBound.getText().replace(',', '.'));
     }
 
     public double getUpperBound (){
-        return Double.parseDouble(this.textFieldUpperBound.getText());
+        return Double.parseDouble(this.textFieldUpperBound.getText().replace(',', '.'));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
