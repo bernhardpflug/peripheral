@@ -67,9 +67,9 @@ public class DesignerGUI extends javax.swing.JFrame {
         SymbolAdapter slider1 = new SymbolAdapter();
         slider1.setName("RuleSlider1");
         slider1.setTool(new Point());
-        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue(slider1,"EnableSmoothing",new Boolean(true))));
-        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationX",new Integer(0))));
-        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationY",new Integer(0))));
+        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue(slider1,"EnableSmoothing",new Boolean(true),Boolean.class)));
+        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationX",new Integer(0),Integer.class)));
+        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationY",new Integer(0), Integer.class)));
 
         slider1.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, new Boolean(true));
 
@@ -168,7 +168,6 @@ public class DesignerGUI extends javax.swing.JFrame {
         prevButton = new javax.swing.JButton();
         cardPanel = new javax.swing.JPanel();
         SensorPanel = new javax.swing.JPanel();
-        sensorPanel1 = new peripheral.designer.SensorPanel();
         BackgroundPanel = new javax.swing.JPanel();
         jFileChooser1 = new peripheral.designer.ImageFileChooser();
         AnimationsPanel = new javax.swing.JPanel();
@@ -232,8 +231,6 @@ public class DesignerGUI extends javax.swing.JFrame {
 
         SensorPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 1 : Select Sensorserver"));
         SensorPanel.setLayout(new java.awt.BorderLayout());
-        SensorPanel.add(sensorPanel1, java.awt.BorderLayout.CENTER);
-
         cardPanel.add(SensorPanel, "card2");
 
         BackgroundPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 2 : Select Background Image of the Scene"));
@@ -704,7 +701,6 @@ public class DesignerGUI extends javax.swing.JFrame {
     private javax.swing.JButton priorityUpButton;
     private javax.swing.JButton removeAnimationButton;
     private javax.swing.JButton saveConfigurationButton;
-    private peripheral.designer.SensorPanel sensorPanel1;
     // End of variables declaration//GEN-END:variables
 
 }
