@@ -15,9 +15,9 @@ public class SensorValue extends Value {
         setSensorChannel(sensorChannel);
     }
 
-    public SensorValue(SymbolAdapter adapter, String varName, SensorChannel sensorChannel) {
+    /*public SensorValue(SymbolAdapter adapter, String varName, SensorChannel sensorChannel) {
         this(adapter, varName, sensorChannel, null);
-    }
+    }*/
 
     public SensorChannel getSensorChannel() {
         return sensorChannel;
@@ -38,13 +38,13 @@ public class SensorValue extends Value {
     }
 
     public Object getValue() {
-        return "100";
+        //@todo: return real actvalue
+        return 100;
     //return actValue;
     }
 
-    public Interval getLimits() {
-        //return sensor limits
-        return new Interval();
+    public Interval getBounds() {
+        return sensorChannel.getBounds();
     }
 }
 
