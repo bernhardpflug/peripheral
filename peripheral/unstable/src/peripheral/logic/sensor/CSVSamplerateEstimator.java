@@ -9,6 +9,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.Stack;
+import java.util.logging.Logger;
+
+import peripheral.logic.Logging;
 
 public class CSVSamplerateEstimator extends Thread {
 
@@ -25,13 +28,15 @@ public class CSVSamplerateEstimator extends Thread {
 		
 			String startmark = sensor.getStartmark();
 			calculateFromCSVFile(startmark);
+			
 	}
 	
 	private void calculateFromCSVFile(String startmark){
 		
 		Stack<Long> timestamps = new Stack<Long>();
 		
-		System.err.println("Startmark" + startmark);
+		Logging.getLogger().fine("Startmark: " + startmark);
+//		System.err.println("Startmark" + startmark);
 		
 		do {
 			timestamps = getNewMeasStack(startmark);
