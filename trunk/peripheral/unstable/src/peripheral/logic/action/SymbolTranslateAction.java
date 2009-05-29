@@ -13,6 +13,7 @@ public class SymbolTranslateAction extends SymbolAction {
 
     private Value targetPositionX;
     private Value targetPositionY;
+    private Value targetPosition;
 
     public SymbolTranslateAction(SymbolAdapter adapter) {
         super(adapter);
@@ -22,6 +23,11 @@ public class SymbolTranslateAction extends SymbolAction {
         this(adapter);
         this.targetPositionX = targetPositionX;
         this.targetPositionY = targetPositionY;
+    }
+
+    public SymbolTranslateAction(SymbolAdapter adapter, Value targetPosition) {
+        this(adapter);
+        this.targetPosition = targetPosition;
     }
 
     public int getTargetPositionX() {
@@ -34,12 +40,17 @@ public class SymbolTranslateAction extends SymbolAction {
         return Integer.parseInt(targetPositionY.getValue().toString());
     }
 
+    public java.awt.Point getTargetPosition() {
+        //extract concrete value from Value-Object
+        return (java.awt.Point)targetPosition.getValue();
+    }
+
     public java.util.List<UserInput> getUserInput() {
         List<UserInput> ui = new ArrayList<UserInput>();
-        if (targetPositionX == null) {
+        if (targetPosition == null && targetPositionX == null) {
             ui.add(new UserInput("Target position x", "x-value to which the symbol should be moved.", new ConstValue(adapter, "targetPositionX", 0, int.class)));
         }
-        if (targetPositionY == null) {
+        if (targetPosition == null && targetPositionY == null) {
             ui.add(new UserInput("Target position y", "y-value to which the symbol should be moved.", new ConstValue(adapter, "targetPositionY", 0, int.class)));
         }
         return ui;

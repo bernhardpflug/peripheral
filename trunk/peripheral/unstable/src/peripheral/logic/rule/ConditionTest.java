@@ -33,7 +33,7 @@ public class ConditionTest {
         test.createDummySensors();
 
         Condition cond = new Condition();
-        SensorValue val = new SensorValue(new SymbolAdapter(), "testVal", test.channel1);
+        SensorValue val = new SensorValue(new SymbolAdapter(), "testVal", test.channel1, String.class);
         cond.setLeftSideOp(val);
         for (ConditionOperation ops : cond.getAvailableOperations()) {
             System.out.println(ops.toString());

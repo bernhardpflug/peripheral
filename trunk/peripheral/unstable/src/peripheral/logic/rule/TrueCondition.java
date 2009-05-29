@@ -6,7 +6,8 @@ public class TrueCondition extends Condition {
     public TrueCondition () {
     }
 
-    public boolean eval (Condition cond) {
+    @Override
+    public boolean eval () {
         return true;
     }
 
