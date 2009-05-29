@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import peripheral.logic.datatype.Interval;
 import peripheral.logic.value.SensorValue;
 
 
@@ -79,6 +80,22 @@ public class SensorChannel implements Serializable{
         }
 
         return Object.class;
+    }
+
+    public Interval getBounds (){
+        double lower = 0, upper = 0;
+        try{
+            lower = Double.parseDouble(metadata.get("lowerlimit").toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        try{
+            upper = Double.parseDouble(metadata.get("upperlimit").toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return new Interval(lower, upper);
     }
 
 }
