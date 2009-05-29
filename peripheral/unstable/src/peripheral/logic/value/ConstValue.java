@@ -21,8 +21,19 @@ public class ConstValue extends Value {
         return value;
     }
 
-    public void setValue (Object val) {
-        this.value = val;
+    public void setValue (Object val) throws IllegalArgumentException{
+        if (this.getValueType().isAssignableFrom(val.getClass())){
+            this.value = val;
+        }
+        else{
+            //@todo: remove and always throw IllegalArgumentException
+            //type checking has to be done in propertypanel
+            if (getValueType().equals(Number.class)){
+                this.value = Double.parseDouble(val.toString());
+            }
+            else
+                throw new IllegalArgumentException("Accepted value must be of type '" + getValueType().getName() + "' but was '" + val.getClass().getName() + "'");
+        }
     }
 
 }
