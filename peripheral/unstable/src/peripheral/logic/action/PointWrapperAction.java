@@ -6,7 +6,7 @@ import peripheral.logic.positioningtool.Point;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
 
-public abstract class PointWrapperAction extends PointAction {
+public class PointWrapperAction extends PointAction {
 
     private SymbolAction symbolAction;
 
@@ -14,29 +14,23 @@ public abstract class PointWrapperAction extends PointAction {
         return symbolAction;
     }
 
-    private PointWrapperAction (SymbolAdapter adapter, SymbolAction symbolAction) {
+    public PointWrapperAction (SymbolAdapter adapter, SymbolAction symbolAction) {
         super(adapter);
         this.symbolAction = symbolAction;
     }
 
-    /**
-     *  <p style="margin-top: 0">
-     *    return symbolAction.getUserInput();
-     *      </p>
-     */
     public java.util.List<UserInput> getUserInput () {
-        return null;
+        return symbolAction.getUserInput();
     }
 
-    public abstract String getName ();
+    public String getName (){
+        return symbolAction.getName();
+    }
 
-    public abstract String getDescription ();
+    public String getDescription (){
+        return symbolAction.getDescription();
+    }
 
-    /**
-     *  <p style="margin-top: 0">
-     *        symbolAction.execute ();
-     *      </p>
-     */
     public void execute (ActionTool tool) {
         symbolAction.execute(((Point)tool).getActSymbol());
     }
@@ -51,7 +45,7 @@ public abstract class PointWrapperAction extends PointAction {
      *  <br>  public String getDescription(){...<br>}
      *      </p>
      */
-    public static PointWrapperAction getPointWrapperAction (SymbolAdapter adapter, SymbolAction symbolAction) {
+    /*public static PointWrapperAction getPointWrapperAction (SymbolAdapter adapter, SymbolAction symbolAction) {
         return new PointWrapperAction(adapter, symbolAction){
             @Override
             public String getDescription() {
@@ -64,7 +58,7 @@ public abstract class PointWrapperAction extends PointAction {
             }
 
         };
-    }
+    }*/
 
     public void update (Observable o, Object arg) {
     }

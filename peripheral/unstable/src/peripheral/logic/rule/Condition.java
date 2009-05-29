@@ -61,7 +61,9 @@ public class Condition implements Serializable {
     }
 
     public boolean eval () {
-        return getOperation().eval(this);
+        return new SimpleCondition(SimpleCondition.Operation.Equal).eval(this);
+        //@todo: return true eval
+        //return getOperation().eval(this);
     }
 
 }
