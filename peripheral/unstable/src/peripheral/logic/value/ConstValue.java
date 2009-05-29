@@ -7,9 +7,9 @@ public class ConstValue extends Value {
 
     private Object value;
 
-    public ConstValue (SymbolAdapter adapter, String varName, Object value) {
+    /*public ConstValue (SymbolAdapter adapter, String varName, Object value) {
         this(adapter, varName, value, null);
-    }
+    }*/
 
     public ConstValue (SymbolAdapter adapter, String varName, Object value, Class valueType) {
         super(adapter, varName, valueType);
