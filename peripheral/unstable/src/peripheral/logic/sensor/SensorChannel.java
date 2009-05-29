@@ -95,7 +95,14 @@ public class SensorChannel implements Serializable{
             e.printStackTrace();
         }
 
-        return new Interval(lower, upper);
+        Interval bounds;
+        try{
+            bounds = new Interval(lower, upper);
+        }catch (Exception e){
+            e.printStackTrace();
+            bounds = new Interval();
+        }
+        return bounds;
     }
 
 }
