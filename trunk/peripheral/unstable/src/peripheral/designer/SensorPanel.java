@@ -1,17 +1,25 @@
 package peripheral.designer;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.table.AbstractTableModel;
 
 import peripheral.logic.DisplayConfiguration;
+import peripheral.logic.sensor.Sensor;
+import peripheral.logic.sensor.SensorChannel;
 import peripheral.logic.sensor.SensorServer;
 import peripheral.logic.sensor.ServerConnectionStatusChangedEvent;
 
@@ -175,8 +183,8 @@ public class SensorPanel extends JPanel implements Observer{
 
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==2){
-					System.out.println(e.getSource());
-					serverTableMouseDoubleClickPerformed();
+					JTable temp = (JTable)e.getSource();
+					serverTableMouseDoubleClickPerformed(temp);
 				}
 			}
 
@@ -204,6 +212,7 @@ public class SensorPanel extends JPanel implements Observer{
         jScrollPane1.setViewportView(serverTable);
 
         editButton.setText("Edit");
+        editButton.setEnabled(false);
         editButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editButtonActionPerformed(evt);
@@ -211,13 +220,24 @@ public class SensorPanel extends JPanel implements Observer{
         });
 
         removeButton.setText("Remove");
+        removeButton.setEnabled(false);
+        removeButton.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				serverList.remove(serverTable.getSelectedRow());
+				serverTable.repaint();
+			}
+        	
+        });
 
         reconnectButton.setText("Reconnect");
+        reconnectButton.setEnabled(false);
         reconnectButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 reconnectButtonActionPerformed(evt);
             }
         });
+  
 
         org.jdesktop.layout.GroupLayout serverPanelLayout = new org.jdesktop.layout.GroupLayout(serverPanel);
         serverPanel.setLayout(serverPanelLayout);
@@ -288,35 +308,77 @@ public class SensorPanel extends JPanel implements Observer{
         // TODO add your handling code here:
     }
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        if(addressTextField.getText().compareTo(addressTextFieldText)!=0 &&
-        		portTextField.getText().compareTo("") != 0 &&
-        		usernameTextField.getText().compareTo("") !=0 ){
-        	
-        	// Create new instance of SensorServer with userInputs
-        	SensorServer server = new SensorServer("http://" + addressTextField.getText(), portTextField.getText(), usernameTextField.getText());
-        	server.addObserver(this);
-        	server.connect();
-        	
-        	serverList.add(server);
-        	serverTable.updateUI();
-        	
-        }
+       
+    	if(addButton.getText().compareTo("Add")==0){
+    		if(addressTextField.getText().compareTo(addressTextFieldText)!=0 &&
+            		portTextField.getText().compareTo("") != 0 &&
+            		usernameTextField.getText().compareTo("") !=0 ){
+            	
+            	// Create new instance of SensorServer with userInputs
+            	SensorServer server = new SensorServer("http://" + addressTextField.getText(), portTextField.getText(), usernameTextField.getText());
+            	server.addObserver(this);
+            	server.connect();
+            	
+            	serverList.add(server);
+            	serverTable.updateUI();
+         
+            }
+    	}else{
+    		
+    		List<SensorServer> copy = serverList;
+    		List<SensorServer> newlist = new ArrayList<SensorServer>();
+    		
+    		for(int i = 0; i < copy.size(); i++){
+    			if(i!=serverTable.getSelectedRow()){
+    				newlist.add(copy.get(i));
+    			}else{
+    				
+                	SensorServer server = new SensorServer("http://" + addressTextField.getText(), portTextField.getText(), usernameTextField.getText());
+                	server.addObserver(this);
+                	server.connect();
+                	
+    				newlist.add(server);
+    			}
+    		}
+    		
+    		serverList = newlist;
+    		
+    		addButton.setText("Add");
+    		serverTable.repaint();
+    	}
+    	
+    	editButton.setEnabled(true);
+    	removeButton.setEnabled(true);
+    	reconnectButton.setEnabled(true);
+    	serverTable.setEnabled(true);
     }
     
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+    	removeButton.setEnabled(false);
+    	reconnectButton.setEnabled(false);
+    	editButton.setEnabled(false);
+    	serverTable.setEnabled(false);
+    	
+    	addButton.setText("Change");
+    	addressTextField.setText(serverList.get(serverTable.getSelectedRow()).getAddress().substring(7));
+    	portTextField.setText(serverList.get(serverTable.getSelectedRow()).getPort());
+    	usernameTextField.setText(serverList.get(serverTable.getSelectedRow()).getUsername());
     }
     
     private void reconnectButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+    	serverList.get(serverTable.getSelectedRow()).reconnect();
     }
 	
-    private void serverTableMouseDoubleClickPerformed() {
-		ServerDetailFrame frame = new ServerDetailFrame();
-		frame.setLocationRelativeTo(null);
-		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
+    private void serverTableMouseDoubleClickPerformed(JTable source) {
+    	if(serverTable.getRowCount()>0 && serverTable.isEnabled()){
+        	if(serverList.get(source.getSelectedRow()).getConnectionStatus().toString().compareTo("online")==0){
+        		ServerDetailFrame frame = new ServerDetailFrame(source.getSelectedRow());
+        		frame.setLocationRelativeTo(null);
+        		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        		frame.pack();
+        		frame.setVisible(true);
+        	}
+    	}
 	}
     
 	public void update(Observable o, Object arg) {
@@ -356,10 +418,16 @@ public class SensorPanel extends JPanel implements Observer{
     }
     
     class ServerDetailFrame extends JFrame {
-
     	
+		private static final long serialVersionUID = 1L;
+		
+		private SensorServer server;
+    	private Sensor selectedSensor;
+    	private ServerDetailFrame mySelf;
     	
-        public ServerDetailFrame() {
+        public ServerDetailFrame(int listindex) {
+        	this.server = serverList.get(listindex);
+        	this.mySelf = this;
             initComponents();
         }
 
@@ -394,25 +462,32 @@ public class SensorPanel extends JPanel implements Observer{
 
             setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-            jddacLogoLabel.setIcon(new javax.swing.ImageIcon("/Users/tobias/Code/Peripheral/res/JddacLogo.gif")); // NOI18N
+            jddacLogoLabel.setIcon(new javax.swing.ImageIcon(System.getProperty("user.dir") + "/res/JddacLogo.gif"));
 
             addLabel.setText("Address:");
 
             usrLabel.setText("Username:");
 
-            addText.setText("http://localhost");
+            addText.setText(server.getAddress() + "/" + server.getPort());
 
-            usrText.setText("admin");
+            usrText.setText(server.getUsername());
 
             numLabel.setText("Number of Sensors:");
 
             numChanLabel.setText("Total Number of Measurement Channels:");
 
-            numText.setText("7");
-
-            numChanText.setText("21");
+            numText.setText(String.valueOf(server.getSensorList().size()));
+            
+            int channels = 0;
+            
+            for(Sensor sensor : server.getSensorList()){
+            	channels += sensor.getSensorChannels().size();
+            }
+            
+            numChanText.setText(String.valueOf(channels));
 
             metadataPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Channel Metadata"));
+            metadataPanel.setVisible(false);
 
             nameLabel.setText("Name:");
 
@@ -427,20 +502,6 @@ public class SensorPanel extends JPanel implements Observer{
             upperLabel.setText("Upperlimit:");
 
             lowerLabel.setText("Lowerlimit:");
-
-            nameText.setText("AccX");
-
-            descriptionText.setText("Lorem Impsum dolor");
-
-            datatypeText.setText("Integer8");
-
-            unitsText.setText("jLabel1");
-
-            locationText.setText("jLabel2");
-
-            upperText.setText("jLabel3");
-
-            lowerText.setText("jLabel4");
 
             org.jdesktop.layout.GroupLayout metadataPanelLayout = new org.jdesktop.layout.GroupLayout(metadataPanel);
             metadataPanel.setLayout(metadataPanelLayout);
@@ -500,9 +561,73 @@ public class SensorPanel extends JPanel implements Observer{
                     .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             );
 
-            sensorComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Select a sensor" }));
+            String [] sensorModel = new String[server.getSensorList().size()];
+            
+            for(int i = 0; i<sensorModel.length; i++){
+            	sensorModel[i] = server.getSensorList().get(i).getName();
+            }
+            
+            sensorComboBox.setModel(new javax.swing.DefaultComboBoxModel(sensorModel));
+            sensorComboBox.addPopupMenuListener(new PopupMenuListener(){
+
+				public void popupMenuCanceled(PopupMenuEvent e) {
+					
+				}
+
+				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+					if(sensorComboBox.getSelectedIndex() != 0){
+						
+						ArrayList<SensorChannel> chan = server.getSensorList().get(sensorComboBox.getSelectedIndex()).getSensorChannels();
+						String [] channelModel = new String[server.getSensorList().get(sensorComboBox.getSelectedIndex()).getSensorChannels().size()];
+						
+						for(int i = 0; i<channelModel.length; i++){
+			            	channelModel[i] = chan.get(i).getMetadata().get("shortname");
+			            }
+						
+						channelComboBox.setModel(new javax.swing.DefaultComboBoxModel(channelModel));
+						channelComboBox.setEnabled(true);
+						
+						selectedSensor = server.getSensorList().get(sensorComboBox.getSelectedIndex());
+					}
+				}
+
+				public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+				}
+            	
+            });
 
             channelComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Select a channel" }));
+            channelComboBox.setEnabled(false);
+            
+            channelComboBox.addPopupMenuListener(new PopupMenuListener(){
+
+				public void popupMenuCanceled(PopupMenuEvent e) {
+					
+				}
+
+				public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+					SensorChannel selection = selectedSensor.getSensorChannels().get(channelComboBox.getSelectedIndex());
+					
+		            nameText.setText(selection.getMetadata().get("shortname"));
+		            descriptionText.setText(selection.getMetadata().get("description"));
+		            datatypeText.setText(selection.getMetadata().get("datatype"));
+		            unitsText.setText(selection.getMetadata().get("units"));
+		            locationText.setText(selection.getMetadata().get("location"));
+		            upperText.setText(selection.getMetadata().get("upperlimit"));
+		            lowerText.setText(selection.getMetadata().get("lowerlimit"));
+					
+		            if(!metadataPanel.isVisible()){
+		            	metadataPanel.setVisible(true);
+			            mySelf.pack();
+		            }
+		            
+				}
+
+				public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+					
+				}
+            	
+            });
 
             org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
             getContentPane().setLayout(layout);
