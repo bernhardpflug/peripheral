@@ -27,6 +27,7 @@ import peripheral.logic.positioningtool.Line;
 import peripheral.logic.positioningtool.Point;
 import peripheral.logic.positioningtool.PositioningTool;
 import peripheral.logic.positioningtool.Region;
+import peripheral.logic.positioningtool.ToolList;
 import peripheral.logic.symboladapter.Symbol;
 
 /**
@@ -64,6 +65,20 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
 
         if (!model.isEmpty()) {
             this.LocationList.setSelectedIndex(0);
+        }
+
+        //depending whether actionTool is toollist en/disable add remove buttons
+        if (actionTool instanceof ToolList) {
+            this.addLocationButton.setEnabled(true);
+            this.removeLocationButton.setEnabled(true);
+            this.priorityUpButton.setEnabled(true);
+            this.priorityDownButton.setEnabled(true);
+        }
+        else {
+            this.addLocationButton.setEnabled(false);
+            this.removeLocationButton.setEnabled(false);
+            this.priorityUpButton.setEnabled(false);
+            this.priorityDownButton.setEnabled(false);
         }
     }
 
@@ -282,7 +297,6 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
         symbolPanel = new javax.swing.JPanel();
         addSymbolButton = new javax.swing.JButton();
         removeSymbolButton = new javax.swing.JButton();
-        alterSymbolButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         symbolList = new javax.swing.JList();
         displaySymbolCheckBox = new javax.swing.JCheckBox();
@@ -304,6 +318,11 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
         });
 
         removeLocationButton.setText("-");
+        removeLocationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeLocationButtonActionPerformed(evt);
+            }
+        });
 
         xLabel.setText("X");
 
@@ -314,8 +333,18 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
         heightLabel.setText("Height");
 
         priorityUpButton.setText("UP");
+        priorityUpButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                priorityUpButtonActionPerformed(evt);
+            }
+        });
 
         priorityDownButton.setText("DOWN");
+        priorityDownButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                priorityDownButtonActionPerformed(evt);
+            }
+        });
 
         xTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
         xTextField.setInputVerifier(new BoundsVerifier(this));
@@ -416,8 +445,6 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
             }
         });
 
-        alterSymbolButton.setText("...");
-
         symbolList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 symbolListValueChanged(evt);
@@ -444,10 +471,8 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
                         .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(symbolPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, symbolPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                                .add(addSymbolButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(removeSymbolButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, alterSymbolButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
+                            .add(addSymbolButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                            .add(removeSymbolButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
                     .add(displaySymbolCheckBox))
                 .addContainerGap())
         );
@@ -459,9 +484,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
                         .add(58, 58, 58)
                         .add(addSymbolButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(removeSymbolButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(alterSymbolButton))
+                        .add(removeSymbolButton))
                     .add(symbolPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .add(jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)))
@@ -624,10 +647,113 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
     }//GEN-LAST:event_removeSymbolButtonActionPerformed
 
     private void addLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addLocationButtonActionPerformed
-        // TODO allow adding depeding on type of action tool
-        //add positioning tool depending on type and afterwards call
-        //fillLocationList()
+
+        //only if toollist allow add
+        if (actionTool instanceof ToolList) {
+
+            ToolList toollist = (ToolList) actionTool;
+
+            PositioningTool newTool = null;
+
+            if (toollist.getType().equals(Point.class)) {
+                newTool = new Point();
+            }
+            else if (toollist.getType().equals(Line.class)) {
+                newTool = new Line();
+            }
+            else if (toollist.getType().equals(Region.class)) {
+                newTool = new Region();
+            }
+
+            toollist.getVisibleElements().add(newTool);
+
+            fillLocationList();
+
+            //set new one as selected
+            this.LocationList.setSelectedValue(newTool, true);
+        }
+        
     }//GEN-LAST:event_addLocationButtonActionPerformed
+
+    private void removeLocationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeLocationButtonActionPerformed
+
+        if (this.LocationList.getSelectedValue() != null && actionTool instanceof ToolList) {
+
+            PositioningTool toDel = (PositioningTool)this.LocationList.getSelectedValue();
+
+            ToolList toollist = (ToolList)actionTool;
+
+            //don't allow deletion if there is only one item left
+            if (toollist.getVisibleElements().size() > 1) {
+
+                int delIndex = toollist.getVisibleElements().indexOf(toDel);
+
+                //element to set selected after refill
+                Object toSelect;
+
+                //if deleted is not at first position select upper item
+                if (delIndex > 0) {
+                    toSelect = toollist.getVisibleElements().get(delIndex -1);
+                } else {
+                    //usually check for greater one to select but in here there must be always one element left
+                    toSelect = toollist.getVisibleElements().get(1);
+
+                }
+                toollist.getVisibleElements().remove(toDel);
+
+                fillLocationList();
+
+                //after refill select before calculated element to select
+                this.LocationList.setSelectedValue(toSelect, true);
+            }
+        }
+    }//GEN-LAST:event_removeLocationButtonActionPerformed
+
+    private void priorityUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_priorityUpButtonActionPerformed
+
+        if (this.LocationList.getSelectedValue() != null && actionTool instanceof ToolList) {
+
+            PositioningTool tool = (PositioningTool)this.LocationList.getSelectedValue();
+
+            ArrayList elements = ((ToolList)actionTool).getVisibleElements();
+
+            int position = elements.indexOf(tool);
+
+            if (position > 0) {
+
+                //change this item with previous one
+                elements.set(position, elements.get(position-1));
+                elements.set(position-1, tool);
+            }
+
+            fillLocationList();
+
+            this.LocationList.setSelectedValue(tool, true);
+        }
+    }//GEN-LAST:event_priorityUpButtonActionPerformed
+
+    private void priorityDownButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_priorityDownButtonActionPerformed
+
+        if (this.LocationList.getSelectedValue() != null && actionTool instanceof ToolList) {
+
+            PositioningTool tool = (PositioningTool)this.LocationList.getSelectedValue();
+
+            ArrayList elements = ((ToolList)actionTool).getVisibleElements();
+
+            int position = elements.indexOf(tool);
+
+            if (position < elements.size() - 1) {
+
+                //change this item with next one
+                elements.set(position, elements.get(position+1));
+                elements.set(position+1, tool);
+            }
+
+            fillLocationList();
+
+            this.LocationList.setSelectedValue(tool, true);
+        }
+    }//GEN-LAST:event_priorityDownButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -635,7 +761,6 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
     private javax.swing.JPanel LocationPanel;
     private javax.swing.JButton addLocationButton;
     private javax.swing.JButton addSymbolButton;
-    private javax.swing.JButton alterSymbolButton;
     private javax.swing.JCheckBox displaySymbolCheckBox;
     private javax.swing.JLabel heightLabel;
     private javax.swing.JFormattedTextField heightTextField;

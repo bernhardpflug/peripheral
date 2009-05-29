@@ -164,6 +164,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="-"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeLocationButtonActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="xLabel">
           <Properties>
@@ -189,11 +192,17 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="UP"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="priorityUpButtonActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="priorityDownButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="DOWN"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="priorityDownButtonActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JFormattedTextField" name="xTextField">
           <Properties>
@@ -260,11 +269,8 @@
                           <Component id="jScrollPane2" pref="201" max="32767" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="103" alignment="1" groupAlignment="0" attributes="0">
-                                  <Component id="addSymbolButton" alignment="0" min="-2" pref="54" max="-2" attributes="0"/>
-                                  <Component id="removeSymbolButton" alignment="0" min="-2" pref="54" max="-2" attributes="0"/>
-                              </Group>
-                              <Component id="alterSymbolButton" alignment="1" min="-2" pref="54" max="-2" attributes="0"/>
+                              <Component id="addSymbolButton" alignment="0" min="-2" pref="54" max="-2" attributes="0"/>
+                              <Component id="removeSymbolButton" alignment="0" min="-2" pref="54" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <Component id="displaySymbolCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -282,8 +288,6 @@
                           <Component id="addSymbolButton" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="removeSymbolButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="alterSymbolButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
@@ -312,11 +316,6 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeSymbolButtonActionPerformed"/>
           </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="alterSymbolButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="..."/>
-          </Properties>
         </Component>
         <Container class="javax.swing.JScrollPane" name="jScrollPane2">
           <AuxValues>
