@@ -1,17 +1,24 @@
 package peripheral.logic.symboladapter;
 
 import java.util.ArrayList;
+import java.util.List;
+import peripheral.logic.action.ListShowAction;
 import peripheral.logic.action.PointWrapperAction;
 import peripheral.logic.action.SymbolAction;
+import peripheral.logic.action.SymbolRotateAction;
 import peripheral.logic.action.SymbolScaleAction;
 import peripheral.logic.action.SymbolSwapAction;
 import peripheral.logic.action.SymbolTranslateAction;
 import peripheral.logic.filter.MultiplyFilter;
 import peripheral.logic.filter.PercentageFilter;
 import peripheral.logic.filter.PositionFilter;
+import peripheral.logic.filter.RandomPositioningToolPickerFilter;
 import peripheral.logic.filter.StringTemplateFilter;
+import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.positioningtool.Line;
 import peripheral.logic.positioningtool.Point;
+import peripheral.logic.positioningtool.PositioningTool;
+import peripheral.logic.positioningtool.ToolList;
 import peripheral.logic.rule.Rule;
 import peripheral.logic.rule.TrueCondition;
 import peripheral.logic.value.ConstValue;
@@ -42,7 +49,7 @@ public class AdapterTemplateFactory {
         contSlider.setName("continuousSlider");
         contSlider.setTool(new Point());
         contSlider.setDescription("A slider based on \na sensorvalue that continously \nmaps the sensorvalue\n onto a selected area");
-        contSlider.getNeededUserInput().add(new UserInput("ui1", "what the hell", new SensorValue(contSlider, "SensorValue", null, Number.class)));
+        contSlider.getNeededUserInput().add(new UserInput("ui1", "what the hell", new SensorValue(contSlider, "SensorValue", Number.class)));
         contSlider.getNeededUserInput().add(new UserInput("ui2", "what the hell", new ConstValue(contSlider, "LocationX", new Integer(0), Integer.class)));
         contSlider.getNeededUserInput().add(new UserInput("ui2", "what the hell", new ConstValue(contSlider, "LocationY", new Integer(0), Integer.class)));
 
@@ -92,7 +99,7 @@ public class AdapterTemplateFactory {
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
-        Value val = new SensorValue(adapter, "sensorValue", null, Number.class);
+        Value val = new SensorValue(adapter, "sensorValue", Number.class);
         UserInput input = new UserInput("Sensorwert", "Wert vom Sensor", val);
         adapter.getNeededUserInput().add(input);
 
@@ -130,7 +137,7 @@ public class AdapterTemplateFactory {
         adapter.setTool(new Line());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
-        val = new SensorValue(adapter, "sensorValue", null, Number.class);
+        val = new SensorValue(adapter, "sensorValue", Number.class);
         input = new UserInput("Sensorwert", "Wert vom Sensor", val);
         adapter.getNeededUserInput().add(input);
 
@@ -171,7 +178,7 @@ public class AdapterTemplateFactory {
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
-        val = new SensorValue(adapter, "sensorValue", null, Number.class);
+        val = new SensorValue(adapter, "sensorValue", Number.class);
         input = new UserInput("Sensorwert", "Wert vom Sensor", val);
         adapter.getNeededUserInput().add(input);
 
@@ -189,6 +196,60 @@ public class AdapterTemplateFactory {
         symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "factorX", 1.0, Float.class), new VarValue(adapter, "factorY"));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         rule.getActions().add(wrapperAction);
+        adapter.getRules().add(rule);
+
+        templates.add(adapter);
+
+        /**
+         * rotor 1
+         */
+        adapter = new SymbolAdapter();
+
+        adapter.setName("Rotor based on SensorValue");
+        adapter.setDescription("Rotor, bei dem ein Sensorwert als Rotationswinkel verwendet wird.");
+
+        adapter.setTool(new Point());
+        adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
+
+        val = new SensorValue(adapter, "sensorValue", Number.class);
+        input = new UserInput("Sensorwert", "Wert vom Sensor", val);
+        adapter.getNeededUserInput().add(input);
+
+        rule = new Rule(adapter);
+        rule.getConditions().add(new TrueCondition());
+        symbolAction = new SymbolRotateAction(adapter, new VarValue(adapter, "sensorValue"));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        rule.getActions().add(wrapperAction);
+        adapter.getRules().add(rule);
+
+        templates.add(adapter);
+
+         /**
+         * overlay position populator 1
+         */
+        adapter = new SymbolAdapter();
+
+        adapter.setName("OverlayPositionPopulator");
+        adapter.setDescription("1st Populator...");
+
+        adapter.setTool(new ToolList(Point.class));
+        adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
+
+        val = new SensorValue(adapter, "sensorValue", Integer.class);
+        input = new UserInput("Sensorwert", "Wert vom Sensor, der die Anzahl der anzuzeigenden Punkte angibt.", val);
+        adapter.getNeededUserInput().add(input);
+
+        RandomPositioningToolPickerFilter rpf = new RandomPositioningToolPickerFilter(adapter, "pickedValues");
+        List<PositioningTool> posTools = adapter.getTool().getElements();
+        new ConstValue(adapter, "valueList", posTools, posTools.getClass());
+        rpf.putFilterInputValue("valueList", new VarValue(adapter, "valueList"));
+        rpf.putFilterInputValue("nrToPick", new VarValue(adapter, "sensorValue"));
+        adapter.getBeforeFilter().add(rpf);
+
+        rule = new Rule(adapter);
+        rule.getConditions().add(new TrueCondition());
+        ListShowAction listShowAction = new ListShowAction(adapter, new VarValue(adapter, "pickedValues"), new ConstValue(adapter, "hideOthers", true, Boolean.class));
+        rule.getActions().add(listShowAction);
         adapter.getRules().add(rule);
 
         templates.add(adapter);
