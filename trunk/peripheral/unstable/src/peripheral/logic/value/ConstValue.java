@@ -26,13 +26,7 @@ public class ConstValue extends Value {
             this.value = val;
         }
         else{
-            //@todo: remove and always throw IllegalArgumentException
-            //type checking has to be done in propertypanel
-            if (getValueType().equals(Number.class)){
-                this.value = Double.parseDouble(val.toString());
-            }
-            else
-                throw new IllegalArgumentException("Accepted value must be of type '" + getValueType().getName() + "' but was '" + val.getClass().getName() + "'");
+            throw new IllegalArgumentException("Accepted value must be of type '" + getValueType().getName() + "' but was '" + val.getClass().getName() + "'");
         }
     }
 
