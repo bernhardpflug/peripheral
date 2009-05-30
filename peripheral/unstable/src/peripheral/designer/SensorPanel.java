@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.TreeMap;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -22,6 +23,7 @@ import peripheral.logic.sensor.Sensor;
 import peripheral.logic.sensor.SensorChannel;
 import peripheral.logic.sensor.SensorServer;
 import peripheral.logic.sensor.ServerConnectionStatusChangedEvent;
+import peripheral.logic.sensor.SensorServer.status;
 
 /**
  *
@@ -310,19 +312,77 @@ public class SensorPanel extends JPanel implements Observer{
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {
        
     	if(addButton.getText().compareTo("Add")==0){
-    		if(addressTextField.getText().compareTo(addressTextFieldText)!=0 &&
-            		portTextField.getText().compareTo("") != 0 &&
-            		usernameTextField.getText().compareTo("") !=0 ){
-            	
-            	// Create new instance of SensorServer with userInputs
-            	SensorServer server = new SensorServer("http://" + addressTextField.getText(), portTextField.getText(), usernameTextField.getText());
-            	server.addObserver(this);
-            	server.connect();
-            	
-            	serverList.add(server);
-            	serverTable.updateUI();
-         
-            }
+    		
+    		if(addressTextField.getText().compareTo("dummyserver")==0){
+    			if(addressTextField.getText().compareTo(addressTextFieldText)!=0 &&
+                		portTextField.getText().compareTo("") != 0 &&
+                		usernameTextField.getText().compareTo("") !=0 ){
+                	
+                	// Create dummy server instance
+    				SensorServer dummyserver = new SensorServer("http://dummyserver","8080", "admin");
+    				
+    				// Create Sensor
+    				Sensor dummyserversensor = new Sensor(0, "admin:00999*99999*99999*99999", dummyserver);
+    				Sensor dummysensor = new Sensor(1, "admin:dummysensor", dummyserver);
+    			
+    				// Create SensorChannel channel1 for dummysensor
+    				SensorChannel channel1 = new SensorChannel(34, "admin:Dummy Sensor:Dummy Stim:dummychannel1", dummysensor);
+    				
+    				// Create SensorChannel channel2 for dummysensor
+    				SensorChannel channel2 = new SensorChannel(32, "admin:Dummy Sensor:Dummy Stim:dummychannel2", dummysensor);
+    				
+    				// Create Metadata for channel1
+    				TreeMap<String, String> metadata1 = channel1.getMetadata();
+    				metadata1.put("shortname", "AirTemp");
+    				metadata1.put("description", "Air Temperature");
+    				metadata1.put("datatype", "Integer8");
+    				metadata1.put("units", "Degree Celcius");
+    				metadata1.put("location", "In your face bitch");
+    				
+    				// Create Metadata for channel2
+    				TreeMap<String, String> metadata2 = channel2.getMetadata();
+    				metadata2.put("shortname", "SkyCover");
+    				metadata2.put("description", "Percentage of Sky Cover");
+    				metadata2.put("datatype", "Integer8");
+    				metadata2.put("units", "Percent");
+    				metadata2.put("location", "In your face bitch");
+    				metadata2.put("upperlimit", "100");
+    				metadata2.put("lowerlimit", "0");
+    				
+    				// Add channels to Sensor
+    				ArrayList<SensorChannel> channellist = dummysensor.getSensorChannels();
+    				channellist.add(channel1);
+    				channellist.add(channel2);
+    				
+    				// Add Sensor to Server
+    				ArrayList<Sensor> sensorlist = dummyserver.getSensorList();
+    				sensorlist.add(dummyserversensor);
+    				sensorlist.add(dummysensor);
+    				
+    				// Add observers
+    				dummyserver.addObserver(this);
+    				dummyserver.setConnectionStatus(status.online);
+    				
+    				// Add dummyserver to serverList
+    				serverList.add(dummyserver);
+    				serverTable.updateUI();
+             
+                }
+    		}else{
+    			if(addressTextField.getText().compareTo(addressTextFieldText)!=0 &&
+                		portTextField.getText().compareTo("") != 0 &&
+                		usernameTextField.getText().compareTo("") !=0 ){
+                	
+                	// Create new instance of SensorServer with userInputs
+                	SensorServer server = new SensorServer("http://" + addressTextField.getText(), portTextField.getText(), usernameTextField.getText());
+                	server.addObserver(this);
+                	server.connect();
+                	
+                	serverList.add(server);
+                	serverTable.updateUI();
+             
+                }
+    		}
     	}else{
     		
     		List<SensorServer> copy = serverList;
