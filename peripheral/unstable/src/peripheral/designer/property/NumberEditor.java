@@ -22,8 +22,7 @@ import javax.swing.text.NumberFormatter;
  *
  * @author Berni
  *
- * This editor should be used for Float, Double, Long and Short
- * Integer is supported but IntegerEditor is recommended to use
+ * This editor should be used for Integer, Float, Double, Long and Short
  *
  * After each edit value is casted to class given in Constructor
  */
@@ -32,21 +31,60 @@ public class NumberEditor extends DefaultCellEditor{
     JFormattedTextField ftf;
     NumberFormat numberFormat;
 
+    private Number minimum, maximum;
+    private boolean BoundsCheckFlag;
+
     Class valueClass;
 
     public NumberEditor(Class valueClass) {
-
         super(new JFormattedTextField());
-        ftf = (JFormattedTextField) getComponent();
+
+        BoundsCheckFlag = false;
 
         this.valueClass = valueClass;
 
-        //Set up the editor for the integer cells.
-        numberFormat = new DecimalFormat("#.0");
+        init();
+    }
+
+    /**
+     * Constructor taking minimum and maximum to check bounds
+     * @param valueClass
+     * @param minimum value of SAME type like value
+     * @param maximum value of SAME type like value
+     */
+    public NumberEditor(Class valueClass, Number minimum, Number maximum) {
+        super(new JFormattedTextField());
+
+        BoundsCheckFlag = true;
+
+        this.minimum = minimum;
+        this.maximum = maximum;
+
+        this.valueClass = valueClass;
+
+        init();
+    }
+
+    private void init() {
+
+        ftf = (JFormattedTextField) getComponent();
+
+        //Set up the editor for the number cells.
+        if (valueClass.equals(Integer.class)) {
+            numberFormat = NumberFormat.getIntegerInstance();
+        }
+        else {
+            numberFormat = new DecimalFormat("#.0######");
+            
+        }
         
         NumberFormatter numberFormatter = new NumberFormatter(numberFormat);
-        numberFormatter.setFormat(numberFormat);
+        numberFormatter.setValueClass(valueClass);
 
+        if (BoundsCheckFlag) {
+            numberFormatter.setMinimum((Comparable)minimum);
+            numberFormatter.setMaximum((Comparable)maximum);
+        }
 
         ftf.setFormatterFactory(
                 new DefaultFormatterFactory(numberFormatter));
@@ -98,6 +136,7 @@ public class NumberEditor extends DefaultCellEditor{
 
         if (o instanceof Number) {
             if (valueClass.equals(Float.class)) {
+                System.out.println(((Number) o).floatValue());
                 return new Float(((Number) o).floatValue());
             } else if (valueClass.equals(Double.class)) {
                 return new Double(((Number) o).doubleValue());
@@ -148,9 +187,15 @@ public class NumberEditor extends DefaultCellEditor{
         ftf.selectAll();
         Object[] options = {"Edit",
             "Revert"};
+        String text = "The value must be of type "+this.valueClass.getCanonicalName();
+
+        if (BoundsCheckFlag) {
+            text += " between " + minimum + " and " + maximum ;
+        }
+
         int answer = JOptionPane.showOptionDialog(
                 SwingUtilities.getWindowAncestor(ftf),
-                "The value must be a Number.\n" + "You can either continue editing " + "or revert to the last valid value.",
+                text,
                 "Invalid Text Entered",
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.ERROR_MESSAGE,
