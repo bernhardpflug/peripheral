@@ -11,6 +11,11 @@ public abstract class ActionToolAction extends Action {
 
     public abstract void execute (ActionTool tool);
 
+    @Override
+    public String getName() {
+        return this.getClass().getName();
+    }
+
 
 }
 
