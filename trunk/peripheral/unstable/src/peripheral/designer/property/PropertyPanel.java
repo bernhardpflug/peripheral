@@ -199,6 +199,7 @@ public class PropertyPanel extends JPanel {
             else {
 
                 ConstValue cval = (ConstValue)val;
+                System.out.println(cval.getValue().getClass().toString());
 
                 if (cval.getValue() instanceof Boolean) {
 
@@ -208,6 +209,10 @@ public class PropertyPanel extends JPanel {
                 }
                 else if (cval.getValue() instanceof Integer) {
                     return new IntegerEditor(0,100);
+                }
+                else if (cval.getValue() instanceof Float || cval.getValue() instanceof Double
+                        || cval.getValue() instanceof Long || cval.getValue() instanceof Short) {
+                    return new NumberEditor(cval.getValueType());
                 }
                 //String
                 else {
