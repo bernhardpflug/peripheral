@@ -9,10 +9,10 @@ public class SensorValue extends Value {
     private SensorChannel sensorChannel;
     private Object actValue;
 
-    public SensorValue(SymbolAdapter adapter, String varName, SensorChannel sensorChannel, Class valueType) {
+    public SensorValue(SymbolAdapter adapter, String varName, Class valueType) {
         super(adapter, varName, valueType);
 
-        setSensorChannel(sensorChannel);
+        setSensorChannel(SensorChannel.getDummy());
     }
 
     /*public SensorValue(SymbolAdapter adapter, String varName, SensorChannel sensorChannel) {
