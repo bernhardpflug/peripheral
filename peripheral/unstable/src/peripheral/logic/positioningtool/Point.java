@@ -50,7 +50,7 @@ public class Point extends PositioningTool {
 
     @Override
     public String toString() {
-        return "Point";
+        return "Point [" + position.x + ", " + position.y + "]";
     }
 
     /*
