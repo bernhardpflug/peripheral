@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+import peripheral.logic.DisplayConfiguration;
 import peripheral.logic.sensor.Sensor;
 import peripheral.logic.sensor.SensorChannel;
 import peripheral.logic.sensor.SensorServer;
@@ -38,22 +39,10 @@ import peripheral.logic.value.Value;
 public class PropertyPanel extends JPanel {
 
     List<Value> userInputs;
-    List<SensorChannel> sensorTemplate;
 
     public PropertyPanel(List<UserInput> userInputs) {
 
         super(new GridLayout(1,0));
-
-        //TODO DELETE DELETE
-        sensorTemplate = new ArrayList<SensorChannel>();
-        Sensor sensor1 = new Sensor(1,"sensor1", new SensorServer("", "", ""));
-        SensorChannel sa = new SensorChannel(1, "SensorX",sensor1);
-        sensorTemplate.add(sa);
-
-        Sensor sensor2 = new Sensor(1,"sensor2", new SensorServer("", "", ""));
-        SensorChannel sa2 = new SensorChannel(2, "SensorX",sensor2);
-        sensorTemplate.add(sa2);
-
 
         this.userInputs = new ArrayList<Value>();
 
@@ -77,6 +66,33 @@ public class PropertyPanel extends JPanel {
         add(scrollPane);
 
 
+    }
+
+    /**
+     * requests all sensors from the sensorserver and returns all channels
+     * with appropriate data type
+     * @param allowedType type of SensorValue that should fit to sensorchannel
+     * @return list with all sensorchannels with appropriate type
+     */
+    private List<SensorChannel> getAppropriateSensorChannels(Class allowedType) {
+
+        ArrayList<SensorChannel> channels = new ArrayList<SensorChannel>();
+
+        channels.add(SensorChannel.getDummy());
+
+        ArrayList<SensorServer> servers = (ArrayList<SensorServer>) DisplayConfiguration.getInstance().getSensorServer();
+
+        for (SensorServer server : servers) {
+
+            ArrayList<Sensor> sensors = server.getSensorList();
+
+            for (Sensor sensor : sensors) {
+                
+                channels.addAll(sensor.getSensorChannels(allowedType));
+            }
+        }
+
+        return channels;
     }
     
     /**
@@ -149,9 +165,9 @@ public class PropertyPanel extends JPanel {
          * data can change.
          */
         public void setValueAt(Object value, int row, int col) {
-            if (true) {
-                System.out.println("Setting value at " + row + "," + col + " to " + value + " (an instance of " + value.getClass() + ")");
-            }
+//            if (true) {
+//                System.out.println("Setting value at " + row + "," + col + " to " + value + " (an instance of " + value.getClass() + ")");
+//            }
 
             Value val = userInputs.get(row);
             
@@ -187,7 +203,7 @@ public class PropertyPanel extends JPanel {
 
                 JComboBox box = new JComboBox();
 
-                for (SensorChannel satt : sensorTemplate) {
+                for (SensorChannel satt : getAppropriateSensorChannels(sval.getValueType())) {
                     box.addItem(satt);
                 }
 
