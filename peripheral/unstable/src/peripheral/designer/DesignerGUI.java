@@ -67,9 +67,10 @@ public class DesignerGUI extends javax.swing.JFrame {
         SymbolAdapter slider1 = new SymbolAdapter();
         slider1.setName("RuleSlider1");
         slider1.setTool(new Point());
+        //slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new SensorValue()));
         slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue(slider1,"EnableSmoothing",new Boolean(true),Boolean.class)));
         slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationX",new Integer(0),Integer.class)));
-        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationY",new Integer(0), Integer.class)));
+        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationY",new Float(0), Float.class)));
 
         slider1.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, new Boolean(true));
 
@@ -167,7 +168,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         nextButton = new javax.swing.JButton();
         prevButton = new javax.swing.JButton();
         cardPanel = new javax.swing.JPanel();
-        SensorPanel = new javax.swing.JPanel();
+        SensorPanel = new peripheral.designer.SensorPanel();
         BackgroundPanel = new javax.swing.JPanel();
         jFileChooser1 = new peripheral.designer.ImageFileChooser();
         AnimationsPanel = new javax.swing.JPanel();
@@ -230,7 +231,6 @@ public class DesignerGUI extends javax.swing.JFrame {
         cardPanel.setLayout(new java.awt.CardLayout());
 
         SensorPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 1 : Select Sensorserver"));
-        SensorPanel.setLayout(new java.awt.BorderLayout());
         cardPanel.add(SensorPanel, "card2");
 
         BackgroundPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 2 : Select Background Image of the Scene"));
@@ -671,7 +671,9 @@ public class DesignerGUI extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new DesignerGUI().setVisible(true);
+                DesignerGUI gui = new DesignerGUI();
+                gui.setLocationRelativeTo(null);
+                gui.setVisible(true);
             }
         });
     }
