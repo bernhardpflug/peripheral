@@ -2,6 +2,7 @@ package peripheral.logic.sensor;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 
 import peripheral.logic.sensor.exception.SensorChannelException;
@@ -71,6 +72,23 @@ public class Sensor extends Observable implements Serializable {
     // GETTERS AND SETTERS
     public ArrayList<SensorChannel> getSensorChannels () {
         return channels;
+    }
+
+    /**
+     *
+     * @param allowedType: type, which a SensorChannel's type have to be assignable, to be returned in the list
+     * @return list, which only holds SensorChannels, whose types are assignable to the passed allowed type
+     */
+    public List<SensorChannel> getSensorChannels (Class allowedType){
+        List<SensorChannel> allowedChannels = new ArrayList<SensorChannel>();
+
+        for (SensorChannel channel : channels){
+            if (allowedType.isAssignableFrom(channel.getDatatype())){
+                allowedChannels.add(channel);
+            }
+        }
+
+        return allowedChannels;
     }
 
     public String getName () {
