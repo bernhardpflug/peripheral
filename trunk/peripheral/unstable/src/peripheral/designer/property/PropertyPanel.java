@@ -207,11 +207,9 @@ public class PropertyPanel extends JPanel {
                     checkBox.setSelected(((Boolean)val.getValue()).booleanValue());
                     return new DefaultCellEditor(checkBox);
                 }
-                else if (cval.getValue() instanceof Integer) {
-                    return new IntegerEditor(0,100);
-                }
                 else if (cval.getValue() instanceof Float || cval.getValue() instanceof Double
-                        || cval.getValue() instanceof Long || cval.getValue() instanceof Short) {
+                        || cval.getValue() instanceof Long || cval.getValue() instanceof Short
+                        || cval.getValue() instanceof Integer) {
                     return new NumberEditor(cval.getValueType());
                 }
                 //String
