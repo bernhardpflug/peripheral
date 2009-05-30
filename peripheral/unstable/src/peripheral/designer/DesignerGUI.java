@@ -28,6 +28,7 @@ import peripheral.logic.positioningtool.Point;
 import peripheral.logic.positioningtool.Region;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.ConstValue;
+import peripheral.logic.value.SensorValue;
 import peripheral.logic.value.UserInput;
 
 /**
@@ -67,7 +68,8 @@ public class DesignerGUI extends javax.swing.JFrame {
         SymbolAdapter slider1 = new SymbolAdapter();
         slider1.setName("RuleSlider1");
         slider1.setTool(new Point());
-        //slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new SensorValue()));
+        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new SensorValue(slider1,"SourceInt",null,Integer.class)));
+        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new SensorValue(slider1,"SourceString",null,String.class)));
         slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue(slider1,"EnableSmoothing",new Boolean(true),Boolean.class)));
         slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationX",new Integer(0),Integer.class)));
         slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationY",new Float(0), Float.class)));

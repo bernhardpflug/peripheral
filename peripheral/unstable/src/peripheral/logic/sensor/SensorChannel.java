@@ -10,6 +10,8 @@ import peripheral.logic.value.SensorValue;
 
 public class SensorChannel implements Serializable{
 
+    private static SensorChannel DUMMY;
+
 	private static final long serialVersionUID = 1L;
 	private long mid;
     private String fullname;
@@ -63,16 +65,16 @@ public class SensorChannel implements Serializable{
             return String.class;
         }
         else if (jddacType.equalsIgnoreCase("Integer64")){
-            return long.class;
+            return Long.class;
         }
         else if (jddacType.startsWith("Integer")){
-            return int.class;
+            return Integer.class;
         }
         else if (jddacType.equalsIgnoreCase("Float32")){
-            return float.class;
+            return Float.class;
         }
         else if (jddacType.equalsIgnoreCase("Float64")){
-            return double.class;
+            return Double.class;
         }
 
         return Object.class;
@@ -101,5 +103,21 @@ public class SensorChannel implements Serializable{
         return bounds;
     }
 
+    public String toString() {
+        return sensor.getName() + metadata.get("shortname");
+    }
+
+    public static SensorChannel getDummy() {
+
+        if (DUMMY == null) {
+            DUMMY = new SensorChannel(0, "DUMMY",null) {
+                public String toString() {
+                    return "<none>";
+                }
+            };
+        }
+
+        return DUMMY;
+    }
 }
 
