@@ -1,6 +1,5 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * editor for propertypanel that handles integer values
  */
 package peripheral.designer.property;
 
@@ -30,7 +29,6 @@ public class IntegerEditor extends DefaultCellEditor {
     JFormattedTextField ftf;
     NumberFormat integerFormat;
     private Integer minimum,  maximum;
-    private boolean DEBUG = false;
 
     public IntegerEditor(int min, int max) {
         super(new JFormattedTextField());
@@ -95,9 +93,7 @@ public class IntegerEditor extends DefaultCellEditor {
         } else if (o instanceof Number) {
             return new Integer(((Number) o).intValue());
         } else {
-            if (DEBUG) {
-                System.out.println("getCellEditorValue: o isn't a Number");
-            }
+            
             try {
                 return integerFormat.parseObject(o.toString());
             } catch (ParseException exc) {
