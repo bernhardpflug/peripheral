@@ -1,9 +1,8 @@
 package peripheral.logic.action;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Observable;
-import java.util.Set;
 import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.positioningtool.Point;
 import peripheral.logic.positioningtool.PositioningTool;
@@ -12,7 +11,6 @@ import peripheral.logic.positioningtool.ToolList;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value;
-import peripheral.visualization.Visualization;
 import peripheral.logic.Runtime;
 
 public class ListShowAction extends ListAction {
@@ -34,18 +32,15 @@ public class ListShowAction extends ListAction {
         return null;
     }
 
-    public String getName() {
-        return null;
-    }
-
+    @Override
     public String getDescription() {
-        return null;
+        return "Shows a list of passed points or regions.";
     }
 
     public void execute(ActionTool tool) {
         ToolList toolList = (ToolList) tool;
-        Set<PositioningTool> elemsToHide = new HashSet<PositioningTool>();
-        Set<PositioningTool> elementsToShow = getElementsToShow();
+        List<PositioningTool> elemsToHide = new ArrayList<PositioningTool>();
+        List<PositioningTool> elementsToShow = getElementsToShow();
 
         if (getHideOthers()) {
             for (PositioningTool pt : toolList.getVisibleElements()) {
@@ -84,12 +79,12 @@ public class ListShowAction extends ListAction {
     public void update(Observable o, Object arg) {
     }
 
-    public Set<PositioningTool> getElementsToShow() {
-        return null;
+    public List<PositioningTool> getElementsToShow() {
+        return (List<PositioningTool>) elementsToShow.getValue();
     }
 
     public boolean getHideOthers() {
-        return true;
+        return (Boolean) hideOthers.getValue();
     }
 }
 
