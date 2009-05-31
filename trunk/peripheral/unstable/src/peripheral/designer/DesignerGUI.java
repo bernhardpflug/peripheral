@@ -465,7 +465,7 @@ public class DesignerGUI extends javax.swing.JFrame {
             if (selectedFile != null && PreviewDialog.isExtentionSupported(selectedFile)) {
 
                 DisplayConfiguration.getInstance().setBackgroundImage(PreviewDialog.getInstance().getBackgroundImage());
-                DisplayConfiguration.getInstance().setBackgroundImageFilename(selectedFile);
+                DisplayConfiguration.getInstance().setBackgroundImageFile(selectedFile);
 
                 currentIndex++;
                 cl.next(cardPanel);
