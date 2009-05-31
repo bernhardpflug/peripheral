@@ -23,14 +23,17 @@ public class PointWrapperAction extends PointAction {
         return symbolAction.getUserInput();
     }
 
+    @Override
     public String getName (){
         return symbolAction.getName();
     }
 
+    @Override
     public String getDescription (){
         return symbolAction.getDescription();
     }
 
+    @Override
     public void execute (ActionTool tool) {
         symbolAction.execute(((Point)tool).getActSymbol());
     }

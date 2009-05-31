@@ -1,7 +1,8 @@
 package peripheral.logic.action;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Observable;
-import java.util.Set;
 import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.positioningtool.Point;
 import peripheral.logic.positioningtool.PositioningTool;
@@ -38,26 +39,28 @@ public class ListHideAction extends ListAction {
     }
 
     public void execute(ActionTool tool) {
-        Set<PositioningTool> elementsToHide = getElementsToHide();
+        List<PositioningTool> elementsToHide = getElementsToHide();
         ToolList toolList = (ToolList) tool;
 
         for (PositioningTool pt : elementsToHide) {
             if (pt instanceof Point) {
-                Runtime.getInstance().getVisualization().hideSymbol(((Point) pt).getActSymbol());
+                PointWrapperAction act = new PointHideAction(adapter);
+                act.execute(pt);
+                //Runtime.getInstance().getVisualization().hideSymbol(((Point) pt).getActSymbol());
             } else if (pt instanceof Region) {
                 RegionAction act = new RegionHideAction(adapter);
-                act.execute((Region) pt);
+                act.execute(pt);
             }
         }
-        toolList.getHiddenElements().addAll(elementsToHide);
-        toolList.getVisibleElements().removeAll(elementsToHide);
+        //toolList.getHiddenElements().addAll(elementsToHide);
+        //toolList.getVisibleElements().removeAll(elementsToHide);
     }
 
     public void update(Observable o, Object arg) {
     }
 
-    public Set<PositioningTool> getElementsToHide() {
-        return null;
+    public List<PositioningTool> getElementsToHide() {
+        return Collections.unmodifiableList((List<PositioningTool>) elementsToHide.getValue());
     }
 }
 
