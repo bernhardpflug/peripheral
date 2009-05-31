@@ -29,14 +29,14 @@ public class VisApplet extends PApplet implements Visualization {
 
     public void draw() {
     	//TODO: interpolate coords to actual screen resolution
-        background(bgImage);
+        //background(bgImage);
         VisSymbol ptr;
         for (int i = 0; i < symbols.size(); i++) {
             ptr = symbols.get(i);
             ptr.calcStep();
             //draw the image in all its aspects
             pushMatrix();
-            	tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlpha()));
+            	//tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlpha()));
 	            translate((float)ptr.getPositionIpl().getX(), (float)ptr.getPositionIpl().getY());
 	            scale(ptr.getScaleXIpl(), ptr.getScaleYIpl());
 	            rotate(radians(ptr.getAngleIpl()));
@@ -111,7 +111,7 @@ public class VisApplet extends PApplet implements Visualization {
     }
 
     public void translateSymbol(Symbol s, java.awt.Point targetPosition) {
-        s.getPosition().setPosition(targetPosition);
+        s.setPosition(targetPosition);
 
     }
 

@@ -30,7 +30,7 @@ public class VisSymbol {
 		this.scaleXIpl = s.getScaleX();
 		this.scaleYIpl = s.getScaleY();
 		this.positionIpl = new Point();
-		this.positionIpl.setLocation(s.getPosition().getPosition());
+		this.positionIpl.setLocation(s.getPosition());
 		this.img = this.imgSwap = null;
 		this.fadeIn = this.fadeOut = false;
 		this.isVisible = true;
@@ -58,11 +58,11 @@ public class VisSymbol {
 		//===========================================
 		//compute easing
 		float iplX = (float)positionIpl.getX(), iplY = (float)positionIpl.getY();
-		float dx = (float)symbol.getPosition().getPosition().getX() - iplX;
+		float dx = (float)symbol.getPosition().getX() - iplX;
 		if(Math.abs(dx) > 1) {
 			iplX += dx * 0.05; //-> easing val
 		}
-		float dy = (float)symbol.getPosition().getPosition().getY() - iplY;
+		float dy = (float)symbol.getPosition().getY() - iplY;
 		if(Math.abs(dy) > 1) {
 			iplY += dy * 0.05;
 		}
