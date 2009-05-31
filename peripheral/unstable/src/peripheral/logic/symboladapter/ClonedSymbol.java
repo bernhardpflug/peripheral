@@ -7,17 +7,21 @@ public class ClonedSymbol extends Symbol {
 
     private Symbol source;
 
-    public ClonedSymbol (File file) {
-        super(file);
+    public ClonedSymbol (Symbol source, File file) {
+        super(file, null);
+
+        this.source = source;
     }
 
     public Symbol getSource () {
         return source;
     }
 
-    public void setSource (Symbol val) {
-        this.source = val;
+    @Override
+    public ClonedSymbol cloneSymbol() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException("Only instances of class Symbol may be cloned, not of subclass ClonedSymbol.");
     }
+
 
 }
 
