@@ -2,23 +2,24 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package peripheral.logic.filter;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
-import java.util.Random;
 import peripheral.logic.Logging;
 import peripheral.logic.positioningtool.PositioningTool;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.ConstValue;
+import peripheral.logic.value.VarValue;
 
 /**
  *
  * @author Andi
  */
 public class RandomPositioningToolPickerFilter extends RandomValuePickerFilter {
+
     public RandomPositioningToolPickerFilter(SymbolAdapter adapter, String outputVarName) {
         super(adapter, outputVarName);
 
@@ -40,17 +41,18 @@ public class RandomPositioningToolPickerFilter extends RandomValuePickerFilter {
 
         List<PositioningTool> pickedValues;
 
+        nrToPick = 2;
+
         //if nrToPick >= valueList.size() then all values have to
         //be returned
-        if (nrToPick >= valueList.size()){
+        if (nrToPick >= valueList.size()) {
             pickedValues = new ArrayList<PositioningTool>(valueList);
-        }
-        else{
+        } else {
             pickedValues = new ArrayList<PositioningTool>();
 
-            int [] pickedIndizes = this.getPickedIndizesNumbers(nrToPick, false, 0, valueList.size()-1);
+            int[] pickedIndizes = this.getPickedIndizesNumbers(nrToPick, false, 0, valueList.size());
 
-            for (int i : pickedIndizes){
+            for (int i : pickedIndizes) {
                 pickedValues.add(valueList.get(i));
             }
         }
