@@ -30,7 +30,7 @@ public abstract class PositioningTool implements ActionTool {
     public void calculateRelativeCoordinates () {
     }
 
-    @Override
+    //@Override
     public List<PositioningTool> getElements() {
         ArrayList list = new ArrayList(1);
         list.add(this);
