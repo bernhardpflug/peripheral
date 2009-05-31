@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 import peripheral.logic.symboladapter.Symbol; 
 
 public abstract class PositioningTool implements ActionTool {
@@ -14,6 +15,8 @@ public abstract class PositioningTool implements ActionTool {
     private Symbol displayedSymbol;
 
     private boolean displaySymbol;
+
+    private boolean visible = true;
 
     public PositioningTool () {
         symbols = new ArrayList<Symbol>();
@@ -27,7 +30,8 @@ public abstract class PositioningTool implements ActionTool {
     public void calculateRelativeCoordinates () {
     }
 
-    public ArrayList<PositioningTool> getElements() {
+    @Override
+    public List<PositioningTool> getElements() {
         ArrayList list = new ArrayList(1);
         list.add(this);
         return list;
@@ -51,6 +55,14 @@ public abstract class PositioningTool implements ActionTool {
 
     public void setSymbolDisplayed(boolean flag) {
         this.displaySymbol = flag;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 
     /**

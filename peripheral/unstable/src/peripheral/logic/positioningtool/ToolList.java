@@ -1,39 +1,45 @@
 package peripheral.logic.positioningtool;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ToolList implements ActionTool {
 
-    private java.util.ArrayList<PositioningTool> visibleElements;
-    private java.util.ArrayList<PositioningTool> hiddenElements;
+    //private java.util.ArrayList<PositioningTool> visibleElements;
+    //private java.util.ArrayList<PositioningTool> hiddenElements;
+
+    private List<PositioningTool> elements;
     private Class type;
 
     public ToolList(Class type) {
         this.type = type;
 
         if (type.equals(Point.class) || type.equals(Region.class)) {
-            visibleElements = new ArrayList<PositioningTool>();
-            hiddenElements = new ArrayList<PositioningTool>();
+            //visibleElements = new ArrayList<PositioningTool>();
+            //hiddenElements = new ArrayList<PositioningTool>();
+            elements = new ArrayList<PositioningTool>();
         }
         else{
             throw new IllegalArgumentException("type must be one of Point.class or Region.class");
         }
 
         if (type.equals(Point.class)){
-            visibleElements.add(new Point());
+            //visibleElements.add(new Point());
+            elements.add(new Point());
         }
         else {
-            visibleElements.add(new Region());
+            //visibleElements.add(new Region());
+            elements.add(new Region());
         }
     }
 
-    public java.util.ArrayList<PositioningTool> getHiddenElements() {
+    /*public java.util.ArrayList<PositioningTool> getHiddenElements() {
         return hiddenElements;
     }
 
     public java.util.ArrayList<PositioningTool> getVisibleElements() {
         return visibleElements;
-    }
+    }*/
 
     public Class getType() {
         return type;
@@ -45,8 +51,12 @@ public class ToolList implements ActionTool {
     public void draw(java.awt.Graphics g) {
     }
 
-    public java.util.ArrayList<PositioningTool> getElements() {
-        return (ArrayList<PositioningTool>) visibleElements;
+    
+    @Override
+    public List<PositioningTool> getElements() {
+        //return (ArrayList<PositioningTool>) visibleElements;
+        return elements;
     }
+
 }
 
