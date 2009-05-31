@@ -3,7 +3,10 @@ package peripheral.logic.positioningtool;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import peripheral.logic.symboladapter.Symbol; 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import peripheral.logic.datatype.SymbolList;
+import peripheral.logic.symboladapter.Symbol;
 
 public class Region extends PositioningTool {
 
@@ -13,24 +16,21 @@ public class Region extends PositioningTool {
     private static final int MIN_DRAGSIZE = 2;
 
     private enum DragOption {
+
         resize,
         move
     }
-
     private DragOption currentOption;
 
     //offset between origin of symbol and current mouse cursor
     //(otherwise first drag creates a jump if click was far away from origin)
     private java.awt.Point dragOffset;
-
-
     private Rectangle bounds;
 
-    private java.util.Set<Symbol> userSelectedSymbols;
+    private SymbolList symbolList;
 
-    private boolean hidden;
-
-    public Region () {
+    //private boolean hidden;
+    public Region() {
         super();
 
         bounds = new Rectangle();
@@ -42,21 +42,18 @@ public class Region extends PositioningTool {
         dragOffset = new java.awt.Point();
     }
 
-    public Rectangle getBounds () {
+    public Rectangle getBounds() {
         return bounds;
     }
 
-    public void setBounds (Rectangle val) {
+    public void setBounds(Rectangle val) {
         this.bounds = val;
     }
 
-    public void draw (java.awt.Graphics g) {
+    public void draw(java.awt.Graphics g) {
     }
 
-    public java.util.Set<Symbol> getUserSelectedSymbols () {
-        return userSelectedSymbols;
-    }
-
+    @Override
     public String toString() {
         return "Region";
     }
@@ -67,33 +64,42 @@ public class Region extends PositioningTool {
      *  <br>userSelectedSymbols.addSymbol(s);
      *      </p>
      */
-    public void addSymbol (Symbol s) {
+    /*public void addSymbol(Symbol s) {
+    }*/
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        symbolList = new SymbolList(this.getSymbols());
+
+        out.defaultWriteObject();
     }
 
-    public boolean isHidden () {
-        return hidden;
+    public SymbolList getSymbolList (){
+        return symbolList;
+    }
+
+    /*public boolean isHidden () {
+    return hidden;
     }
 
     public void setHidden (boolean val) {
-        this.hidden = val;
-    }
+    this.hidden = val;
+    }*/
 
     /*
      * GRAPHICAL METHODS
      */
-
     @Override
     public void paint(Graphics g, float scale) {
 
-        int scaledStartX = (int)((float)bounds.x*scale);
-        int scaledStartY = (int)((float)bounds.y*scale);
-        int scaledEndX = (int)((float)(bounds.x+bounds.width)*scale);
-        int scaledEndY = (int)((float)(bounds.y+bounds.height)*scale);
+        int scaledStartX = (int) ((float) bounds.x * scale);
+        int scaledStartY = (int) ((float) bounds.y * scale);
+        int scaledEndX = (int) ((float) (bounds.x + bounds.width) * scale);
+        int scaledEndY = (int) ((float) (bounds.y + bounds.height) * scale);
         int scaledWidth = scaledEndX - scaledStartX;
         int scaledHeight = scaledEndY - scaledStartY;
 
         //in case of painting symbol paint for symbol
-        if (super.getDisplayedSymbol()!=null && super.isSymbolDisplayed()) {
+        if (super.getDisplayedSymbol() != null && super.isSymbolDisplayed()) {
 
             Graphics imageGraphics = g.create(scaledStartX, scaledStartY, scaledWidth, scaledHeight);
             Symbol symbol = super.getDisplayedSymbol();
@@ -120,8 +126,8 @@ public class Region extends PositioningTool {
         if (bounds.width > DRAGAREA * MIN_DRAGSIZE && bounds.height > DRAGAREA * MIN_DRAGSIZE) {
 
             //draw cross in area
-            int lowerX = scaledEndX - (int)(DRAGAREA*scale);
-            int lowerY = scaledEndY - (int)(DRAGAREA*scale);
+            int lowerX = scaledEndX - (int) (DRAGAREA * scale);
+            int lowerY = scaledEndY - (int) (DRAGAREA * scale);
             int higherX = scaledEndX;
             int higherY = scaledEndY;
 
@@ -133,10 +139,9 @@ public class Region extends PositioningTool {
     @Override
     public boolean dragable(int x, int y) {
 
-        if (internalDragable(x,y) != null) {
+        if (internalDragable(x, y) != null) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -150,14 +155,12 @@ public class Region extends PositioningTool {
     private DragOption internalDragable(int x, int y) {
 
         //first check whether in resize area (which is right lower part of the rectangle
-        if (x >= bounds.x + bounds.width - DRAGAREA && x <= bounds.x + bounds.width && y >= bounds.y + bounds.height - DRAGAREA && y <= bounds.y +bounds.height) {
+        if (x >= bounds.x + bounds.width - DRAGAREA && x <= bounds.x + bounds.width && y >= bounds.y + bounds.height - DRAGAREA && y <= bounds.y + bounds.height) {
             return DragOption.resize;
-        }
-        //if not in resize area check for whole bounds
+        } //if not in resize area check for whole bounds
         else if (x >= bounds.x && x <= bounds.x + bounds.width && y >= bounds.y && y <= bounds.y + bounds.height) {
             return DragOption.move;
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -173,8 +176,7 @@ public class Region extends PositioningTool {
                 if (currentOption == DragOption.move) {
                     this.dragOffset.x = origin.x - bounds.x;
                     this.dragOffset.y = origin.y - bounds.y;
-                }
-                else {
+                } else {
                     this.dragOffset.x = bounds.x + bounds.width - origin.x;
                     this.dragOffset.y = bounds.y + bounds.height - origin.y;
                 }
@@ -190,9 +192,8 @@ public class Region extends PositioningTool {
             if (currentOption == DragOption.move) {
                 bounds.x = newPosition.x - dragOffset.x;
                 bounds.y = newPosition.y - dragOffset.y;
-            }
-            else {
-                
+            } else {
+
                 int checkWidth = newPosition.x - bounds.x + dragOffset.x;
                 int checkHeight = newPosition.y - bounds.y + dragOffset.y;
 
@@ -212,6 +213,5 @@ public class Region extends PositioningTool {
 
         currentOption = null;
     }
-
 }
 

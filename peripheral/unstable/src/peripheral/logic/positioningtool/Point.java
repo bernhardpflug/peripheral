@@ -41,7 +41,7 @@ public class Point extends PositioningTool {
     }
 
     public Symbol getActSymbol () {
-        return actSymbol;
+        return getSymbols().get(0);//actSymbol;
     }
 
     public void setActSymbol (Symbol val) {
