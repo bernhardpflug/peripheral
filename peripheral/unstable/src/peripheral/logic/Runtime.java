@@ -39,10 +39,10 @@ public class Runtime {
     }
 
     public Visualization getVisualization() {
-        //return viz;
+        return viz;
 
         //@todo: comment out and return real viz-instance
-        return new Visualization() {
+        /*return new Visualization() {
 
             public void addSymbol(Symbol s, Region region) {
                 Logging.getLogger().finer("Visualization: added symbol");
@@ -87,7 +87,7 @@ public class Runtime {
             public void translateSymbol(Symbol s, java.awt.Point targetPosition) {
                 Logging.getLogger().finer("Visualization: translated symbol to position " + targetPosition);
             }
-        };
+        };*/
     }
 
     public Map<Sensor, java.util.List<SymbolAdapter>> getSensorAdapterMapping() {

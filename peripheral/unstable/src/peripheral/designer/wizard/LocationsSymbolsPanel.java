@@ -560,7 +560,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
             fileChooser.setDialogTitle("Select an image file for the symbol");
 
             if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                Symbol symbol = new Symbol(fileChooser.getSelectedFile());
+                Symbol symbol = new Symbol(fileChooser.getSelectedFile(), pos);
                 
                 //if added symbol is first one mark it as display symbol
                 /*if (pos.getSymbols().isEmpty()) {
