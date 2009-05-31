@@ -2,22 +2,27 @@ package peripheral.logic.symboladapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import peripheral.logic.action.ListHideAction;
 import peripheral.logic.action.ListShowAction;
 import peripheral.logic.action.PointWrapperAction;
+import peripheral.logic.action.RegionAddNewAction;
 import peripheral.logic.action.SymbolAction;
 import peripheral.logic.action.SymbolRotateAction;
 import peripheral.logic.action.SymbolScaleAction;
+import peripheral.logic.action.SymbolShowAction;
 import peripheral.logic.action.SymbolSwapAction;
 import peripheral.logic.action.SymbolTranslateAction;
 import peripheral.logic.filter.MultiplyFilter;
 import peripheral.logic.filter.PercentageFilter;
 import peripheral.logic.filter.PositionFilter;
 import peripheral.logic.filter.RandomPositioningToolPickerFilter;
+import peripheral.logic.filter.RandomSymbolPickerFilter;
+import peripheral.logic.filter.RandomValuePickerFilter;
 import peripheral.logic.filter.StringTemplateFilter;
-import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.positioningtool.Line;
 import peripheral.logic.positioningtool.Point;
 import peripheral.logic.positioningtool.PositioningTool;
+import peripheral.logic.positioningtool.Region;
 import peripheral.logic.positioningtool.ToolList;
 import peripheral.logic.rule.Rule;
 import peripheral.logic.rule.TrueCondition;
@@ -127,6 +132,23 @@ public class AdapterTemplateFactory {
         templates.add(adapter);
 
         /**
+         * static symbol adapter 1
+         */
+        adapter = new SymbolAdapter();
+
+        adapter.setName("Static Symbol");
+        adapter.setDescription("Adapter, mit dessen Hilfe ein statisches Symbol in die Szene eingefügt werden kann.");
+
+        adapter.setTool(new Point());
+        adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
+
+        symbolAction = new SymbolShowAction(adapter);
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        adapter.getInitActions().add(wrapperAction);
+
+        templates.add(adapter);
+
+        /**
          * slider 1
          */
         adapter = new SymbolAdapter();
@@ -224,7 +246,7 @@ public class AdapterTemplateFactory {
 
         templates.add(adapter);
 
-         /**
+        /**
          * overlay position populator 1
          */
         adapter = new SymbolAdapter();
@@ -235,12 +257,16 @@ public class AdapterTemplateFactory {
         adapter.setTool(new ToolList(Point.class));
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
+        List<PositioningTool> posTools = adapter.getTool().getElements();
+        ListHideAction listHideAction = new ListHideAction(adapter, new ConstValue(adapter, "elementsToHide", posTools, posTools.getClass()));
+        adapter.getInitActions().add(listHideAction);
+
         val = new SensorValue(adapter, "sensorValue", Integer.class);
         input = new UserInput("Sensorwert", "Wert vom Sensor, der die Anzahl der anzuzeigenden Punkte angibt.", val);
         adapter.getNeededUserInput().add(input);
 
-        RandomPositioningToolPickerFilter rpf = new RandomPositioningToolPickerFilter(adapter, "pickedValues");
-        List<PositioningTool> posTools = adapter.getTool().getElements();
+        RandomValuePickerFilter rpf = new RandomPositioningToolPickerFilter(adapter, "pickedValues");
+        posTools = adapter.getTool().getElements();
         new ConstValue(adapter, "valueList", posTools, posTools.getClass());
         rpf.putFilterInputValue("valueList", new VarValue(adapter, "valueList"));
         rpf.putFilterInputValue("nrToPick", new VarValue(adapter, "sensorValue"));
@@ -250,6 +276,43 @@ public class AdapterTemplateFactory {
         rule.getConditions().add(new TrueCondition());
         ListShowAction listShowAction = new ListShowAction(adapter, new VarValue(adapter, "pickedValues"), new ConstValue(adapter, "hideOthers", true, Boolean.class));
         rule.getActions().add(listShowAction);
+        //rule.getActions().add(new ListHideAction(adapter, new VarValue(adapter, "pickedValues")));
+        //rule.getActions().add(listShowAction);
+        adapter.getRules().add(rule);
+
+        templates.add(adapter);
+
+        /**
+         * static area populator 1
+         */
+        adapter = new SymbolAdapter();
+
+        adapter.setName("StaticAreaPopulator");
+        adapter.setDescription("2nd Populator...");
+
+        adapter.setTool(new Region());
+        adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
+
+        val = new SensorValue(adapter, "sensorValue", Integer.class);
+        input = new UserInput("Sensorwert", "Wert vom Sensor, der die Anzahl der anzuzeigenden Symbole angibt.", val);
+        adapter.getNeededUserInput().add(input);
+
+        val = new ConstValue(adapter, "repeat", true, Boolean.class);
+        input = new UserInput("Repeat", "True: Ein Symbol kann mehrmals angzeigt werden, False: Ein Symbol kann nur höchstens einmal angezeigt werden.", val);
+        adapter.getNeededUserInput().add(input);
+
+        rpf = new RandomSymbolPickerFilter(adapter, "pickedSymbols");
+        List<Symbol> symbolList = ((Region) adapter.getTool()).getSymbols();
+        new ConstValue(adapter, "symbolList", symbolList, symbolList.getClass());
+        rpf.putFilterInputValue("symbolList", new VarValue(adapter, "symbolList"));
+        rpf.putFilterInputValue("nrToPick", new VarValue(adapter, "sensorValue"));
+        rpf.putFilterInputValue("repeat", new VarValue(adapter, "repeat"));
+        adapter.getBeforeFilter().add(rpf);
+
+        rule = new Rule(adapter);
+        rule.getConditions().add(new TrueCondition());
+        RegionAddNewAction regionAddNewAction = new RegionAddNewAction(adapter, new VarValue(adapter, "pickedSymbols"));
+        rule.getActions().add(regionAddNewAction);
         adapter.getRules().add(rule);
 
         templates.add(adapter);
