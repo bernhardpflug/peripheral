@@ -13,6 +13,7 @@ package peripheral.designer.wizard;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
@@ -665,7 +666,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
                 newTool = new Region();
             }
 
-            toollist.getVisibleElements().add(newTool);
+            toollist.getElements().add(newTool);
 
             fillLocationList();
 
@@ -684,22 +685,22 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
             ToolList toollist = (ToolList)actionTool;
 
             //don't allow deletion if there is only one item left
-            if (toollist.getVisibleElements().size() > 1) {
+            if (toollist.getElements().size() > 1) {
 
-                int delIndex = toollist.getVisibleElements().indexOf(toDel);
+                int delIndex = toollist.getElements().indexOf(toDel);
 
                 //element to set selected after refill
                 Object toSelect;
 
                 //if deleted is not at first position select upper item
                 if (delIndex > 0) {
-                    toSelect = toollist.getVisibleElements().get(delIndex -1);
+                    toSelect = toollist.getElements().get(delIndex -1);
                 } else {
                     //usually check for greater one to select but in here there must be always one element left
-                    toSelect = toollist.getVisibleElements().get(1);
+                    toSelect = toollist.getElements().get(1);
 
                 }
-                toollist.getVisibleElements().remove(toDel);
+                toollist.getElements().remove(toDel);
 
                 fillLocationList();
 
@@ -715,7 +716,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
 
             PositioningTool tool = (PositioningTool)this.LocationList.getSelectedValue();
 
-            ArrayList elements = ((ToolList)actionTool).getVisibleElements();
+            List elements = ((ToolList)actionTool).getElements();
 
             int position = elements.indexOf(tool);
 
@@ -738,7 +739,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
 
             PositioningTool tool = (PositioningTool)this.LocationList.getSelectedValue();
 
-            ArrayList elements = ((ToolList)actionTool).getVisibleElements();
+            List elements = ((ToolList)actionTool).getElements();
 
             int position = elements.indexOf(tool);
 
