@@ -107,10 +107,28 @@ public class SensorChannel implements Serializable{
         return sensor.getName() + metadata.get("shortname");
     }
 
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj instanceof SensorChannel) {
+            SensorChannel sc = (SensorChannel)obj;
+
+            if (this.mid == sc.getMid()) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return super.equals(obj);
+        }
+    }
+
     public static SensorChannel getDummy() {
 
         if (DUMMY == null) {
-            DUMMY = new SensorChannel(0, "DUMMY",null) {
+            DUMMY = new SensorChannel(-1, "DUMMY",null) {
                 public String toString() {
                     return "<none>";
                 }

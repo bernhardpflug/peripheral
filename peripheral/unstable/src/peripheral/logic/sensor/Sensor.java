@@ -91,6 +91,29 @@ public class Sensor extends Observable implements Serializable {
         return allowedChannels;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+
+        if (obj instanceof Sensor) {
+            Sensor s = (Sensor)obj;
+
+            if (this.pid == s.getPid()) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return super.equals(obj);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
     public String getName () {
         return name;
     }

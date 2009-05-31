@@ -40,6 +40,23 @@ public class SensorServer extends Observable implements Serializable {
     	XmlMetaParser parser = new XmlMetaParser(this);
     	parser.start();
     }
+
+    public boolean equals(Object obj) {
+
+        if (obj instanceof SensorServer) {
+            SensorServer server = (SensorServer)obj;
+
+            if (this.address.equals(server.address)) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return super.equals(obj);
+        }
+    }
     
     // GETTERS AND SETTERS
     public String getAddress () {
