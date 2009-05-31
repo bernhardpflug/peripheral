@@ -43,11 +43,11 @@ public class DisplayConfiguration implements Serializable {
         return adapter;
     }
 
-    public void setBackgroundImageFilename(File file) {
+    public void setBackgroundImageFile(File file) {
         this.backgroundImageFile = file;
     }
 
-    public File getBackgroundImageFilename() {
+    public File getBackgroundImageFile() {
         return backgroundImageFile;
     }
 
