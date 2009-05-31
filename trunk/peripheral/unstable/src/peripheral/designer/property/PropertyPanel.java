@@ -24,6 +24,7 @@ import peripheral.logic.DisplayConfiguration;
 import peripheral.logic.sensor.Sensor;
 import peripheral.logic.sensor.SensorChannel;
 import peripheral.logic.sensor.SensorServer;
+import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.ConstValue;
 import peripheral.logic.value.SensorValue;
 import peripheral.logic.value.UserInput;
@@ -38,16 +39,19 @@ import peripheral.logic.value.Value;
  */
 public class PropertyPanel extends JPanel {
 
+    SymbolAdapter symbolAdapter;
     List<Value> userInputs;
 
-    public PropertyPanel(List<UserInput> userInputs) {
+    public PropertyPanel(SymbolAdapter symbolAdapter) {
 
         super(new GridLayout(1,0));
+
+        this.symbolAdapter = symbolAdapter;
 
         this.userInputs = new ArrayList<Value>();
 
         //sort out const and sensor values for display
-        for (UserInput uInput : userInputs) {
+        for (UserInput uInput : symbolAdapter.getNeededUserInput()) {
 
             if (uInput.getValue() instanceof ConstValue || uInput.getValue() instanceof SensorValue) {
                 this.userInputs.add(uInput.getValue());
@@ -80,17 +84,13 @@ public class PropertyPanel extends JPanel {
 
         channels.add(SensorChannel.getDummy());
 
-        ArrayList<SensorServer> servers = (ArrayList<SensorServer>) DisplayConfiguration.getInstance().getSensorServer();
+        ArrayList<Sensor> sensors = symbolAdapter.getPreselectedSensors();
 
-        for (SensorServer server : servers) {
+        for (Sensor sensor : sensors) {
 
-            ArrayList<Sensor> sensors = server.getSensorList();
-
-            for (Sensor sensor : sensors) {
-                
-                channels.addAll(sensor.getSensorChannels(allowedType));
-            }
+            channels.addAll(sensor.getSensorChannels(allowedType));
         }
+
 
         return channels;
     }
