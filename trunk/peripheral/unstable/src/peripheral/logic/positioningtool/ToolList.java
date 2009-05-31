@@ -52,7 +52,7 @@ public class ToolList implements ActionTool {
     }
 
     
-    @Override
+    //@Override
     public List<PositioningTool> getElements() {
         //return (ArrayList<PositioningTool>) visibleElements;
         return elements;
