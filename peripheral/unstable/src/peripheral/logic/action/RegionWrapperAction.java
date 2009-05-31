@@ -5,51 +5,43 @@ import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.symboladapter.Symbol; 
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
-import peripheral.logic.value.Value; 
 
 public abstract class RegionWrapperAction extends RegionAction {
 
-    private Value symbol;
+    //private Value symbol;
+    private Symbol symbol;
 
     private SymbolAction symbolAction;
 
-    private RegionWrapperAction (SymbolAdapter adapter, SymbolAction symbolAction) {
+    public RegionWrapperAction (SymbolAdapter adapter, SymbolAction symbolAction, Symbol symbol) {
         super(adapter);
         this.symbolAction = symbolAction;
+        this.symbol = symbol;
     }
 
     public java.util.List<UserInput> getUserInput () {
-        return null;
+        return symbolAction.getUserInput();
     }
 
-    public abstract String getName ();
+    @Override
+    public String getName (){
+        return symbolAction.getName();
+    }
 
-    public abstract String getDescription ();
+    @Override
+    public String getDescription (){
+        return symbolAction.getDescription();
+    }
 
-    /**
-     *  <p style="margin-top: 0">
-     *        symbolAction.execute(symbol);
-     *      </p>
-     */
+    @Override
     public void execute (ActionTool tool) {
+        symbolAction.execute(symbol);
     }
 
-    /**
-     *  <p style="margin-top: 0">
-     *    returns anonymous class based on the passed SymbolAction.<br><br>e.g.:<br>return 
-     *    new RegionWrapperAction(symbolAction){<br>public String getName(){...}<br>public 
-     *    String getDescription(){...<br>}
-     *      </p>
-     */
-    public RegionWrapperAction getRegionWrapperAction (SymbolAction symbolAction) {
-        return null;
-    }
 
     public void update (Observable o, Object arg) {
     }
 
-    public void getRegionWrapperAction (SymbolAction symbolAction, Value symbol) {
-    }
 
     public Symbol getSymbol () {
         return null;

@@ -1,42 +1,43 @@
 package peripheral.logic.action;
 
 import java.util.Observable;
-import peripheral.logic.positioningtool.ActionTool; 
+import peripheral.logic.positioningtool.ActionTool;
+import peripheral.logic.positioningtool.Region;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
+import peripheral.logic.Runtime;
+import peripheral.logic.symboladapter.Symbol;
 
 public class RegionShowAction extends RegionAction {
 
-    public RegionShowAction (SymbolAdapter adapter) {
+    public RegionShowAction(SymbolAdapter adapter) {
         super(adapter);
     }
 
-    public java.util.List<UserInput> getUserInput () {
+    public java.util.List<UserInput> getUserInput() {
         return null;
     }
 
-    public String getName () {
+    public String getName() {
         return null;
     }
 
-    public String getDescription () {
+    public String getDescription() {
         return null;
     }
 
-    /**
-     *  <p style="margin-top: 0">
-     *        if ( ((Region)tool).isHidden() ){<br>
-     *      </p>
-     *      <p style="margin-top: 0">
-     *        for (Symbol s : tool.getSymbols()){<br>Visualization.show(s);<br>}<br>}
-     *  <br>((Region)tool).setHidden(false);
-     *      </p>
-     */
-    public void execute (ActionTool tool) {
+    public void execute(ActionTool tool) {
+        Region region = (Region) tool;
+
+        if (!region.isVisible()) {
+            region.setVisible(true);
+            for (Symbol s : region.getSymbols()){
+                Runtime.getInstance().getVisualization().showSymbol(s);
+            }
+        }
     }
 
-    public void update (Observable o, Object arg) {
+    public void update(Observable o, Object arg) {
     }
-
 }
 
