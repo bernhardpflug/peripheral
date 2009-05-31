@@ -1,5 +1,7 @@
 package peripheral.logic.filter;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +14,6 @@ public abstract class Filter implements Serializable {
     protected String outputVarName;
     protected Map<String, FilterInput> filterInputs;
     protected SymbolAdapter adapter;
-
     protected ConstValue outputValue;
 
     /*public List<VarValue> getInputVar() {
@@ -38,9 +39,8 @@ public abstract class Filter implements Serializable {
     return outputVarName;
     }*/
     /*public void setOutputVarName(String val) {
-        this.outputVarName = val;
+    this.outputVarName = val;
     }*/
-
     public void putFilterInputValue(String name, VarValue value) throws IllegalArgumentException {
         FilterInput fi = filterInputs.get(name);
 
@@ -58,17 +58,17 @@ public abstract class Filter implements Serializable {
         throw new IllegalArgumentException("Filter input '" + name + "' for filter " + this.getClass().getName() + " requires one of type '" + createAllowedTypesString(fi.getAllowedTypes()) + "' but was '" + value.getValueType().getName() + "'");
     }
 
-    public FilterInput[] getFilterInputs (){
+    public FilterInput[] getFilterInputs() {
         return filterInputs.values().toArray(new FilterInput[0]);
     }
 
-    private String createAllowedTypesString (Class [] allowedTypes){
+    private String createAllowedTypesString(Class[] allowedTypes) {
         StringBuffer sb = new StringBuffer();
-        for (Class allowedType : allowedTypes){
+        for (Class allowedType : allowedTypes) {
             sb.append(allowedType.getName());
             sb.append(", ");
         }
-        sb.delete(sb.length()-2, sb.length());
+        sb.delete(sb.length() - 2, sb.length());
         return sb.toString();
     }
 
