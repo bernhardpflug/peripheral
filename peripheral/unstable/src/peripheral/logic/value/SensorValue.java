@@ -28,8 +28,6 @@ public class SensorValue extends Value {
         if (val != null) {
             this.sensorChannel.getSensorValues().add(this);
 
-            //@todo: delete; only for testing purposes
-            this.adapter.getPreselectedSensors().add(this.sensorChannel.getSensor());
         }
     }
 
