@@ -2,8 +2,11 @@ package peripheral.logic.action;
 
 import java.util.Observable;
 import peripheral.logic.positioningtool.ActionTool; 
+import peripheral.logic.positioningtool.Region;
+import peripheral.logic.symboladapter.Symbol;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
+import peripheral.logic.Runtime;
 
 public class RegionHideAction extends RegionAction {
 
@@ -35,7 +38,15 @@ public class RegionHideAction extends RegionAction {
      *        ((Region)tool).setHidden(true);
      *      </p>
      */
-    public void execute (ActionTool tool) {
+    public void execute(ActionTool tool) {
+        Region region = (Region) tool;
+
+        if (region.isVisible()) {
+            region.setVisible(false);
+            for (Symbol s : region.getSymbols()){
+                Runtime.getInstance().getVisualization().hideSymbol(s);
+            }
+        }
     }
 
     public void update (Observable o, Object arg) {
