@@ -15,6 +15,9 @@ import peripheral.logic.filter.Filter;
 import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.rule.Rule;
 import peripheral.logic.sensor.Sensor;
+import peripheral.logic.sensor.SensorChannel;
+import peripheral.logic.sensor.SensorServer;
+import peripheral.logic.value.SensorValue;
 import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value;
 
@@ -33,7 +36,7 @@ public class SymbolAdapter implements Serializable {
     private String name;
     private String description;
     private SymbolAnimator animator;
-    private java.util.Set<Sensor> preselectedSensors;
+    private java.util.ArrayList<Sensor> preselectedSensors;
     private Map<RequiredStep, Boolean> requiredSteps;
     private Action defaultAction;
 
@@ -50,7 +53,7 @@ public class SymbolAdapter implements Serializable {
 
         neededUserInput = new ArrayList<UserInput>();
 
-        preselectedSensors = new java.util.HashSet<Sensor>();
+        preselectedSensors = new java.util.ArrayList<Sensor>();
 
         requiredSteps = new java.util.HashMap<RequiredStep, Boolean>();
 
@@ -140,6 +143,132 @@ public class SymbolAdapter implements Serializable {
         return copy;
     }
 
+    /**
+     * Determines whether given sensor has dependencies in UserInputs
+     * @param sensor
+     * @return
+     */
+    public boolean isUsed(Sensor sensor) {
+
+        for (UserInput userInput : neededUserInput) {
+
+            //iterate through all user inputs with sensorvalues
+            if (userInput.getValue() instanceof SensorValue) {
+                SensorValue sensorValue = (SensorValue) userInput.getValue();
+
+                //iterate through all sensorchannels of this sensor
+
+                for (SensorChannel channel : sensor.getSensorChannels()) {
+
+                    if (sensorValue.getSensorChannel().equals(channel)) {
+
+                        return true;
+                    }
+                }
+
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * @return list of all sensors that are preselected but no longer available
+     * in sensor server list of displayconfiguration
+     */
+    public ArrayList<Sensor> getInvalidSensors() {
+        ArrayList<Sensor> result = new ArrayList<Sensor>();
+
+        ArrayList<SensorServer> servers = (ArrayList<SensorServer>) peripheral.logic.DisplayConfiguration.getInstance().getSensorServer();
+
+        for (Sensor sensor : this.preselectedSensors) {
+
+            boolean foundFlag = false;
+
+            for (SensorServer server : servers) {
+                if (server.getSensorList().contains(sensor)) {
+                    foundFlag = true;
+                }
+            }
+
+            if (!foundFlag) {
+                result.add(sensor);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     *
+     * @param sensor
+     * @return whether given sensor (that should be one of the preselected sensors) is invalid
+     */
+    public boolean isSensorInvalid(Sensor sensor) {
+        return getInvalidSensors().contains(sensor);
+    }
+
+    /**
+     * Method that removes given sensors from preselection list and resets all
+     * affected user inputs
+     * @param noLongerAvailableSensors list with no longer available sensors
+     */
+    public void removeSensorsWithDependencies(ArrayList<Sensor> sensorList) {
+
+        //first remove corrupt sensors from preselection list
+        for (Sensor sensor : sensorList) {
+            this.preselectedSensors.remove(sensor);
+        }
+
+        //second reset all affected userinputs to dummy value
+        resetCorruptUserInputs(sensorList);
+    }
+
+    /**
+     * Takes a list of sensors that are no longer available and resets all its
+     * user inputs with SensorValues to the default dummy sensorchannel
+     * @param noLongerAvailableSensors
+     */
+    private void resetCorruptUserInputs(ArrayList<Sensor> noLongerAvailableSensors) {
+
+        for (UserInput userInput : neededUserInput) {
+
+            //iterate through all user inputs with sensorvalues
+            if (userInput.getValue() instanceof SensorValue) {
+                SensorValue sensorValue = (SensorValue)userInput.getValue();
+
+                //iterate through all sensorchannels of this sensor
+                for (Sensor sensor : noLongerAvailableSensors) {
+                    for (SensorChannel channel : sensor.getSensorChannels()) {
+
+                        if (sensorValue.getSensorChannel().equals(channel)) {
+
+                            //reset the value of this sensorvalue to dummy channel
+                            sensorValue.setSensorChannel(SensorChannel.getDummy());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Method to return all required but empty userinputs
+     * GUI checks whether returned list is empty to allow user to proceed
+     * @return list with all required but empty user inputs
+     */
+    public ArrayList<UserInput> getEmptyButNeededUserInputs() {
+
+//        //search for all sensorvalues with SensorChannel.EMPTY value
+//        for (UserInput userInput : this.neededUserInput) {
+//
+//            if (userInput.getValue() instanceof SensorValue) {
+//                SensorValue sensorValue = (SensorValue)userInput.getValue();
+//            }
+//        }
+        return null;
+    }
+
     public Action getDefaultAction() {
         return defaultAction;
     }
@@ -148,7 +277,7 @@ public class SymbolAdapter implements Serializable {
         this.defaultAction = val;
     }
 
-    public java.util.Set<Sensor> getPreselectedSensors() {
+    public java.util.ArrayList<Sensor> getPreselectedSensors() {
         return preselectedSensors;
     }
 

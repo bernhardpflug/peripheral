@@ -11,15 +11,90 @@
 
 package peripheral.designer.wizard;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import peripheral.logic.DisplayConfiguration;
+import peripheral.logic.sensor.Sensor;
+import peripheral.logic.sensor.SensorServer;
+
 /**
  *
  * @author Berni
  */
 public class PreselectSensorPanel extends javax.swing.JPanel {
 
+    AddAnimationDialog parent;
+
+    DefaultListModel availableModel;
+    DefaultListModel selectedModel;
+
+    ArrayList<Sensor> userDefinedSensors;
+
     /** Creates new form preselectSensorPanel */
-    public PreselectSensorPanel() {
+    public PreselectSensorPanel(AddAnimationDialog parent) {
         initComponents();
+
+        this.parent = parent;
+
+        availableModel = new DefaultListModel();
+        selectedModel = new DefaultListModel();
+
+        this.selectedSensorList.setCellRenderer(new SensorCellRenderer());
+        this.availableSensorList.setModel(availableModel);
+        this.selectedSensorList.setModel(selectedModel);
+        
+
+    }
+
+    /**
+     * Must be called to fill lists (can't be done in constructor as symboladapter might not be known at this time
+     */
+    public void initPanel() {
+
+        initUserDefinedSensors();
+        initAvailableList();
+        initSelectedList();
+    }
+
+    private void initUserDefinedSensors() {
+
+        userDefinedSensors = new ArrayList<Sensor>();
+
+        ArrayList<SensorServer> definedSensorServer = (ArrayList<SensorServer>) DisplayConfiguration.getInstance().getSensorServer();
+
+        for (SensorServer server : definedSensorServer) {
+
+            ArrayList<Sensor> sensors = server.getSensorList();
+
+            for (Sensor sensor : sensors) {
+                userDefinedSensors.add(sensor);
+            }
+        }
+
+    }
+
+    private void initAvailableList() {
+
+        List<Sensor> alreadyPreselected = parent.getCreatedAdapter().getPreselectedSensors();
+
+        for (Sensor sensor : userDefinedSensors) {
+
+            //check if sensor is not already as preselected Sensors of symbol adpater
+            if (!alreadyPreselected.contains(sensor)) {
+                availableModel.addElement(sensor);
+            }
+        }
+    }
+
+    private void initSelectedList() {
+
+        List<Sensor> alreadyPreselected = parent.getCreatedAdapter().getPreselectedSensors();
+
+        for (Sensor sensor : alreadyPreselected) {
+            selectedModel.addElement(sensor);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -32,35 +107,35 @@ public class PreselectSensorPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         sensorList = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        availableSensorList = new javax.swing.JList();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList2 = new javax.swing.JList();
+        selectedSensorList = new javax.swing.JList();
         jLabel2 = new javax.swing.JLabel();
         removeButton = new javax.swing.JButton();
         addButton = new javax.swing.JButton();
 
-        jList1.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        sensorList.setViewportView(jList1);
+        sensorList.setViewportView(availableSensorList);
 
         jLabel1.setText("Available Sensors");
 
-        jList2.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(jList2);
+        jScrollPane1.setViewportView(selectedSensorList);
 
         jLabel2.setText("Selected Sensors");
 
         removeButton.setText("<");
+        removeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeButtonActionPerformed(evt);
+            }
+        });
 
         addButton.setText(">");
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addButtonActionPerformed(evt);
+            }
+        });
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
         this.setLayout(layout);
@@ -73,8 +148,8 @@ public class PreselectSensorPanel extends javax.swing.JPanel {
                     .add(sensorList, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 253, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 33, Short.MAX_VALUE)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(removeButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(addButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(addButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(removeButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 54, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .add(30, 30, 30)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(jLabel2)
@@ -86,10 +161,10 @@ public class PreselectSensorPanel extends javax.swing.JPanel {
             .add(layout.createSequentialGroup()
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                     .add(layout.createSequentialGroup()
-                        .add(138, 138, 138)
-                        .add(removeButton)
-                        .add(18, 18, 18)
-                        .add(addButton))
+                        .add(145, 145, 145)
+                        .add(addButton)
+                        .add(31, 31, 31)
+                        .add(removeButton))
                     .add(layout.createSequentialGroup()
                         .addContainerGap()
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
@@ -103,16 +178,146 @@ public class PreselectSensorPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+
+        Object [] selectedElems = this.availableSensorList.getSelectedValues();
+        if (selectedElems != null && selectedElems.length > 0) {
+
+            for (int i=0; i < selectedElems.length; i++) {
+
+                Sensor sensor = (Sensor)selectedElems[i];
+
+                //remove from available and add to selected model
+                availableModel.removeElement(sensor);
+                selectedModel.addElement(sensor);
+
+                //add to preselected sensors
+                parent.getCreatedAdapter().getPreselectedSensors().add(sensor);
+            }
+        }
+    }//GEN-LAST:event_addButtonActionPerformed
+
+    private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
+
+        Object [] selectedElems = this.selectedSensorList.getSelectedValues();
+
+        if (selectedElems != null && selectedElems.length > 0) {
+
+            for (int i=0; i < selectedElems.length; i++) {
+
+                Sensor sensor = (Sensor)selectedElems[i];
+
+                //only allow removing this sensor if it is contained by currently user defined sensors
+                if (userDefinedSensors.contains(sensor)) {
+
+                    //CHEck if sensor is used in user inputs
+                    if (parent.getCreatedAdapter().isUsed(sensor)) {
+
+                        //ask user if really wants to delete this sensor
+                        Object[] options = {"YES","NO"};
+                        String title = "Sensor is currently in use";
+                        String text = "The sensor "+sensor+" is used by some properties of this animation\n" +
+                                "If you remove it all properties with values of this sensor will be reset\n" +
+                                "Remove anyway?";
+
+                        int answer = JOptionPane.showOptionDialog(
+                                parent,
+                                text,
+                                title,
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.WARNING_MESSAGE,
+                                null,
+                                options,
+                                options[1]);
+
+                        if (answer == JOptionPane.YES_OPTION) {
+                            availableModel.addElement(sensor);
+                            selectedModel.removeElement(sensor);
+
+                            //use special method to also delete dependencies
+                            ArrayList<Sensor> list = new ArrayList<Sensor>();
+                            list.add(sensor);
+                            parent.getCreatedAdapter().removeSensorsWithDependencies(list);
+                        }
+
+                    }
+                    //just remove
+                    else {
+                        availableModel.addElement(sensor);
+                        selectedModel.removeElement(sensor);
+
+                        //remove from preselected sensors
+                        parent.getCreatedAdapter().getPreselectedSensors().remove(sensor);
+                    }
+                }
+            }
+        }
+    }//GEN-LAST:event_removeButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
+    private javax.swing.JList availableSensorList;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JList jList1;
-    private javax.swing.JList jList2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton removeButton;
+    private javax.swing.JList selectedSensorList;
     private javax.swing.JScrollPane sensorList;
     // End of variables declaration//GEN-END:variables
 
+    class SensorCellRenderer extends javax.swing.JLabel implements javax.swing.ListCellRenderer {
+
+        // This is the only method defined by ListCellRenderer.
+        // We just reconfigure the JLabel each time we're called.
+        public java.awt.Component getListCellRendererComponent(
+                javax.swing.JList list,
+                Object value, // value to display
+                int index, // cell index
+                boolean isSelected, // is the cell selected
+                boolean cellHasFocus) // the list and the cell have the focus
+        {
+            String s = value.toString();
+            setText(s);
+
+            //call internal method that decides
+            setForeground(getForeground(list,isSelected,value));
+
+            if (isSelected) {
+                setBackground(list.getSelectionBackground());
+
+            } else {
+                setBackground(list.getBackground());
+            }
+            setEnabled(list.isEnabled());
+            setFont(list.getFont());
+            setOpaque(true);
+            return this;
+        }
+
+        private java.awt.Color getForeground(javax.swing.JList list,boolean isSelected, Object value)
+                throws IllegalArgumentException{
+
+            if (value instanceof Sensor) {
+                Sensor sensor = (Sensor)value;
+
+                if (userDefinedSensors.contains(sensor)) {
+                    
+                    if (isSelected) {
+                        return list.getSelectionForeground();
+                    }
+                    else {
+                        return list.getForeground();
+                    }
+                }
+                else {
+                    
+                    return java.awt.Color.RED;
+                }
+            }
+            else {
+                throw new IllegalArgumentException(value + " is not of class Sensor");
+            }
+        }
+    }
 }

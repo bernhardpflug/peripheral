@@ -6,7 +6,7 @@
 /*
  * addAnimationDialog.java
  *
- * Created on 14.05.2009, 14:53:34
+ * 
  */
 
 package peripheral.designer.wizard;
@@ -17,7 +17,7 @@ import java.awt.event.WindowListener;
 import javax.swing.JOptionPane;
 import peripheral.designer.DesignerGUI;
 import peripheral.designer.preview.PreviewDialog;
-import peripheral.logic.positioningtool.PositioningTool;
+import peripheral.logic.sensor.Sensor;
 import peripheral.logic.symboladapter.AdapterTemplateFactory;
 import peripheral.logic.symboladapter.SymbolAdapter;
 
@@ -96,6 +96,9 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         modifyFlag = true;
 
         this.symbolAdapter = copyToEdit;
+
+        //init preselect panel as now symboladapter is known
+        this.preselectSensorPanel1.initPanel();
     }
 
     /** This method is called from within the constructor to
@@ -109,7 +112,7 @@ public class AddAnimationDialog extends javax.swing.JDialog {
 
         cardPanel = new javax.swing.JPanel();
         selectAnimationPanel1 = new peripheral.designer.wizard.SelectAnimationPanel();
-        preselectSensorPanel1 = new peripheral.designer.wizard.PreselectSensorPanel();
+        preselectSensorPanel1 = new peripheral.designer.wizard.PreselectSensorPanel(this);
         createLocationsSymbolsPanel1 = new peripheral.designer.wizard.LocationsSymbolsPanel(this);
         prevButton = new javax.swing.JButton();
         nextButton = new javax.swing.JButton();
@@ -186,6 +189,9 @@ public class AddAnimationDialog extends javax.swing.JDialog {
                     this.ruleBasedAdapterFlag = true;
                 }
 
+                //must be called here as now symboladapter is determined which is needed
+                this.preselectSensorPanel1.initPanel();
+
                 currentIndex++;
                 cl.next(cardPanel);
             }
@@ -213,6 +219,22 @@ public class AddAnimationDialog extends javax.swing.JDialog {
 
             //register positioning panel to preview dialog for listening to drag events
             PreviewDialog.getInstance().addPreviewListener(createLocationsSymbolsPanel1);
+
+            //get all sensors that have been preselected some time before but are no longer in the serverlist
+            java.util.ArrayList<Sensor> corruptSensors = symbolAdapter.getInvalidSensors();
+
+            if (corruptSensors.size() > 0) {
+                
+                //inform user in case there are some sensors selected that aren't available anymore
+                JOptionPane.showMessageDialog(this,
+                        "Red marked sensors are no longer available\n" +
+                        "and will be deleted from properties", "No longer existing sensors", JOptionPane.WARNING_MESSAGE);
+
+                //let the current symboladapter reset the preselected sensors and
+                //all its userinputs that contain sensorvalue with one
+                //sensorchannel of the no longer available sensors
+                symbolAdapter.removeSensorsWithDependencies(corruptSensors);
+            }
 
             currentIndex++;
             cl.next(cardPanel);

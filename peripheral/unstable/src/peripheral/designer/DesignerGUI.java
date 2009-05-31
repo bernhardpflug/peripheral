@@ -15,6 +15,7 @@ import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
@@ -26,6 +27,7 @@ import peripheral.logic.DisplayConfiguration;
 import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.positioningtool.Point;
 import peripheral.logic.positioningtool.Region;
+import peripheral.logic.sensor.Sensor;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.ConstValue;
 import peripheral.logic.value.SensorValue;
@@ -142,19 +144,43 @@ public class DesignerGUI extends javax.swing.JFrame {
             //selected created element
             this.defAnimationsList.setSelectedValue(created, true);
             
-            //show its positioning tools in preview
-            PreviewDialog.getInstance().setPositioningtoolsToPaint(created.getTool().getElements());
-            PreviewDialog.getInstance().updatePreview();
         }
-        else {
-            //display tools from selected adapter list
-            SymbolAdapter selected = (SymbolAdapter)this.defAnimationsList.getSelectedValue();
 
-            if (selected != null) {
-                PreviewDialog.getInstance().setPositioningtoolsToPaint(selected.getTool().getElements());
-                PreviewDialog.getInstance().updatePreview();
+        //refresh properties list and positioning tools in preview dialog
+        this.defAnimationsListValueChanged(null);
+    }
+
+    /**
+     * Checks if there are sensorvalues (userinputs) in some symboladpaters that contain either
+     * empty (SensorChannel.DUMMY) or no longer available sensorchannels
+     * @return true if no invalid data wos found, else false
+     */
+    private boolean checkForEmptyOrCorruptSensors() {
+
+        //get all created symboladapter
+        ArrayList<SymbolAdapter> adapters = (ArrayList<SymbolAdapter>) DisplayConfiguration.getInstance().getAdapter();
+
+        for (SymbolAdapter adapter : adapters) {
+
+            List<Sensor> invalidSensors = adapter.getInvalidSensors();
+
+            for (Sensor sensor : invalidSensors) {
+
+                //check if invalid sensor is in use
+                if (adapter.isUsed(sensor)) {
+                    JOptionPane.showMessageDialog(this,
+                            adapter.getName()+" uses invalid sensor "+sensor+"\n" +
+                            "Remove this sensor from animations properties",
+                            "Invalid sensor found", JOptionPane.ERROR_MESSAGE);
+
+                    return false;
+                }
             }
         }
+
+        //TODO check for userinputs with invalid values
+
+        return true;
     }
 
     /** This method is called from within the constructor to
@@ -481,9 +507,13 @@ public class DesignerGUI extends javax.swing.JFrame {
         //animation panel
         else if (currentIndex == 2) {
 
-            nextButton.setText("Finish");
-            currentIndex++;
-            cl.next(cardPanel);
+            //only allow continuing if there are no corrupt symboladapter
+            if (this.checkForEmptyOrCorruptSensors()) {
+                nextButton.setText("Finish");
+                currentIndex++;
+                cl.next(cardPanel);
+            }
+            
         }
         //save panel
         else if (currentIndex == 3) {
@@ -525,9 +555,7 @@ public class DesignerGUI extends javax.swing.JFrame {
             //PROPERTYPANEL
             //in case of list selection change display properties of selected
             //symbol adapter
-            List<UserInput> userInputs = ((SymbolAdapter)defAnimationsList.getSelectedValue()).getNeededUserInput();
-
-            PropertyPanel propertyPanel = new PropertyPanel(userInputs);
+            PropertyPanel propertyPanel = new PropertyPanel((SymbolAdapter)defAnimationsList.getSelectedValue());
 
             AnimationPropertiesPanel.removeAll();
             AnimationPropertiesPanel.add(propertyPanel, java.awt.BorderLayout.CENTER);
