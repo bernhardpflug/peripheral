@@ -24,7 +24,6 @@ public class Runtime {
     private static Runtime theInstance = null;
     private List<SensorUpdateThread> threads = new ArrayList<SensorUpdateThread>();
     private DisplayConfiguration displayConfig;
-
     private Visualization viz;
 
     private Runtime() {
@@ -39,11 +38,11 @@ public class Runtime {
         return theInstance;
     }
 
-    public Visualization getVisualization(){
+    public Visualization getVisualization() {
         //return viz;
 
         //@todo: comment out and return real viz-instance
-        return new Visualization(){
+        return new Visualization() {
 
             public void addSymbol(Symbol s, Region region) {
                 Logging.getLogger().finer("Visualization: added symbol");
@@ -88,7 +87,6 @@ public class Runtime {
             public void translateSymbol(Symbol s, java.awt.Point targetPosition) {
                 Logging.getLogger().finer("Visualization: translated symbol to position " + targetPosition);
             }
-
         };
     }
 
@@ -105,16 +103,18 @@ public class Runtime {
         //@todo: uncomment when visualization is ready
         initVisualization();
 
+        executeAdapterInitActions();
+
         //@todo: delete: only for testing purpose
         executeAdapters();
-        ////@todo: delete: only for testing purpose
-        //startSensorServer();
+    ////@todo: delete: only for testing purpose
+    //startSensorServer();
 
-        //createSensorAdapterMapping();
-        //createSensorUpdateThreads();
+    //createSensorAdapterMapping();
+    //createSensorUpdateThreads();
 
-        //startServers();
-        //startSensorCheckout();
+    //startServers();
+    //startSensorCheckout();
     }
 
     private void startSensorServer() {
@@ -148,9 +148,15 @@ public class Runtime {
         }
     }
 
-    private void executeAdapters(){
-        for (SymbolAdapter s : DisplayConfiguration.getInstance().getAdapter()){
+    private void executeAdapters() {
+        for (SymbolAdapter s : DisplayConfiguration.getInstance().getAdapter()) {
             s.execute();
+        }
+    }
+
+    private void executeAdapterInitActions() {
+        for (SymbolAdapter adapter : DisplayConfiguration.getInstance().getAdapter()) {
+            adapter.executeInitActions();
         }
     }
 
@@ -158,27 +164,34 @@ public class Runtime {
         Visualization viz = getVisualization();
 
         viz.init(
-                displayConfig.getBackgroundImageFilename(),
+                //@todo: change visualization interface to pass file object
+                displayConfig.getBackgroundImageFile().getPath(),
                 displayConfig.getDimension());
- 
+
         ActionTool tool;
-        ToolList toolList;
         for (SymbolAdapter adapter : displayConfig.getAdapter()) {
             tool = adapter.getTool();
 
-            if (tool instanceof Point) {
-                initPoint(viz, (Point) tool);
+            /*if (tool instanceof Point) {
+            initPoint(viz, (Point) tool);
             } else if (tool instanceof Region) {
-                initRegion(viz, (Region) tool);
+            initRegion(viz, (Region) tool);
             } else if (tool instanceof ToolList) {
-                toolList = (ToolList) tool;
+            toolList = (ToolList) tool;
 
-                for (PositioningTool pt : toolList.getVisibleElements()) {
-                    if (pt instanceof Point) {
-                        initPoint(viz, (Point) pt);
-                    } else if (tool instanceof Region) {
-                        initRegion(viz, (Region) pt);
-                    }
+            for (PositioningTool pt : toolList.getElements()) {
+            if (pt instanceof Point) {
+            initPoint(viz, (Point) pt);
+            } else if (tool instanceof Region) {
+            initRegion(viz, (Region) pt);
+            }
+            }
+            }*/
+            for (PositioningTool pt : tool.getElements()) {
+                if (pt instanceof Point) {
+                    initPoint(viz, (Point) pt);
+                } else if (tool instanceof Region) {
+                    initRegion(viz, (Region) pt);
                 }
             }
         }
@@ -230,9 +243,9 @@ public class Runtime {
     }
 
     /*private void startServers() {
-        for (Thread th : threads) {
-           // th.start();
-        }
+    for (Thread th : threads) {
+    // th.start();
+    }
     }*/
 }
 
