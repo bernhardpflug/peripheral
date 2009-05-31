@@ -2,6 +2,7 @@ package peripheral.logic;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -16,7 +17,7 @@ public class DisplayConfiguration implements Serializable {
 
     private static DisplayConfiguration instance;
     private java.util.List<SymbolAdapter> adapter;
-    private String backgroundImageFilename = "c:\\test.jpg";
+    private File backgroundImageFile;
     //@todo: make SensorServer and contained objects serializable
     private java.util.List<SensorServer> sensorServer;
     private transient BufferedImage backgroundImage;
@@ -42,12 +43,12 @@ public class DisplayConfiguration implements Serializable {
         return adapter;
     }
 
-    public void setBackgroundImageFilename(String val) {
-        this.backgroundImageFilename = val;
+    public void setBackgroundImageFilename(File file) {
+        this.backgroundImageFile = file;
     }
 
-    public String getBackgroundImageFilename() {
-        return backgroundImageFilename;
+    public File getBackgroundImageFilename() {
+        return backgroundImageFile;
     }
 
     public BufferedImage getBackgroundImage() {
