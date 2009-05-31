@@ -7,8 +7,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import peripheral.logic.action.Action;
+import peripheral.logic.action.ActionToolAction;
 import peripheral.logic.filter.Filter;
 import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.rule.Rule;
@@ -35,6 +37,8 @@ public class SymbolAdapter implements Serializable {
     private Map<RequiredStep, Boolean> requiredSteps;
     private Action defaultAction;
 
+    private List<ActionToolAction> initActions;
+
     public SymbolAdapter() {
 
         beforeFilter = new ArrayList<Filter>();
@@ -49,6 +53,8 @@ public class SymbolAdapter implements Serializable {
         preselectedSensors = new java.util.HashSet<Sensor>();
 
         requiredSteps = new java.util.HashMap<RequiredStep, Boolean>();
+
+        initActions = new ArrayList<ActionToolAction>();
     }
 
     public java.util.List<Filter> getAfterFilter() {
@@ -150,6 +156,10 @@ public class SymbolAdapter implements Serializable {
         return requiredSteps;
     }
 
+    public List<ActionToolAction> getInitActions() {
+        return initActions;
+    }
+
     /*public void save (ObjectOutputStream os) {
     }*/
     public String toString() {
@@ -170,6 +180,12 @@ public class SymbolAdapter implements Serializable {
 
         for (Filter af : getAfterFilter()) {
             af.doFilter();
+        }
+    }
+
+    public void executeInitActions(){
+        for (ActionToolAction action : initActions){
+            action.execute(tool);
         }
     }
 }
