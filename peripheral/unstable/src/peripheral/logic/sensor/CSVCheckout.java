@@ -77,8 +77,6 @@ public class CSVCheckout extends Thread {
         			
             	}
         		
-        		sensor.samplingStarted();
-        		
     		} catch (SensorServerAddressException e){
     			System.err.println("[" + sensor.getName() + "] - " + e.getMessage());
     		} catch (SensorChannelException e) {
@@ -196,6 +194,7 @@ public class CSVCheckout extends Thread {
 			// By doing so, each channel will get the same amount of measurements
 			if(sensor.getSensorChannels().get(0).equals(channel)){
 				stopmark = fullmeas[5];
+				sensor.setMeasQueueCurrentSize(channel.getMeasQueue().size());
 			}
 			
 		} catch (IOException e) {
