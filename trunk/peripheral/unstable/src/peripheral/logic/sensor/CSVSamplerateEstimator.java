@@ -28,6 +28,8 @@ public class CSVSamplerateEstimator extends Thread {
 		
 			String startmark = sensor.getStartmark();
 			calculateFromCSVFile(startmark);
+			sensor.setPollingrate(sensor.getSamplerate() * Sensor.getSr_polling_ratio());
+			sensor.samplingStarted();
 			
 	}
 	
@@ -138,11 +140,11 @@ public class CSVSamplerateEstimator extends Thread {
 			reader.close();
 			
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		} catch (IndexOutOfBoundsException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		
 		return resultstack;
