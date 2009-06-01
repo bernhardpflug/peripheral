@@ -42,6 +42,11 @@ public class SymbolAdapter implements Serializable {
     private Action defaultAction;
     private List<ActionToolAction> initActions;
 
+    //defines whether symbols of the positioningtools of this adapter
+    //may add a second file for a symbol if the symbol changes its direction
+    //in the animation
+    private boolean allowOrientedSymbols;
+
     public SymbolAdapter() {
 
         beforeFilter = new ArrayList<Filter>();
@@ -58,6 +63,8 @@ public class SymbolAdapter implements Serializable {
         requiredSteps = new java.util.HashMap<RequiredStep, Boolean>();
 
         initActions = new ArrayList<ActionToolAction>();
+
+        allowOrientedSymbols = false;
     }
 
     public java.util.List<Filter> getAfterFilter() {
@@ -120,6 +127,14 @@ public class SymbolAdapter implements Serializable {
 
     public java.util.Map<String, Value> getVarpool() {
         return varpool;
+    }
+
+    public void setAllowOrientedSymbols(boolean value) {
+        this.allowOrientedSymbols = value;
+    }
+
+    public boolean areOrientedSymbolsAllowed() {
+        return this.allowOrientedSymbols;
     }
 
     public SymbolAdapter createCopy() {

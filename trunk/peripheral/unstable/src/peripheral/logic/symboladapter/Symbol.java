@@ -13,6 +13,9 @@ import peripheral.logic.positioningtool.Region;
 public class Symbol implements Serializable, Cloneable {
 
     private File file;
+    //this file can additionally be set if one symbol should change its
+    //image if the orientation of the movement changes (left-right/ up-down)
+    private File secondFile;
     private transient BufferedImage bufferedImage;
     private float angle = 0;
     private java.awt.Point position;
@@ -31,6 +34,13 @@ public class Symbol implements Serializable, Cloneable {
         }
     }
 
+    public Symbol(File file, File secondFile, PositioningTool tool) {
+
+        this(file,tool);
+
+        this.secondFile = secondFile;
+    }
+
     public void executeAction(SymbolAction action) {
     }
 
@@ -44,6 +54,10 @@ public class Symbol implements Serializable, Cloneable {
 
     public File getFile() {
         return file;
+    }
+
+    public File getSecondFile() {
+        return secondFile;
     }
 
     public java.awt.Point getPosition() {
