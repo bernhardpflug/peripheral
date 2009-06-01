@@ -222,6 +222,8 @@ public class DesignerGUI extends javax.swing.JFrame {
         FileMenu = new javax.swing.JMenu();
         exitMenu = new javax.swing.JMenuItem();
         EditMenu = new javax.swing.JMenu();
+        viewMenu = new javax.swing.JMenu();
+        previewItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -265,6 +267,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         cardPanel.setLayout(new java.awt.CardLayout());
 
         SensorPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 1 : Select Sensorserver"));
+        SensorPanel.setLayout(null);
         cardPanel.add(SensorPanel, "card2");
 
         BackgroundPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 2 : Select Background Image of the Scene"));
@@ -455,6 +458,18 @@ public class DesignerGUI extends javax.swing.JFrame {
 
         EditMenu.setText("Edit");
         ApplicationMenu.add(EditMenu);
+
+        viewMenu.setText("View");
+
+        previewItem.setText("show Preview");
+        previewItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                previewItemActionPerformed(evt);
+            }
+        });
+        viewMenu.add(previewItem);
+
+        ApplicationMenu.add(viewMenu);
 
         setJMenuBar(ApplicationMenu);
 
@@ -702,6 +717,11 @@ public class DesignerGUI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_priorityDownButtonActionPerformed
 
+    private void previewItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previewItemActionPerformed
+
+        PreviewDialog.getInstance().setVisible(true);
+    }//GEN-LAST:event_previewItemActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -736,10 +756,12 @@ public class DesignerGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton nextButton;
     private javax.swing.JButton prevButton;
+    private javax.swing.JMenuItem previewItem;
     private javax.swing.JButton priorityDownButton;
     private javax.swing.JButton priorityUpButton;
     private javax.swing.JButton removeAnimationButton;
     private javax.swing.JButton saveConfigurationButton;
+    private javax.swing.JMenu viewMenu;
     // End of variables declaration//GEN-END:variables
 
 }
