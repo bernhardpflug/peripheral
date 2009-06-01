@@ -20,10 +20,8 @@ import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
-import peripheral.logic.DisplayConfiguration;
 import peripheral.logic.sensor.Sensor;
 import peripheral.logic.sensor.SensorChannel;
-import peripheral.logic.sensor.SensorServer;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.ConstValue;
 import peripheral.logic.value.SensorValue;
@@ -141,6 +139,7 @@ public class PropertyPanel extends JPanel {
          * JTable uses this method to determine the default renderer/
          * editor for each cell. Stupid JTable!
          */
+        @Override
         public Class getColumnClass(int c) {
             //return getValueAt(0, c).getClass();
             return Object.class;
@@ -150,6 +149,7 @@ public class PropertyPanel extends JPanel {
          * Don't need to implement this method unless your table's
          * editable.
          */
+        @Override
         public boolean isCellEditable(int row, int col) {
             //Note that the data/cell address is constant,
             //no matter where the cell appears onscreen.
@@ -164,6 +164,7 @@ public class PropertyPanel extends JPanel {
          * Don't need to implement this method unless your table's
          * data can change.
          */
+        @Override
         public void setValueAt(Object value, int row, int col) {
 //            if (true) {
 //                System.out.println("Setting value at " + row + "," + col + " to " + value + " (an instance of " + value.getClass() + ")");
@@ -211,22 +212,40 @@ public class PropertyPanel extends JPanel {
 
                 return new DefaultCellEditor(box);
             }
-            //const value: depending whether text /  integer or boolean
+            //const value: depending whether text, enum, number or boolean
             else {
 
                 ConstValue cval = (ConstValue)val;
                 System.out.println(cval.getValue().getClass().toString());
 
+                //Boolean
                 if (cval.getValue() instanceof Boolean) {
 
                     JCheckBox checkBox = new JCheckBox();
                     checkBox.setSelected(((Boolean)val.getValue()).booleanValue());
                     return new DefaultCellEditor(checkBox);
                 }
+                //Number
                 else if (cval.getValue() instanceof Float || cval.getValue() instanceof Double
                         || cval.getValue() instanceof Long || cval.getValue() instanceof Short
                         || cval.getValue() instanceof Integer) {
                     return new NumberEditor(cval.getValueType());
+                }
+                //enum
+                else if (cval.getValue().getClass().isEnum()) {
+
+                    //get all constants of this enumeration and display them in combo box
+                    Object[] constants = cval.getValue().getClass().getEnumConstants();
+
+                    JComboBox box = new JComboBox();
+
+                    for (Object constant : constants) {
+                        box.addItem(constant);
+                    }
+
+                    box.setSelectedItem(cval.getValue());
+
+                    return new DefaultCellEditor(box);
                 }
                 //String
                 else {

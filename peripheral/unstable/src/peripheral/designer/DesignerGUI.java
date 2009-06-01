@@ -27,7 +27,6 @@ import peripheral.logic.DisplayConfiguration;
 import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.positioningtool.Point;
 import peripheral.logic.positioningtool.Region;
-import peripheral.logic.sensor.Sensor;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.ConstValue;
 import peripheral.logic.value.SensorValue;
@@ -45,6 +44,7 @@ public class DesignerGUI extends javax.swing.JFrame {
 
     //reference original adapter where copy has been modified in dialog
     private SymbolAdapter modifying;
+
 
     /** Creates new form DesignerGUI */
     public DesignerGUI() {
@@ -67,15 +67,22 @@ public class DesignerGUI extends javax.swing.JFrame {
         fillAnimationList();
     }
 
+    //TODO DELETE
+    public enum ConstVAL {
+        Constval1,
+        Convstval2
+    }
+    //TODO DELETE
     private void createDummyData() {
+
         SymbolAdapter slider1 = new SymbolAdapter();
         slider1.setName("RuleSlider1");
         slider1.setTool(new Point());
-        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new SensorValue(slider1,"SourceInt",Integer.class)));
-        //slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new SensorValue(slider1,"SourceString",String.class)));
-        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue(slider1,"EnableSmoothing",new Boolean(true),Boolean.class)));
-        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationX",new Integer(0),Integer.class)));
-        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationY",new Float(0), Float.class)));
+        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new SensorValue(slider1,"SensorIntegerTest",Integer.class)));
+        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue(slider1,"EnumTest",ConstVAL.Constval1,ConstVAL.class)));
+        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue(slider1,"CheckBoxTest",new Boolean(true),Boolean.class)));
+        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"IntegerTest",new Integer(0),Integer.class)));
+        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"FloatTest",new Float(0), Float.class)));
 
         slider1.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, new Boolean(true));
 
