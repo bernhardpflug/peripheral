@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
+import peripheral.logic.datatype.Primitives;
 import peripheral.logic.sensor.exception.SensorChannelException;
 import peripheral.logic.sensor.exception.SensorServerAddressException;
 
@@ -85,6 +86,14 @@ public class Sensor extends Observable implements Serializable {
         for (SensorChannel channel : channels){
             if (allowedType.isAssignableFrom(channel.getDatatype())){
                 allowedChannels.add(channel);
+            }
+            //if allowedType is of type number, do special handling:
+            //int should be assignable to long, float, double,
+            //long should be assignable to float, double, etc.
+            else if (Number.class.isAssignableFrom(allowedType)){
+                if (Primitives.isAssignable(allowedType, channel.getDatatype())){
+                    allowedChannels.add(channel);
+                }
             }
         }
 
