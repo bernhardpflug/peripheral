@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Observable;
 
 import peripheral.logic.Logging;
+import peripheral.logic.datatype.Primitives;
 import peripheral.logic.sensor.exception.SensorChannelException;
 import peripheral.logic.sensor.exception.SensorServerAddressException;
 
