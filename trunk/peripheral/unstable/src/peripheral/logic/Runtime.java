@@ -1,6 +1,7 @@
 package peripheral.logic;
 
 import java.awt.Dimension;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,11 +10,9 @@ import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.positioningtool.Point;
 import peripheral.logic.positioningtool.PositioningTool;
 import peripheral.logic.positioningtool.Region;
-import peripheral.logic.positioningtool.ToolList;
 import peripheral.logic.sensor.Sensor;
 import peripheral.logic.sensor.SensorServer;
 import peripheral.logic.sensor.SensorUpdateThread;
-import peripheral.logic.sensor.XmlMetaParser;
 import peripheral.logic.symboladapter.Symbol;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.visualization.Visualization;
@@ -39,10 +38,10 @@ public class Runtime {
     }
 
     public Visualization getVisualization() {
-        return viz;
+        //return viz;
 
         //@todo: comment out and return real viz-instance
-        /*return new Visualization() {
+        return new Visualization() {
 
             public void addSymbol(Symbol s, Region region) {
                 Logging.getLogger().finer("Visualization: added symbol");
@@ -87,7 +86,7 @@ public class Runtime {
             public void translateSymbol(Symbol s, java.awt.Point targetPosition) {
                 Logging.getLogger().finer("Visualization: translated symbol to position " + targetPosition);
             }
-        };*/
+        };
     }
 
     public Map<Sensor, java.util.List<SymbolAdapter>> getSensorAdapterMapping() {
@@ -146,6 +145,29 @@ public class Runtime {
         for (Thread th : threads) {
             th.interrupt();
         }
+
+        File unzipDir = new File(DisplayConfiguration.UNZIP_DIR);
+        deleteDirectory(unzipDir);
+    }
+
+    /**
+     * helper method to delete a non-empty directory
+     *
+     * @param path
+     * @return
+     */
+    private boolean deleteDirectory(File path) {
+        if (path.exists()) {
+            File[] files = path.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isDirectory()) {
+                    deleteDirectory(files[i]);
+                } else {
+                    files[i].delete();
+                }
+            }
+        }
+        return (path.delete());
     }
 
     private void executeAdapters() {
@@ -172,21 +194,6 @@ public class Runtime {
         for (SymbolAdapter adapter : displayConfig.getAdapter()) {
             tool = adapter.getTool();
 
-            /*if (tool instanceof Point) {
-            initPoint(viz, (Point) tool);
-            } else if (tool instanceof Region) {
-            initRegion(viz, (Region) tool);
-            } else if (tool instanceof ToolList) {
-            toolList = (ToolList) tool;
-
-            for (PositioningTool pt : toolList.getElements()) {
-            if (pt instanceof Point) {
-            initPoint(viz, (Point) pt);
-            } else if (tool instanceof Region) {
-            initRegion(viz, (Region) pt);
-            }
-            }
-            }*/
             for (PositioningTool pt : tool.getElements()) {
                 if (pt instanceof Point) {
                     initPoint(viz, (Point) pt);
@@ -242,10 +249,5 @@ public class Runtime {
         }
     }
 
-    /*private void startServers() {
-    for (Thread th : threads) {
-    // th.start();
-    }
-    }*/
 }
 
