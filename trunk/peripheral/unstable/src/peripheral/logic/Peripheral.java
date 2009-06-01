@@ -16,7 +16,7 @@ public class Peripheral {
     public static void main(String[] args) {
         //@todo: read configuration-filename from args
 
-        Runtime.getInstance().startup(null, "displayConfig.ser");
+        Runtime.getInstance().startup(null, "displayConfig.zip");
 
         try {
             System.out.println("Press <Enter> to terminate visualization.");
