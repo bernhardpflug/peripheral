@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import peripheral.logic.sensor.SensorServer;
 import peripheral.logic.symboladapter.SymbolAdapter;
+import peripheral.logic.util.ZipPackager;
 
 public class DisplayConfiguration implements Serializable {
 
@@ -21,8 +22,9 @@ public class DisplayConfiguration implements Serializable {
     //@todo: make SensorServer and contained objects serializable
     private java.util.List<SensorServer> sensorServer;
     private transient BufferedImage backgroundImage;
-
     private Dimension dimension;
+    private static final String CONFIG_FILE = "DisplayConfiguration.config";
+    public static final String UNZIP_DIR = "res/unzip";
 
     private DisplayConfiguration() {
 
@@ -66,8 +68,10 @@ public class DisplayConfiguration implements Serializable {
     public void save(String filename) {
         dimension = new Dimension(getWidth(), getHeight());
 
+        File configFile = new File(CONFIG_FILE);
+
         try {
-            FileOutputStream fs = new FileOutputStream(filename);
+            FileOutputStream fs = new FileOutputStream(configFile);
             ObjectOutputStream os = new ObjectOutputStream(fs);
 
             os.writeObject(this);
@@ -76,19 +80,26 @@ public class DisplayConfiguration implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        ZipPackager.zip(filename, configFile);
+        configFile.delete();
     }
 
-    public static void load(String filename){
-        try{
-            FileInputStream fs = new FileInputStream(filename);
+    public static void load(String filename) {
+        ZipPackager.unzip(filename, UNZIP_DIR);
+
+        File configFile = new File(UNZIP_DIR + File.separator + CONFIG_FILE);
+
+        try {
+            FileInputStream fs = new FileInputStream(configFile);
             ObjectInputStream is = new ObjectInputStream(fs);
 
-            instance = (DisplayConfiguration)is.readObject();
+            instance = (DisplayConfiguration) is.readObject();
 
             is.close();
-        }catch(ClassNotFoundException ce){
+        } catch (ClassNotFoundException ce) {
             ce.printStackTrace();
-        }catch(IOException ioe){
+        } catch (IOException ioe) {
             ioe.printStackTrace();
         }
     }
