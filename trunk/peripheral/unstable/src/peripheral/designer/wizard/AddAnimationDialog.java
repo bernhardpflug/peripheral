@@ -124,7 +124,7 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         selectAnimationPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 1 : Select an Animation Template"));
         cardPanel.add(selectAnimationPanel1, "card4");
 
-        preselectSensorPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 2 : Select Sensors"));
+        preselectSensorPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 2 : Select Name and preselect Sensors"));
         cardPanel.add(preselectSensorPanel1, "card2");
 
         createLocationsSymbolsPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 3 : Create Point(s), Area(s) and their symbols"));
@@ -220,6 +220,7 @@ public class AddAnimationDialog extends javax.swing.JDialog {
             //register positioning panel to preview dialog for listening to drag events
             PreviewDialog.getInstance().addPreviewListener(createLocationsSymbolsPanel1);
 
+            //CORRUPT SENSORS
             //get all sensors that have been preselected some time before but are no longer in the serverlist
             java.util.ArrayList<Sensor> corruptSensors = symbolAdapter.getInvalidSensors();
 
@@ -236,8 +237,24 @@ public class AddAnimationDialog extends javax.swing.JDialog {
                 symbolAdapter.removeSensorsWithDependencies(corruptSensors);
             }
 
-            currentIndex++;
-            cl.next(cardPanel);
+            //SYMBOLADAPTER NAME
+            //check if defined name of symboladapter by user is not empty
+            String symbolAdapterName = this.preselectSensorPanel1.getUserDefinedSymbolAdapterName();
+
+            //if name greater as null set name and proceed
+            if (symbolAdapterName.length() > 0) {
+
+                symbolAdapter.setName(symbolAdapterName);
+                currentIndex++;
+                cl.next(cardPanel);
+            }
+            //else display error message
+            else {
+                JOptionPane.showMessageDialog(this,
+                        "There must be a name entered for this Animation"
+                        ,"Invalid Animationname", JOptionPane.ERROR_MESSAGE);
+
+            }
         }
         //create points/areas
         else if (currentIndex == 2) {
