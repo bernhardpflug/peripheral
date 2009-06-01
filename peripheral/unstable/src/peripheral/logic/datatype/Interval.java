@@ -44,6 +44,19 @@ public class Interval implements Serializable {
         return new Percentage(val/(up-low));
     }
 
+    public double getValue (Percentage percentage){
+        double offset = 0;
+        if (lowerBound < 0){
+            offset = -lowerBound;
+        }
+
+        double low = lowerBound + offset;
+        double up = upperBound + offset;
+        double size = up - low;
+
+        return percentage.getVal() * size - offset;
+    }
+
     @Override
     public String toString() {
         return "[" + lowerBound + "," + upperBound + "]";
