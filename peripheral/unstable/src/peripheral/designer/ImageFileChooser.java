@@ -28,6 +28,16 @@ public class ImageFileChooser extends JFileChooser{
         this.setFileFilter(new ImageFilter());
     }
 
+    public ImageFileChooser(boolean enableImagePreviews) {
+        
+        this.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        this.setFileFilter(new ImageFilter());
+
+        if (enableImagePreviews) {
+            this.setAccessory(new ImagePreview(this));
+        }
+    }
+
     class MyPropertyChangeListener implements PropertyChangeListener {
 
         private ImageFileChooser ifc;
