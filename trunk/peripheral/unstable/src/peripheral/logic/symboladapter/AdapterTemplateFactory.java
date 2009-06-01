@@ -13,8 +13,10 @@ import peripheral.logic.action.SymbolShowAction;
 import peripheral.logic.action.SymbolSwapAction;
 import peripheral.logic.action.SymbolTranslateAction;
 import peripheral.logic.animation.Mover;
+import peripheral.logic.datatype.Interval;
 import peripheral.logic.filter.MultiplyFilter;
-import peripheral.logic.filter.PercentageFilter;
+import peripheral.logic.filter.IntervalValueToPercentageFilter;
+import peripheral.logic.filter.PercentageToIntervalValueFilter;
 import peripheral.logic.filter.PositionFilter;
 import peripheral.logic.filter.RandomPositioningToolPickerFilter;
 import peripheral.logic.filter.RandomSymbolPickerFilter;
@@ -85,7 +87,7 @@ public class AdapterTemplateFactory {
         createPopulators();
     }
 
-    private void createStaticSymbolAdapter () {
+    private void createStaticSymbolAdapter() {
         /**
          * static symbol adapter 1
          */
@@ -97,6 +99,8 @@ public class AdapterTemplateFactory {
         adapter.setTool(new ToolList(Point.class));
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
+        adapter.setAllowOrientedSymbols(true);
+
         SymbolAction symbolAction = new SymbolShowAction(adapter);
         PointWrapperAction wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.getInitActions().add(wrapperAction);
@@ -104,7 +108,7 @@ public class AdapterTemplateFactory {
         templates.add(adapter);
     }
 
-    private void createSwappers () {
+    private void createSwappers() {
         /**
          * swapper adapter 1
          */
@@ -157,12 +161,12 @@ public class AdapterTemplateFactory {
 
         templates.add(adapter);
 
-        /**
-         * @todo: swapper adapter 3: wie swapper 2 + mapping of continuous sensor value to discrete value
-         */
+    /**
+     * @todo: swapper adapter 3: wie swapper 2 + mapping of continuous sensor value to discrete value
+     */
     }
 
-    private void createSliders (){
+    private void createSliders() {
         /**
          * slider 1
          * @todo: option 'distribute evenly' or user specifies position per rule explicitly (option to pick points of line!?)
@@ -197,7 +201,7 @@ public class AdapterTemplateFactory {
         UserInput input = new UserInput("Sensorwert", "Wert vom Sensor", val);
         adapter.getNeededUserInput().add(input);
 
-        PercentageFilter pf = new PercentageFilter(adapter, "percentage");
+        IntervalValueToPercentageFilter pf = new IntervalValueToPercentageFilter(adapter, "percentage");
         pf.putFilterInputValue("inputValue", new VarValue(adapter, "sensorValue"));
         pf.putFilterInputValue("interval", new SensorIntervalVarValue(adapter, "sensorValue"));
         adapter.getBeforeFilter().add(pf);
@@ -217,12 +221,12 @@ public class AdapterTemplateFactory {
 
         templates.add(adapter);
 
-        /**
-         * @todo: slider 3: custom mapping from sensorvalues to percentage --> requires mapping component
-         */
+    /**
+     * @todo: slider 3: custom mapping from sensorvalues to percentage --> requires mapping component
+     */
     }
 
-    private void createScalers (){
+    private void createScalers() {
         /**
          * scaler 1: vertical scaler
          */
@@ -269,9 +273,71 @@ public class AdapterTemplateFactory {
         adapter.getRules().get(0).getActions().set(0, wrapperAction);
 
         templates.add(adapter);
+
+        /**
+         * scaler 3: scaler - both directions
+         */
+        adapter = new SymbolAdapter();
+
+        adapter.setName("Horiztontal and vertical scaler based on sensor values");
+        adapter.setDescription("Scaler, bei dem der Skalierungsfaktor für beide Richtungen durch einen Sensorwert festgelegt wird.");
+
+        adapter.setTool(new Point());
+        adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
+
+        val = new SensorValue(adapter, "sensorValueX", Float.class);
+        input = new UserInput("Sensorwert horizontal", "Wert vom Sensor, der für den horizontalen Skalierungsfaktor herangezogen wird.", val);
+        adapter.getNeededUserInput().add(input);
+
+        val = new ConstValue(adapter, "multiplyFactorX", 1.0, Float.class);
+        input = new UserInput("MultiplyFactor horizontal", "Faktor, mit dem der eingehende Sensorwert multipliziert wird. Skalierungsfaktor ergibt sich aus (Sensorwert horizontal)*(MultiplyFactor horizontal)", val);
+        adapter.getNeededUserInput().add(input);
+
+        val = new SensorValue(adapter, "sensorValueY", Float.class);
+        input = new UserInput("Sensorwert vertikal", "Wert vom Sensor, der für den vertikalen Skalierungsfaktor herangezogen wird.", val);
+        adapter.getNeededUserInput().add(input);
+
+        val = new ConstValue(adapter, "multiplyFactorY", 1.0, Float.class);
+        input = new UserInput("MultiplyFactor vertikal", "Faktor, mit dem der eingehende Sensorwert multipliziert wird. Skalierungsfaktor ergibt sich aus (Sensorwert vertikal)*(MultiplyFactor vertikal)", val);
+        adapter.getNeededUserInput().add(input);
+
+        mf = new MultiplyFilter(adapter, "factorX");
+        mf.putFilterInputValue("factor1", new VarValue(adapter, "sensorValueX"));
+        mf.putFilterInputValue("factor2", new VarValue(adapter, "multiplyFactorX"));
+        adapter.getBeforeFilter().add(mf);
+
+        mf = new MultiplyFilter(adapter, "factorY");
+        mf.putFilterInputValue("factor1", new VarValue(adapter, "sensorValueY"));
+        mf.putFilterInputValue("factor2", new VarValue(adapter, "multiplyFactorY"));
+        adapter.getBeforeFilter().add(mf);
+
+        rule = new Rule(adapter);
+        rule.getConditions().add(new TrueCondition());
+        symbolAction = new SymbolScaleAction(adapter, new VarValue(adapter, "factorX"), new VarValue(adapter, "factorY"));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        rule.getActions().add(wrapperAction);
+        adapter.getRules().add(rule);
+
+        /**
+         * scaler 4: rule based scaler
+         */
+        adapter = new SymbolAdapter();
+
+        adapter.setName("Rule-based scaler");
+        adapter.setDescription("Scaler, bei dem die Skalierungsfaktoren pro Regel explizit festgelegt werden.");
+
+        adapter.setTool(new Point());
+        adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, true);
+
+        rule = new Rule(adapter);
+        symbolAction = new SymbolScaleAction(adapter);
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        adapter.setDefaultAction(wrapperAction);
+
+        templates.add(adapter);
     }
 
-    private void createRotors (){
+    private void createRotors() {
         /**
          * rotor 1
          */
@@ -295,9 +361,66 @@ public class AdapterTemplateFactory {
         adapter.getRules().add(rule);
 
         templates.add(adapter);
+
+        /**
+         * rotor 2
+         */
+        adapter = new SymbolAdapter();
+
+        adapter.setName("Rotor based on SensorValue");
+        adapter.setDescription("Rotor, bei dem ein Sensorwert innerhalb eines Intervals auf Prozent umgerechnet wird. Aus dem Prozentwert wird dann der Rotatationswinkel abgeleitet. z.B.: 25% --> 90°, 50% --> 180°, ...");
+
+        adapter.setTool(new Point());
+        adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
+
+        val = new SensorValue(adapter, "sensorValue", Double.class);
+        input = new UserInput("Sensorwert", "Wert vom Sensor", val);
+        adapter.getNeededUserInput().add(input);
+
+        IntervalValueToPercentageFilter ipf = new IntervalValueToPercentageFilter(adapter, "percentage");
+        ipf.putFilterInputValue("inputValue", new VarValue(adapter, "sensorValue"));
+        ipf.putFilterInputValue("interval", new SensorIntervalVarValue(adapter, "sensorValue"));
+        adapter.getBeforeFilter().add(ipf);
+
+        PercentageToIntervalValueFilter pif = new PercentageToIntervalValueFilter(adapter, "angle");
+        pif.putFilterInputValue("percentage", new VarValue(adapter, "percentage"));
+        try {
+            new ConstValue(adapter, "angleInterval", new Interval(0, 360), Interval.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        pif.putFilterInputValue("interval", new VarValue(adapter, "angleInterval"));
+        adapter.getBeforeFilter().add(pif);
+
+        rule = new Rule(adapter);
+        rule.getConditions().add(new TrueCondition());
+        symbolAction = new SymbolRotateAction(adapter, new VarValue(adapter, "angle"));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        rule.getActions().add(wrapperAction);
+        adapter.getRules().add(rule);
+
+        templates.add(adapter);
+
+        /**
+         * rotor 3: rule-based rotor
+         */
+        adapter = new SymbolAdapter();
+
+        adapter.setName("Rule-based rotor");
+        adapter.setDescription("Rotor, bei dem der Rotationswinkel pro Regel explizit festgelegt wird.");
+
+        adapter.setTool(new Line());
+        adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, true);
+
+        rule = new Rule(adapter);
+        symbolAction = new SymbolRotateAction(adapter);
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        adapter.setDefaultAction(wrapperAction);
+
+        templates.add(adapter);
     }
 
-    private void createPopulators (){
+    private void createPopulators() {
         /**
          * overlay position populator 1
          */
@@ -378,6 +501,7 @@ public class AdapterTemplateFactory {
         adapter.setDescription("3rd Populator...");
 
         adapter.setAnimator(new Mover(adapter));
+        adapter.setAllowOrientedSymbols(true);
 
         templates.add(adapter);
     }
