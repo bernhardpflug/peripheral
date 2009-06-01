@@ -1,6 +1,7 @@
 package peripheral.logic.action;
 
 import java.util.Observable;
+import peripheral.logic.Logging;
 import peripheral.logic.datatype.SymbolList;
 import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.positioningtool.Region;
@@ -10,6 +11,7 @@ import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value;
 import peripheral.logic.Runtime;
 import peripheral.logic.symboladapter.ClonedSymbol;
+import peripheral.logic.util.PositionRandomizer;
 import peripheral.visualization.Visualization;
 
 public class RegionAddNewAction extends RegionAction {
@@ -76,12 +78,17 @@ public class RegionAddNewAction extends RegionAction {
             if (diff > 0) {
                 for (int i = 0; i < diff; i++) {
                     clonedSymbol = region.getSymbolList().addCloneOf(source);
+                    clonedSymbol.setPosition(PositionRandomizer.getRandomPosition(region.getBounds()));
                     viz.addSymbol(clonedSymbol, region);
+
+                    Logging.getLogger().finer("added symbol: " + clonedSymbol);
                 }
             } else if (diff < 0 && removeOthers) {
                 for (int i = 0; i > diff; i--) {
                     clonedSymbol = region.getSymbolList().removeCloneOf(source);
                     viz.removeSymbol(clonedSymbol);
+
+                    Logging.getLogger().finer("removed symbol: " + clonedSymbol);
                 }
             }
         }

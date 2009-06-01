@@ -38,11 +38,6 @@ public abstract class RegionWrapperAction extends RegionAction {
         symbolAction.execute(symbol);
     }
 
-
-    public void update (Observable o, Object arg) {
-    }
-
-
     public Symbol getSymbol () {
         return null;
     }

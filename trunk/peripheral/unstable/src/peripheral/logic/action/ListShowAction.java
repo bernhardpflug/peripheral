@@ -2,11 +2,8 @@ package peripheral.logic.action;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.List;
-import java.util.Observable;
 import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.positioningtool.Point;
-import peripheral.logic.positioningtool.PositioningTool;
 import peripheral.logic.positioningtool.PositioningTool;
 import peripheral.logic.positioningtool.Region;
 import peripheral.logic.positioningtool.ToolList;
@@ -40,8 +37,6 @@ public class ListShowAction extends ListAction {
 
     public void execute(ActionTool tool) {
         ToolList toolList = (ToolList) tool;
-        //List<PositioningTool> elemsToHide = new ArrayList<PositioningTool>();
-
         List<PositioningTool> elementsToShow = getElementsToShow();
 
         if (getHideOthers()) {
@@ -50,44 +45,23 @@ public class ListShowAction extends ListAction {
                     if (pt instanceof Point) {
                         PointWrapperAction act = new PointHideAction(adapter);
                         act.execute(pt);
-                    //Runtime.getInstance().getVisualization().hideSymbol(((Point) pt).getActSymbol());
                     } else if (pt instanceof Region) {
                         RegionAction act = new RegionHideAction(adapter);
                         act.execute(pt);
                     }
-                //elemsToHide.add(pt);
-                } //else {
-            //Point is already visible, so no new show-effect has to be applied
-            //elementsToShow.remove(pt);
-            // }
+                }
             }
-        /*} else {
-        //remove all elements from list, which are already visible
-        for (PositioningTool pt : toolList.getElements()) {
-        if (pt.isVisible()) {
-        elementsToShow.remove(pt);
         }
-        }*/
-        }
-
-        //toolList.getHiddenElements().removeAll(elementsToShow);
-        //toolList.getHiddenElements().addAll(elemsToHide);
-        //toolList.getVisibleElements().removeAll(elemsToHide);
-        //toolList.getVisibleElements().addAll(elementsToShow);
 
         for (PositioningTool pt : elementsToShow) {
             if (pt instanceof Point) {
                 PointWrapperAction act = new PointShowAction(adapter);
                 act.execute(pt);
-            //Runtime.getInstance().getVisualization().showSymbol(((Point) pt).getActSymbol());
             } else if (pt instanceof Region) {
                 RegionAction act = new RegionShowAction(adapter);
                 act.execute(pt);
             }
         }
-    }
-
-    public void update(Observable o, Object arg) {
     }
 
     public List<PositioningTool> getElementsToShow() {
