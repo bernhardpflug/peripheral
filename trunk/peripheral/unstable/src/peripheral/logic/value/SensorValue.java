@@ -44,5 +44,20 @@ public class SensorValue extends Value {
     public Interval getBounds() {
         return sensorChannel.getBounds();
     }
+
+    public boolean isValid() {
+
+        //if sensorchannel isn't set return false
+        if (sensorChannel == null || sensorChannel.equals(SensorChannel.getDummy())) {
+            return false;
+        }
+        //if sensorchannel is of an invalid (no longer available sensor) return false
+        else if (this.getAdapter().isSensorInvalid(sensorChannel.getSensor())) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
 }
 

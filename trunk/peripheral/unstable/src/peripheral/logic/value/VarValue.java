@@ -26,5 +26,9 @@ public class VarValue extends Value {
     protected Value getReferencedValue (){
         return adapter.getVarpool().get(varName);
     }
+
+    public boolean isValid() {
+        return getReferencedValue().isValid();
+    }
 }
 

@@ -23,6 +23,10 @@ public class UserInput implements Serializable {
         this.allowedValueTypes = new ArrayList<Class>();
     }
 
+    public boolean isValueValid() {
+        return value.isValid();
+    }
+
     public List<Class> getAllowedValueTypes () {
         return allowedValueTypes;
     }

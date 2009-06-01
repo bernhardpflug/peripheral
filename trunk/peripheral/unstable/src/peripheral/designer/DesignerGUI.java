@@ -32,6 +32,7 @@ import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.ConstValue;
 import peripheral.logic.value.SensorValue;
 import peripheral.logic.value.UserInput;
+import peripheral.logic.value.Value;
 
 /**
  *
@@ -71,7 +72,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         slider1.setName("RuleSlider1");
         slider1.setTool(new Point());
         slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new SensorValue(slider1,"SourceInt",Integer.class)));
-        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new SensorValue(slider1,"SourceString",String.class)));
+        //slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new SensorValue(slider1,"SourceString",String.class)));
         slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue(slider1,"EnableSmoothing",new Boolean(true),Boolean.class)));
         slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationX",new Integer(0),Integer.class)));
         slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"LocationY",new Float(0), Float.class)));
@@ -155,30 +156,28 @@ public class DesignerGUI extends javax.swing.JFrame {
      * empty (SensorChannel.DUMMY) or no longer available sensorchannels
      * @return true if no invalid data wos found, else false
      */
-    private boolean checkForEmptyOrCorruptSensors() {
+    private boolean checkForInvalidUserInputValues() {
 
         //get all created symboladapter
         ArrayList<SymbolAdapter> adapters = (ArrayList<SymbolAdapter>) DisplayConfiguration.getInstance().getAdapter();
 
         for (SymbolAdapter adapter : adapters) {
 
-            List<Sensor> invalidSensors = adapter.getInvalidSensors();
+            ArrayList<Value> invalid = adapter.getInvalidUserInputValues();
 
-            for (Sensor sensor : invalidSensors) {
+            if (!invalid.isEmpty()) {
 
-                //check if invalid sensor is in use
-                if (adapter.isUsed(sensor)) {
-                    JOptionPane.showMessageDialog(this,
-                            adapter.getName()+" uses invalid sensor "+sensor+"\n" +
-                            "Remove this sensor from animations properties",
-                            "Invalid sensor found", JOptionPane.ERROR_MESSAGE);
+                //pick first one out of list and display it in message
+                Value invalidValue = invalid.get(0);
 
-                    return false;
-                }
+                JOptionPane.showMessageDialog(this,
+                            invalidValue.getVarName()+" property of adapter "+adapter.getName()+"\n" +
+                            "has an invalid state.\n" +
+                            "Set an valid value to proceed",
+                            "Invalid property found", JOptionPane.ERROR_MESSAGE);
+                return false;
             }
         }
-
-        //TODO check for userinputs with invalid values
 
         return true;
     }
@@ -508,7 +507,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         else if (currentIndex == 2) {
 
             //only allow continuing if there are no corrupt symboladapter
-            if (this.checkForEmptyOrCorruptSensors()) {
+            if (this.checkForInvalidUserInputValues()) {
                 nextButton.setText("Finish");
                 currentIndex++;
                 cl.next(cardPanel);
