@@ -48,6 +48,15 @@ public abstract class Value implements Serializable {
     public String getVarName () {
         return varName;
     }
+    
+    public SymbolAdapter getAdapter() {
+        return adapter;
+    }
+
+    /**
+     * @return whether the current Value of the Value object is valid or not
+     */
+    public abstract boolean isValid();
 
 }
 

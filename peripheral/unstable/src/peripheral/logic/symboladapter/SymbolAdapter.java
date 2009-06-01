@@ -258,20 +258,22 @@ public class SymbolAdapter implements Serializable {
     }
 
     /**
-     * Method to return all required but empty userinputs
+     * Method to return all values of userinputs with invalid values
      * GUI checks whether returned list is empty to allow user to proceed
-     * @return list with all required but empty user inputs
+     * @return list with all invalid values of userinputs
      */
-    public ArrayList<UserInput> getEmptyButNeededUserInputs() {
+    public ArrayList<Value> getInvalidUserInputValues() {
 
-//        //search for all sensorvalues with SensorChannel.EMPTY value
-//        for (UserInput userInput : this.neededUserInput) {
-//
-//            if (userInput.getValue() instanceof SensorValue) {
-//                SensorValue sensorValue = (SensorValue)userInput.getValue();
-//            }
-//        }
-        return null;
+        ArrayList<Value> result = new ArrayList<Value>();
+
+        for (UserInput userInput : this.neededUserInput) {
+
+            if (!userInput.isValueValid()) {
+                result.add(userInput.getValue());
+            }
+        }
+
+        return result;
     }
 
     public Action getDefaultAction() {
