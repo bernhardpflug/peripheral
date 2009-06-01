@@ -603,7 +603,7 @@ public class DesignerGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_editAnimationButtonActionPerformed
 
     private void saveConfigurationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveConfigurationButtonActionPerformed
-        DisplayConfiguration.getInstance().save("displayConfig.ser");
+        DisplayConfiguration.getInstance().save("displayConfig.zip");
     }//GEN-LAST:event_saveConfigurationButtonActionPerformed
 
     private void removeAnimationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAnimationButtonActionPerformed
