@@ -46,6 +46,8 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
     //reference that is set if positioning tool is dragged
     private PositioningTool currentlyDragging;
 
+    private SymbolSelectionDialog symbolDialog;
+
     /** Creates new form createLocationsSymbolsPanel */
     public LocationsSymbolsPanel(AddAnimationDialog parent) {
         initComponents();
@@ -506,11 +508,11 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
+            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(symbolPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(LocationPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, symbolPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, LocationPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -553,31 +555,59 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
 
             PositioningTool pos = (PositioningTool)this.LocationList.getSelectedValue();
 
-            if (fileChooser == null) {
-                fileChooser = new ImageFileChooser();
-            }
+            //if two images are allowed open own dialog for selection
+            if (parent.getCreatedAdapter().areOrientedSymbolsAllowed()) {
 
-            fileChooser.setDialogTitle("Select an image file for the symbol");
+                if (symbolDialog == null) {
+                    symbolDialog = new SymbolSelectionDialog(parent,true);
+                }
+                //reset selection to be able to use same dialog several times
+                //to remember file path
+                symbolDialog.resetSelection();
 
-            if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                Symbol symbol = new Symbol(fileChooser.getSelectedFile(), pos);
+                symbolDialog.setLocationRelativeTo(this);
+
+                //run modal dialog
+                symbolDialog.setVisible(true);
+
+                //create symbol with set files of dialog
+                if (symbolDialog.getLeftFile() != null) {
+                    Symbol symbol = new Symbol(symbolDialog.getLeftFile(), symbolDialog.getRightFile(), pos);
+
+                    pos.getSymbols().add(symbol);
+
+                    fillSymbolList(pos);
+
+                    //select new one as selected
+                    this.symbolList.setSelectedValue(symbol, true);
+
+                    //display symbol in preview if checkbox enabled
+                    PreviewDialog.getInstance().updatePreview();
+                }
                 
-                //if added symbol is first one mark it as display symbol
-                /*if (pos.getSymbols().isEmpty()) {
-                    pos.setDisplayedSymbol(symbol);
-                }*/
-
-                pos.getSymbols().add(symbol);
-
-                fillSymbolList(pos);
-
-                //select new one as selected
-                this.symbolList.setSelectedValue(symbol, true);
-
-                //display symbol in preview if checkbox enabled
-                PreviewDialog.getInstance().updatePreview();
             }
+            //else display just filedialog
+            else {
+                if (fileChooser == null) {
+                    fileChooser = new ImageFileChooser();
+                }
 
+                fileChooser.setDialogTitle("Select an image file for the symbol");
+
+                if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                    Symbol symbol = new Symbol(fileChooser.getSelectedFile(), pos);
+
+                    pos.getSymbols().add(symbol);
+
+                    fillSymbolList(pos);
+
+                    //select new one as selected
+                    this.symbolList.setSelectedValue(symbol, true);
+
+                    //display symbol in preview if checkbox enabled
+                    PreviewDialog.getInstance().updatePreview();
+                }
+            }
 
         }
         else {
@@ -804,38 +834,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
                     panel.updatePositionToolCoordinates(ftf);
 
                     return true;
-
-//                    if (ftf.getName().equals("xTextField")) {
-//                        if (value >= 0 && value <= DisplayConfiguration.getInstance().getWidth()) {
-//                            panel.updatePositionToolCoordinates(ftf);
-//                            return true;
-//                        } else {
-//                            return false;
-//                        }
-//                    } else if (ftf.getName().equals("yTextField")) {
-//                        if (value >= 0 && value <= DisplayConfiguration.getInstance().getHeight()) {
-//                            panel.updatePositionToolCoordinates(ftf);
-//                            return true;
-//                        } else {
-//                            return false;
-//                        }
-//                    }
-//                    else if (ftf.getName().equals("widthTextField")) {
-//                        if (value >= 0 && value <= DisplayConfiguration.getInstance().getWidth()) {
-//                            panel.updatePositionToolCoordinates(ftf);
-//                            return true;
-//                        } else {
-//                            return false;
-//                        }
-//                    }
-//                    else if (ftf.getName().equals("heightTextField")) {
-//                        if (value >= 0 && value <= DisplayConfiguration.getInstance().getHeight()) {
-//                            panel.updatePositionToolCoordinates(ftf);
-//                            return true;
-//                        } else {
-//                            return false;
-//                        }
-//                    }
+                    
                 } catch (NumberFormatException ex) {
                     return false;
                 }
