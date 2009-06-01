@@ -1,5 +1,6 @@
 package peripheral.logic.symboladapter;
 
+import peripheral.logic.animation.SymbolAnimator;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -39,7 +40,6 @@ public class SymbolAdapter implements Serializable {
     private java.util.ArrayList<Sensor> preselectedSensors;
     private Map<RequiredStep, Boolean> requiredSteps;
     private Action defaultAction;
-
     private List<ActionToolAction> initActions;
 
     public SymbolAdapter() {
@@ -69,6 +69,11 @@ public class SymbolAdapter implements Serializable {
     }
 
     public void setAnimator(SymbolAnimator val) {
+        if (animator != null) {
+            this.neededUserInput.removeAll(animator.getUserInput());
+        }
+        this.neededUserInput.addAll(val.getUserInput());
+
         this.animator = val;
     }
 
@@ -168,7 +173,7 @@ public class SymbolAdapter implements Serializable {
 
             }
         }
-        
+
         return false;
     }
 
@@ -235,7 +240,7 @@ public class SymbolAdapter implements Serializable {
 
             //iterate through all user inputs with sensorvalues
             if (userInput.getValue() instanceof SensorValue) {
-                SensorValue sensorValue = (SensorValue)userInput.getValue();
+                SensorValue sensorValue = (SensorValue) userInput.getValue();
 
                 //iterate through all sensorchannels of this sensor
                 for (Sensor sensor : noLongerAvailableSensors) {
@@ -312,8 +317,8 @@ public class SymbolAdapter implements Serializable {
         }
     }
 
-    public void executeInitActions(){
-        for (ActionToolAction action : initActions){
+    public void executeInitActions() {
+        for (ActionToolAction action : initActions) {
             action.execute(tool);
         }
     }
