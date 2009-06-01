@@ -7,6 +7,7 @@ package peripheral.logic.filter;
 
 import java.awt.Point;
 import peripheral.logic.Logging;
+import peripheral.logic.datatype.Interval;
 import peripheral.logic.datatype.Percentage;
 import peripheral.logic.positioningtool.Line;
 import peripheral.logic.symboladapter.SymbolAdapter;
@@ -16,32 +17,27 @@ import peripheral.logic.value.ConstValue;
  *
  * @author Andi
  */
-public class PositionFilter extends Filter{
-
-    public PositionFilter(SymbolAdapter adapter, String outputVarName) {
+public class PercentageToIntervalValueFilter extends Filter{
+    public PercentageToIntervalValueFilter(SymbolAdapter adapter, String outputVarName) {
         super(adapter, outputVarName);
 
         FilterInput fi = new FilterInput("percentage", new Class[]{Percentage.class});
         filterInputs.put(fi.getName(), fi);
 
-        fi = new FilterInput("line", new Class[]{Line.class});
+        fi = new FilterInput("interval", new Class[]{Interval.class});
         filterInputs.put(fi.getName(), fi);
 
-        outputValue = new ConstValue(adapter, outputVarName, new Point(), Point.class);
+        outputValue = new ConstValue(adapter, outputVarName, 0.0, Double.class);
     }
 
     @Override
     public void doFilter() {
         Percentage percentage = (Percentage) getFilterInputValue("percentage");
-        Line line = (Line) getFilterInputValue("line");
+        Interval interval = (Interval) getFilterInputValue("interval");
 
-        Point pos = new Point();
+        double value = interval.getValue(percentage);
+        outputValue.setValue(value);
 
-        pos.x = line.getStartPoint().x + (int)((line.getEndPoint().x - line.getStartPoint().x)*percentage.getVal());
-        pos.y = line.getStartPoint().y + (int)((line.getEndPoint().y - line.getStartPoint().y)*percentage.getVal());
-
-        outputValue.setValue(pos);
-
-        Logging.getLogger().finer("percentage=" + percentage + "; line=" + line + "; position=" + pos);
+        Logging.getLogger().finer("percentage=" + percentage + "; interval=" + interval + "; value=" + value);
     }
 }
