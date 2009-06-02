@@ -35,13 +35,16 @@ public class ContainedByRightSideComponent extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         textFieldUpperBound = new javax.swing.JFormattedTextField();
 
+        setMinimumSize(new java.awt.Dimension(50, 10));
+        setPreferredSize(new java.awt.Dimension(80, 10));
+
         textFieldLowerBound.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));
         textFieldLowerBound.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         textFieldLowerBound.setText("0.00");
         textFieldLowerBound.setPreferredSize(new java.awt.Dimension(50, 20));
         add(textFieldLowerBound);
 
-        jLabel1.setText("and");
+        jLabel1.setText("und");
         add(jLabel1);
 
         textFieldUpperBound.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0.00"))));

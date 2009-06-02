@@ -11,10 +11,6 @@ public class SymbolShowAction extends SymbolAction {
         super(adapter);
     }
 
-    public java.util.List<UserInput> getUserInput () {
-        return new ArrayList<UserInput>();
-    }
-
     public String getDescription () {
         return "Shows a symbol";
     }

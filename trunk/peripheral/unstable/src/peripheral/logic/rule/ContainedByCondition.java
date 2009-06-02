@@ -9,7 +9,8 @@ public class ContainedByCondition extends ConditionOperation {
     private double lowerBound;
     private double upperBound;
 
-    public ContainedByCondition() {
+    public ContainedByCondition(Condition condition) {
+        super(condition);
     }
 
     public boolean eval(Condition cond) {

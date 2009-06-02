@@ -12,6 +12,8 @@ public class SymbolScaleAction extends SymbolAction {
 
     private Value factorX;
     private Value factorY;
+    private boolean needFactorXUserInput = true;
+    private boolean needFactorYUserInput = true;
 
     public SymbolScaleAction(SymbolAdapter adapter) {
         super(adapter);
@@ -21,6 +23,9 @@ public class SymbolScaleAction extends SymbolAction {
         this(adapter);
         this.factorX = factorX;
         this.factorY = factorY;
+
+        needFactorXUserInput = false;
+        needFactorYUserInput = false;
     }
 
     public float getFactorX() {
@@ -33,21 +38,26 @@ public class SymbolScaleAction extends SymbolAction {
         return Float.parseFloat(factorY.getValue().toString());
     }
 
+    @Override
     public java.util.List<UserInput> getUserInput() {
-        List<UserInput> ui = new ArrayList<UserInput>();
-        if (factorX == null) {
-            ui.add(new UserInput("Factor x-Axis", "Factor to which the symbol should be scaled on the x-axis.", new ConstValue(adapter, "factorX", 1.0f, float.class)));
+        if (this.needFactorXUserInput) {
+            if (factorX == null) {
+                factorX = new ConstValue(adapter, "factorX", 1.0f, float.class);
+                userInput.add(new UserInput("Factor x-Axis", "Factor to which the symbol should be scaled on the x-axis.", factorX));
+            }
         }
-        if (factorY == null){
-            ui.add(new UserInput("Factor x-Axis", "Factor to which the symbol should be scaled on the y-axis.", new ConstValue(adapter, "factorY", 1.0f, float.class)));
+        if (this.needFactorYUserInput) {
+            if (factorY == null) {
+                factorY = new ConstValue(adapter, "factorY", 1.0f, float.class);
+                userInput.add(new UserInput("Factor x-Axis", "Factor to which the symbol should be scaled on the y-axis.", factorY));
+            }
         }
-        return ui;
+        return userInput;
     }
 
     public String getDescription() {
         return "Scales a symbol according to two given scaling factors. One for the x- and one for the y-axis.";
     }
-
 
     /**
      * calls scale on visualization
