@@ -132,6 +132,9 @@ public class SensorChannel implements Serializable{
                 public String toString() {
                     return "<none>";
                 }
+                public Class getDatatype(){
+                    return Object.class;
+                }
             };
         }
 
