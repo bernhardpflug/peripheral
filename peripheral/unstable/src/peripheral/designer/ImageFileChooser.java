@@ -68,7 +68,7 @@ public class ImageFileChooser extends JFileChooser{
                 if (selectedFile != null) {
                     if (selectedFile.isDirectory()) {
                         //Allow the user to navigate directories with single click
-                        ifc.setCurrentDirectory(selectedFile);
+                        //ifc.setCurrentDirectory(selectedFile);
                     } else {
                         ifc.setSelectedFile(selectedFile);
                         if (ifc.getSelectedFile() != null) //Accept it
