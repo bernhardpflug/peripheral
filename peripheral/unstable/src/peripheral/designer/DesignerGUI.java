@@ -267,7 +267,6 @@ public class DesignerGUI extends javax.swing.JFrame {
         cardPanel.setLayout(new java.awt.CardLayout());
 
         SensorPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 1 : Select Sensorserver"));
-        SensorPanel.setLayout(null);
         cardPanel.add(SensorPanel, "card2");
 
         BackgroundPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 2 : Select Background Image of the Scene"));
@@ -730,7 +729,27 @@ public class DesignerGUI extends javax.swing.JFrame {
             public void run() {
                 DesignerGUI gui = new DesignerGUI();
                 gui.setLocationRelativeTo(null);
-                gui.setVisible(true);
+
+                //display startup dialog
+                StartUpDialog dialog = new StartUpDialog(gui);
+                dialog.setLocationRelativeTo(null);
+                StartUpDialog.StartOption option = dialog.showStartUpDialog();
+
+                if (option != null) {
+                    if (option.equals(StartUpDialog.StartOption.NEW)) {
+                        //no preconfigurations in here
+                    }
+                    else if (option.equals(StartUpDialog.StartOption.EXISTING)) {
+                        //let displayconfiguration load its settings
+                        DisplayConfiguration.load(dialog.getConfigFile().getAbsolutePath());
+                    }
+
+                    gui.setVisible(true);
+                }
+                else {
+                    gui.dispose();
+                    System.exit(0);
+                }
             }
         });
     }
