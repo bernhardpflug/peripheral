@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import peripheral.designer.preview.PreviewDialog;
@@ -61,42 +62,11 @@ public class DesignerGUI extends javax.swing.JFrame {
         //define model that allows to modify list data
         this.defAnimationsList.setModel(new DefaultListModel());
 
-        createDummyData();
         
         //fill list with already defined animations
         fillAnimationList();
     }
-
-    //TODO DELETE
-    public enum ConstVAL {
-        Constval1,
-        Convstval2
-    }
-    //TODO DELETE
-    private void createDummyData() {
-
-        SymbolAdapter slider1 = new SymbolAdapter();
-        slider1.setName("RuleSlider1");
-        slider1.setTool(new Point());
-        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new SensorValue(slider1,"SensorIntegerTest",Integer.class)));
-        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue(slider1,"EnumTest",ConstVAL.Constval1,ConstVAL.class)));
-        slider1.getNeededUserInput().add(new UserInput("ui1","what the hell", new ConstValue(slider1,"CheckBoxTest",new Boolean(true),Boolean.class)));
-        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"IntegerTest",new Integer(0),Integer.class)));
-        slider1.getNeededUserInput().add(new UserInput("ui2","what the hell", new ConstValue(slider1,"FloatTest",new Float(0), Float.class)));
-
-        slider1.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, new Boolean(true));
-
-        DisplayConfiguration.getInstance().getAdapter().add(slider1);
-
-        SymbolAdapter mover1 = new SymbolAdapter();
-        mover1.setName("ContinousMover1");
-        mover1.setTool(new Region());
-        mover1.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, new Boolean(false));
-        DisplayConfiguration.getInstance().getAdapter().add(mover1);
-
-
-    }
-
+    
     private void handleFilePreview (File selectedFile) {
 
         //in case of first display set location beside current window
@@ -216,8 +186,6 @@ public class DesignerGUI extends javax.swing.JFrame {
         priorityUpButton = new javax.swing.JButton();
         priorityDownButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        SavePanel = new javax.swing.JPanel();
-        saveConfigurationButton = new javax.swing.JButton();
         ApplicationMenu = new javax.swing.JMenuBar();
         FileMenu = new javax.swing.JMenu();
         exitMenu = new javax.swing.JMenuItem();
@@ -413,34 +381,6 @@ public class DesignerGUI extends javax.swing.JFrame {
 
         cardPanel.add(AnimationsPanel, "card4");
 
-        SavePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 4 : Save this Configuration"));
-
-        saveConfigurationButton.setText("Save");
-        saveConfigurationButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveConfigurationButtonActionPerformed(evt);
-            }
-        });
-
-        org.jdesktop.layout.GroupLayout SavePanelLayout = new org.jdesktop.layout.GroupLayout(SavePanel);
-        SavePanel.setLayout(SavePanelLayout);
-        SavePanelLayout.setHorizontalGroup(
-            SavePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(SavePanelLayout.createSequentialGroup()
-                .add(22, 22, 22)
-                .add(saveConfigurationButton)
-                .addContainerGap(624, Short.MAX_VALUE))
-        );
-        SavePanelLayout.setVerticalGroup(
-            SavePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(SavePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(saveConfigurationButton)
-                .addContainerGap(389, Short.MAX_VALUE))
-        );
-
-        cardPanel.add(SavePanel, "card5");
-
         getContentPane().add(cardPanel, java.awt.BorderLayout.CENTER);
 
         FileMenu.setText("File");
@@ -499,6 +439,14 @@ public class DesignerGUI extends javax.swing.JFrame {
         if (currentIndex == 0) {
             prevButton.setEnabled(true);
 
+            //if file is already set display it
+            File alreadyExisting = DisplayConfiguration.getInstance().getBackgroundImageFile();
+
+            if (alreadyExisting != null) {         
+                this.jFileChooser1.setCurrentDirectory(alreadyExisting);
+                this.jFileChooser1.setSelectedFile(alreadyExisting);
+            }
+
             currentIndex++;
             cl.next(cardPanel);
         }
@@ -506,13 +454,14 @@ public class DesignerGUI extends javax.swing.JFrame {
         else if (currentIndex == 1) {
 
             //Save selected image in display configuration
-            File selectedFile = this.jFileChooser1.getSelectedFile();
+            File selectedFile=this.jFileChooser1.getSelectedFile();
 
             if (selectedFile != null && PreviewDialog.isExtentionSupported(selectedFile)) {
 
                 DisplayConfiguration.getInstance().setBackgroundImage(PreviewDialog.getInstance().getBackgroundImage());
                 DisplayConfiguration.getInstance().setBackgroundImageFile(selectedFile);
 
+                nextButton.setText("Save");
                 currentIndex++;
                 cl.next(cardPanel);
             }
@@ -529,17 +478,19 @@ public class DesignerGUI extends javax.swing.JFrame {
 
             //only allow continuing if there are no corrupt symboladapter
             if (this.checkForInvalidUserInputValues()) {
-                nextButton.setText("Finish");
-                currentIndex++;
-                cl.next(cardPanel);
+
+                //TODO open save dialog
+                JFileChooser saveFileChooser = new JFileChooser();
+
+                if (saveFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                    DisplayConfiguration.getInstance().save(saveFileChooser.getSelectedFile().getAbsolutePath());
+                }
+                
+                this.setVisible(false);
+                this.dispose();
+                System.exit(0);
             }
             
-        }
-        //save panel
-        else if (currentIndex == 3) {
-
-            this.setVisible(false);
-            this.dispose();
         }
         
     }//GEN-LAST:event_nextButtonActionPerformed
@@ -557,10 +508,6 @@ public class DesignerGUI extends javax.swing.JFrame {
         }
         //animation panel
         else if (currentIndex == 2) {
-
-        }
-        //save panel
-        else if (currentIndex == 3) {
             nextButton.setText("next");
         }
 
@@ -621,10 +568,6 @@ public class DesignerGUI extends javax.swing.JFrame {
             aaD.setVisible(true);
         }
     }//GEN-LAST:event_editAnimationButtonActionPerformed
-
-    private void saveConfigurationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveConfigurationButtonActionPerformed
-        DisplayConfiguration.getInstance().save("displayConfig.zip");
-    }//GEN-LAST:event_saveConfigurationButtonActionPerformed
 
     private void removeAnimationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAnimationButtonActionPerformed
 
@@ -727,11 +670,10 @@ public class DesignerGUI extends javax.swing.JFrame {
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                DesignerGUI gui = new DesignerGUI();
-                gui.setLocationRelativeTo(null);
+                
 
                 //display startup dialog
-                StartUpDialog dialog = new StartUpDialog(gui);
+                StartUpDialog dialog = new StartUpDialog(null);
                 dialog.setLocationRelativeTo(null);
                 StartUpDialog.StartOption option = dialog.showStartUpDialog();
 
@@ -744,10 +686,11 @@ public class DesignerGUI extends javax.swing.JFrame {
                         DisplayConfiguration.load(dialog.getConfigFile().getAbsolutePath());
                     }
 
+                    DesignerGUI gui = new DesignerGUI();
+                    gui.setLocationRelativeTo(null);
                     gui.setVisible(true);
                 }
                 else {
-                    gui.dispose();
                     System.exit(0);
                 }
             }
@@ -762,7 +705,6 @@ public class DesignerGUI extends javax.swing.JFrame {
     private javax.swing.JPanel DefAnimationsPanel;
     private javax.swing.JMenu EditMenu;
     private javax.swing.JMenu FileMenu;
-    private javax.swing.JPanel SavePanel;
     private javax.swing.JPanel SensorPanel;
     private javax.swing.JButton addAnimationButton;
     private javax.swing.JPanel buttonPanel;
@@ -779,7 +721,6 @@ public class DesignerGUI extends javax.swing.JFrame {
     private javax.swing.JButton priorityDownButton;
     private javax.swing.JButton priorityUpButton;
     private javax.swing.JButton removeAnimationButton;
-    private javax.swing.JButton saveConfigurationButton;
     private javax.swing.JMenu viewMenu;
     // End of variables declaration//GEN-END:variables
 
