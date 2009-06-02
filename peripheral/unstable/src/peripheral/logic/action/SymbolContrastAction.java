@@ -11,6 +11,7 @@ import peripheral.logic.value.Value;
 public class SymbolContrastAction extends SymbolAction {
 
     private Value amount;
+    private boolean needAmountUserInput = true;
 
     public SymbolContrastAction(SymbolAdapter adapter) {
         super(adapter);
@@ -19,6 +20,7 @@ public class SymbolContrastAction extends SymbolAction {
     public SymbolContrastAction(SymbolAdapter adapter, Value amount) {
         this(adapter);
         this.amount = amount;
+        this.needAmountUserInput = false;
     }
 
     public float getAmount() {
@@ -26,12 +28,15 @@ public class SymbolContrastAction extends SymbolAction {
         return Float.parseFloat(amount.getValue().toString());
     }
 
+    @Override
     public java.util.List<UserInput> getUserInput() {
-        List<UserInput> ui = new ArrayList<UserInput>();
-        if (amount == null) {
-            ui.add(new UserInput("Amount", "Amount of contrast ...?", new ConstValue(adapter, "amount", 1.0f, float.class)));
+        if (this.needAmountUserInput) {
+            if (amount == null) {
+                amount = new ConstValue(adapter, "amount", 1.0f, float.class);
+                userInput.add(new UserInput("Amount", "Amount of contrast ...?", amount));
+            }
         }
-        return ui;
+        return userInput;
     }
 
     public String getDescription() {

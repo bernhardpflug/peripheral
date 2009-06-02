@@ -4,6 +4,11 @@
  */
 package peripheral.logic.rule;
 
+import java.awt.Dimension;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import javax.swing.JFormattedTextField;
 import javax.swing.JTextField;
 import peripheral.logic.Logging;
 
@@ -17,14 +22,12 @@ public class SimpleCondition extends ConditionOperation {
 
         Equal, Unequal, Less, LessOrEqual, Greater, GreaterOrEqual
     }
-
     private Operation type;
-
-    private transient JTextField rightSideComponent = null;
-
+    private transient JFormattedTextField rightSideComponent = null;
     private Object rightSideOp;
 
-    public SimpleCondition(Operation type) {
+    public SimpleCondition(Condition condition, Operation type) {
+        super(condition);
         this.type = type;
     }
 
@@ -90,19 +93,56 @@ public class SimpleCondition extends ConditionOperation {
     }
 
     public java.awt.Component getRightSideComponent() {
-        if (rightSideComponent == null){
-            rightSideComponent = new JTextField();
+        if (rightSideComponent == null) {
+            Object value = null;
+            try {
+                Class type = condition.getLeftSideOp().getSensorChannel().getDatatype();
+                String s = "";
+                if (condition.isLeftSideOpTypeNumber()){
+                    s = "0";
+                }
+                value = type.getConstructor(String.class).newInstance(s);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            rightSideComponent = new JFormattedTextField(value);
+            rightSideComponent.setPreferredSize(new Dimension(50, 10));
         }
         return rightSideComponent;
     }
 
     @Override
     public void saveValuesFromRightSideComponent() {
-        if (rightSideComponent != null){
-            rightSideOp = rightSideComponent.getText();
+        if (rightSideComponent != null) {
+            rightSideOp = rightSideComponent.getValue();
             Logging.getLogger().finer("saved value " + rightSideOp + " to rightSideOp");
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof SimpleCondition) {
+            return ((SimpleCondition) obj).type == this.type;
+        }
+        return false;
+    }
 
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        saveValuesFromRightSideComponent();
+
+        out.writeObject(rightSideOp);
+
+        out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
+        //saveValuesFromRightSideComponent();
+
+        rightSideOp = in.readObject();
+
+        in.defaultReadObject();
+    }
 }

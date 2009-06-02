@@ -14,6 +14,8 @@ public class SymbolTranslateAction extends SymbolAction {
     private Value targetPositionX;
     private Value targetPositionY;
     private Value targetPosition;
+    private boolean needTargetPositionXUserInput = true;
+    private boolean needTargetPositionYUserInput = true;
 
     public SymbolTranslateAction(SymbolAdapter adapter) {
         super(adapter);
@@ -23,11 +25,17 @@ public class SymbolTranslateAction extends SymbolAction {
         this(adapter);
         this.targetPositionX = targetPositionX;
         this.targetPositionY = targetPositionY;
+
+        this.needTargetPositionXUserInput = false;
+        this.needTargetPositionYUserInput = false;
     }
 
     public SymbolTranslateAction(SymbolAdapter adapter, Value targetPosition) {
         this(adapter);
         this.targetPosition = targetPosition;
+
+        this.needTargetPositionXUserInput = false;
+        this.needTargetPositionYUserInput = false;
     }
 
     public int getTargetPositionX() {
@@ -42,18 +50,24 @@ public class SymbolTranslateAction extends SymbolAction {
 
     public java.awt.Point getTargetPosition() {
         //extract concrete value from Value-Object
-        return (java.awt.Point)targetPosition.getValue();
+        return (java.awt.Point) targetPosition.getValue();
     }
 
+    @Override
     public java.util.List<UserInput> getUserInput() {
-        List<UserInput> ui = new ArrayList<UserInput>();
-        if (targetPosition == null && targetPositionX == null) {
-            ui.add(new UserInput("Target position x", "x-value to which the symbol should be moved.", new ConstValue(adapter, "targetPositionX", 0, int.class)));
+        if (this.needTargetPositionXUserInput) {
+            if (targetPositionX == null) {
+                targetPositionX = new ConstValue(adapter, "targetPositionX", 0, int.class);
+                userInput.add(new UserInput("Target position x", "x-value to which the symbol should be moved.", targetPositionX));
+            }
         }
-        if (targetPosition == null && targetPositionY == null) {
-            ui.add(new UserInput("Target position y", "y-value to which the symbol should be moved.", new ConstValue(adapter, "targetPositionY", 0, int.class)));
+        if (this.needTargetPositionYUserInput) {
+            if (targetPositionY == null) {
+                targetPositionY = new ConstValue(adapter, "targetPositionY", 0, int.class);
+                userInput.add(new UserInput("Target position y", "y-value to which the symbol should be moved.", targetPositionY));
+            }
         }
-        return ui;
+        return userInput;
     }
 
     public String getDescription() {

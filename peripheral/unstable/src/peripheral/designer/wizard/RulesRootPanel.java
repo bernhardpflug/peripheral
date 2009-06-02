@@ -8,7 +8,6 @@
  *
  * Created on 14.05.2009, 20:04:57
  */
-
 package peripheral.designer.wizard;
 
 import java.awt.Dimension;
@@ -19,6 +18,7 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -31,15 +31,12 @@ import peripheral.logic.symboladapter.SymbolAdapter;
  */
 public class RulesRootPanel extends javax.swing.JPanel {
 
-
     private Window parent;
-
     public GridBagLayout layout;
-
     private SymbolAdapter symbolAdapter;
     private JPanel buttonPanel;
-
     private ArrayList<RulePanel> rulePanels;
+    private List<JButton> removeButtons;
 
     /** Creates new form rulesPanel */
     public RulesRootPanel(Window parent) {
@@ -55,6 +52,7 @@ public class RulesRootPanel extends javax.swing.JPanel {
         buttonPanel = createButtonPanel();
 
         rulePanels = new ArrayList<RulePanel>();
+        removeButtons = new ArrayList<JButton>();
 
     }
 
@@ -82,20 +80,21 @@ public class RulesRootPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-
     public void setSymbolAdapter(SymbolAdapter symbolAdapter) {
 
-        this.symbolAdapter = symbolAdapter;
-        
-        rulePanels.clear();
-        
-        createConditionPanels();
+        if (this.symbolAdapter != symbolAdapter) {
+            this.symbolAdapter = symbolAdapter;
 
-        if (symbolAdapter.getRules().size() == 0) {
-            addNewRule();
+            rulePanels.clear();
+
+            createConditionPanels();
+
+            if (symbolAdapter.getRules().size() == 0) {
+                addNewRule();
+            }
+
+            this.windowChanged();
         }
-        
-        this.windowChanged();
     }
 
     private void createConditionPanels() {
@@ -104,7 +103,7 @@ public class RulesRootPanel extends javax.swing.JPanel {
 
             RulePanel rulePanel = new RulePanel(rule, parent);
             rulePanels.add(rulePanel);
-            
+
         }
     }
 
@@ -113,20 +112,22 @@ public class RulesRootPanel extends javax.swing.JPanel {
         localButtonPanel.setLayout(null);
 
         JButton addRuleButton = new JButton("Add Rule");
-        addRuleButton.addActionListener(new ActionListener () {
+        addRuleButton.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
-                
+
                 addNewRule();
-                
+
             }
         });
 
-        localButtonPanel.setSize(100,20);
+        localButtonPanel.setSize(100, 20);
         addRuleButton.setSize(100, 20);
         localButtonPanel.add(addRuleButton);
 
         return localButtonPanel;
     }
+
     /**
      * called every time a rulePanel is repainted
      */
@@ -136,30 +137,56 @@ public class RulesRootPanel extends javax.swing.JPanel {
 
         this.createLayout();
 
+        this.validate();
+
         parent.validate();
+
+        this.repaint();
     }
 
     private void createLayout() {
 
-        int i=0;
+        int i = 0;
 
         GridBagConstraints gbc;
+
+        this.removeButtons.clear();
 
         for (RulePanel rulePanel : rulePanels) {
 
             Dimension panelMinDim = rulePanel.getMinimumDisplaySize();
 
-            gbc = makegbc(0,i*3+1,1,3,GridBagConstraints.BOTH,(int)panelMinDim.getWidth(),(int)panelMinDim.getHeight());
+            gbc = makegbc(0, i * 3 + 1, 1, 3, GridBagConstraints.BOTH, (int) panelMinDim.getWidth(), (int) panelMinDim.getHeight());
 
             layout.setConstraints(rulePanel, gbc);
 
             this.add(rulePanel);
 
+            //add button to remove
+            final JButton removeButton = new JButton("Remove rule");
+            this.removeButtons.add(removeButton);
+            removeButton.addActionListener(
+                    new ActionListener() {
+
+                        public void actionPerformed(ActionEvent e) {
+                            int index = removeButtons.indexOf(removeButton);
+                            rulePanels.remove(index);
+                            windowChanged();
+                        }
+                    });
+
+            gbc = makegbc(1, i * 3 + 1, 1, 3, GridBagConstraints.NONE, removeButton.getWidth(), removeButton.getHeight());
+            layout.setConstraints(removeButton, gbc);
+            if (rulePanels.size() <= 1) {
+                removeButton.setEnabled(false);
+            }
+            this.add(removeButton);
+
             i++;
         }
 
         //add button panel at least
-        gbc = makegbc(0,i*3+1,1,1,GridBagConstraints.NONE,(int)buttonPanel.getWidth(),(int)buttonPanel.getHeight());
+        gbc = makegbc(0, i * 3 + 1, 1, 1, GridBagConstraints.NONE, (int) buttonPanel.getWidth(), (int) buttonPanel.getHeight());
         layout.setConstraints(buttonPanel, gbc);
         this.add(buttonPanel);
 
@@ -193,7 +220,7 @@ public class RulesRootPanel extends javax.swing.JPanel {
      * @param height how many cells
      * @return
      */
-    private GridBagConstraints makegbc (int x, int y, int width, int height,int fill, int ipadx, int ipady) {
+    private GridBagConstraints makegbc(int x, int y, int width, int height, int fill, int ipadx, int ipady) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = x;
         gbc.gridy = y;
@@ -207,7 +234,7 @@ public class RulesRootPanel extends javax.swing.JPanel {
 
         return gbc;
     }
-    
+
     /**
      * Create the GUI and show it.  For thread safety,
      * this method should be invoked from the

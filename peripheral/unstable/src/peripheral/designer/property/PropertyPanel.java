@@ -28,7 +28,6 @@ import peripheral.logic.value.SensorValue;
 import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value;
 
-
 /**
  *
  * @author Berni
@@ -41,15 +40,18 @@ public class PropertyPanel extends JPanel {
     List<Value> userInputs;
 
     public PropertyPanel(SymbolAdapter symbolAdapter) {
+        this(symbolAdapter, symbolAdapter.getNeededUserInput());
+    }
 
-        super(new GridLayout(1,0));
+    public PropertyPanel(SymbolAdapter symbolAdapter, List<UserInput> userInputs) {
+        super(new GridLayout(1, 0));
 
         this.symbolAdapter = symbolAdapter;
 
         this.userInputs = new ArrayList<Value>();
 
         //sort out const and sensor values for display
-        for (UserInput uInput : symbolAdapter.getNeededUserInput()) {
+        for (UserInput uInput : userInputs) {
 
             if (uInput.getValue() instanceof ConstValue || uInput.getValue() instanceof SensorValue) {
                 this.userInputs.add(uInput.getValue());
@@ -60,14 +62,12 @@ public class PropertyPanel extends JPanel {
         table.setPreferredScrollableViewportSize(new Dimension(300, 70));
 
         table.setDefaultRenderer(Object.class, new PropertyCellRenderer());
-        
+
         //Create the scroll pane and add the table to it.
         JScrollPane scrollPane = new JScrollPane(table);
 
 
         add(scrollPane);
-
-
     }
 
     /**
@@ -92,14 +92,14 @@ public class PropertyPanel extends JPanel {
 
         return channels;
     }
-    
+
     /**
      * Model that converts the UserInput data into the table view
      */
     class PropertyTableModel extends AbstractTableModel {
-        
-        private String [] columnNames = {"Propertyname", "Propertyvalue"};
-        
+
+        private String[] columnNames = {"Propertyname", "Propertyvalue"};
+
         public int getColumnCount() {
             return 2;
         }
@@ -118,19 +118,16 @@ public class PropertyPanel extends JPanel {
             //name
             if (col == 0) {
                 return userInputs.get(row).getVarName();
-            }
-            else if (col == 1) {
+            } else if (col == 1) {
                 Value val = userInputs.get(row);
-                
+
                 if (val instanceof ConstValue) {
                     return userInputs.get(row).getValue();
-                }
-                //Sensorvalue
+                } //Sensorvalue
                 else {
-                    return ((SensorValue)val).getSensorChannel();
+                    return ((SensorValue) val).getSensorChannel();
                 }
-            }
-            else {
+            } else {
                 return "?";
             }
         }
@@ -171,15 +168,14 @@ public class PropertyPanel extends JPanel {
 //            }
 
             Value val = userInputs.get(row);
-            
+
             if (val instanceof ConstValue) {
-                ((ConstValue)val).setValue(value);
-            }
-            //Sensorvalue
+                ((ConstValue) val).setValue(value);
+            } //Sensorvalue
             else {
-                ((SensorValue)val).setSensorChannel((SensorChannel)value);
+                ((SensorValue) val).setSensorChannel((SensorChannel) value);
             }
-            
+
             fireTableCellUpdated(row, col);
         }
     }
@@ -200,7 +196,7 @@ public class PropertyPanel extends JPanel {
 
             //in case of sensorvalue list all available sensorattributes
             if (val instanceof SensorValue) {
-                SensorValue sval = (SensorValue)val;
+                SensorValue sval = (SensorValue) val;
 
                 JComboBox box = new JComboBox();
 
@@ -211,27 +207,22 @@ public class PropertyPanel extends JPanel {
                 box.setSelectedItem(this.getValueAt(row, column));
 
                 return new DefaultCellEditor(box);
-            }
-            //const value: depending whether text, enum, number or boolean
+            } //const value: depending whether text, enum, number or boolean
             else {
 
-                ConstValue cval = (ConstValue)val;
+                ConstValue cval = (ConstValue) val;
                 System.out.println(cval.getValue().getClass().toString());
 
                 //Boolean
                 if (cval.getValue() instanceof Boolean) {
 
                     JCheckBox checkBox = new JCheckBox();
-                    checkBox.setSelected(((Boolean)val.getValue()).booleanValue());
+                    checkBox.setSelected(((Boolean) val.getValue()).booleanValue());
                     return new DefaultCellEditor(checkBox);
-                }
-                //Number
-                else if (cval.getValue() instanceof Float || cval.getValue() instanceof Double
-                        || cval.getValue() instanceof Long || cval.getValue() instanceof Short
-                        || cval.getValue() instanceof Integer) {
+                } //Number
+                else if (cval.getValue() instanceof Float || cval.getValue() instanceof Double || cval.getValue() instanceof Long || cval.getValue() instanceof Short || cval.getValue() instanceof Integer) {
                     return new NumberEditor(cval.getValueType());
-                }
-                //enum
+                } //enum
                 else if (cval.getValue().getClass().isEnum()) {
 
                     //get all constants of this enumeration and display them in combo box
@@ -246,8 +237,7 @@ public class PropertyPanel extends JPanel {
                     box.setSelectedItem(cval.getValue());
 
                     return new DefaultCellEditor(box);
-                }
-                //String
+                } //String
                 else {
                     return new DefaultCellEditor(new JTextField());
                 }
@@ -262,9 +252,9 @@ public class PropertyPanel extends JPanel {
     class PropertyCellRenderer extends DefaultTableCellRenderer {
 
         public Component getTableCellRendererComponent(
-                            JTable table, Object color,
-                            boolean isSelected, boolean hasFocus,
-                            int row, int column) {
+                JTable table, Object color,
+                boolean isSelected, boolean hasFocus,
+                int row, int column) {
 
             Value val = userInputs.get(row);
 
@@ -285,11 +275,10 @@ public class PropertyPanel extends JPanel {
                         JCheckBox checkBox = new JCheckBox();
                         checkBox.setSelected(((Boolean) cval.getValue()).booleanValue());
                         checkBox.setBackground(super.getBackground());
-                        
+
                         if (hasFocus) {
                             checkBox.setForeground(Color.BLUE);
-                        }
-                        else {
+                        } else {
                             checkBox.setForeground(Color.WHITE);
                         }
 

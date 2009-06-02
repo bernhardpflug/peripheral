@@ -6,7 +6,10 @@ import java.io.Serializable;
 
 public abstract class ConditionOperation implements Serializable {
 
-    public ConditionOperation() {
+    protected Condition condition;
+
+    public ConditionOperation(Condition condition) {
+        this.condition = condition;
     }
 
     public abstract boolean eval(Condition cond);

@@ -2,8 +2,10 @@ package peripheral.logic.rule;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import peripheral.logic.action.ActionToolAction;
 import peripheral.logic.symboladapter.SymbolAdapter;
+import peripheral.logic.value.UserInput;
 
 
 public class Rule implements Serializable{
@@ -31,6 +33,22 @@ public class Rule implements Serializable{
 
     public java.util.List<Condition> getConditions () {
         return conditions;
+    }
+
+    public SymbolAdapter getAdapter() {
+        return adapter;
+    }
+
+    public List<UserInput> getUserInput (){
+        List<UserInput> ui = new ArrayList<UserInput>();
+        for (ActionToolAction action : this.actions){
+            ui.addAll(action.getUserInput());
+        }
+        return ui;
+    }
+
+    public String getPrefix (Condition condition){
+        return "rule" + adapter.getRules().indexOf(this) + ".condition" + this.conditions.indexOf(condition) + ".";
     }
 
     public boolean tryExecute (){
