@@ -84,6 +84,14 @@ public class Symbol implements Serializable, Cloneable {
         this.scaleY = val;
     }
 
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public void setSecondFile(File secondFile) {
+        this.secondFile = secondFile;
+    }
+
     public ClonedSymbol cloneSymbol() throws CloneNotSupportedException {
         Symbol source = null;
         source = (Symbol) this.clone();

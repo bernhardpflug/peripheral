@@ -39,7 +39,7 @@ public class SymbolAdapter implements Serializable {
     private SymbolAnimator animator;
     private java.util.ArrayList<Sensor> preselectedSensors;
     private Map<RequiredStep, Boolean> requiredSteps;
-    private Action defaultAction;
+    private ActionToolAction defaultAction;
     private List<ActionToolAction> initActions;
 
     //defines whether symbols of the positioningtools of this adapter
@@ -291,11 +291,11 @@ public class SymbolAdapter implements Serializable {
         return result;
     }
 
-    public Action getDefaultAction() {
+    public ActionToolAction getDefaultAction() {
         return defaultAction;
     }
 
-    public void setDefaultAction(Action val) {
+    public void setDefaultAction(ActionToolAction val) {
         this.defaultAction = val;
     }
 
