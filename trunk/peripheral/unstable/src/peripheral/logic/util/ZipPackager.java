@@ -93,7 +93,10 @@ public class ZipPackager {
         if (File.separatorChar == '\\') {
             return file.getPath().replace(":", "").replace('\\', '/');
         }
-        return file.getPath().substring(1);
+        else if (file.getPath().startsWith("/")){
+            return file.getPath().substring(1);
+        }
+        return file.getPath();
     }
 
     public static void unzip(String zipFilename, String destinationDirectory) {
