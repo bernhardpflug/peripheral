@@ -20,7 +20,7 @@ public class ContainedByCondition extends ConditionOperation {
     }
 
     public String getOperationName() {
-        return "between";
+        return "zwischen";
     }
 
     public java.awt.Component getRightSideComponent() {
