@@ -27,13 +27,7 @@ import peripheral.logic.symboladapter.SymbolAdapter;
  */
 public class ZipPackager {
 
-    public static void zip(String destFilename, File configFile) {
-        DisplayConfiguration dc = DisplayConfiguration.getInstance();
-
-        int read = 0;
-        FileInputStream in;
-        byte[] data = new byte[1024];
-
+    public static Set<File> getFilesToZip(DisplayConfiguration dc) {
         Set<File> filesToZip = new HashSet<File>();
 
         filesToZip.add(dc.getBackgroundImageFile());
@@ -45,6 +39,18 @@ public class ZipPackager {
                 }
             }
         }
+
+        return filesToZip;
+    }
+
+    public static void zip(String destFilename, File configFile) {
+        DisplayConfiguration dc = DisplayConfiguration.getInstance();
+
+        int read = 0;
+        FileInputStream in;
+        byte[] data = new byte[1024];
+
+        Set<File> filesToZip = getFilesToZip(dc);
 
         filesToZip.add(configFile);
 
@@ -61,7 +67,7 @@ public class ZipPackager {
                     //stdout.println(args[i]);
                     // Eintrag für neue Datei anlegen
                     //System.out.println(file.toURI());
-                    ZipEntry entry = new ZipEntry(getPath(file));
+                    ZipEntry entry = new ZipEntry(getRelativePath(file));
                     in = new FileInputStream(file.getPath());
                     // Neuer Eintrag dem Archiv hinzufügen
                     out.putNextEntry(entry);
@@ -82,9 +88,9 @@ public class ZipPackager {
 
     }
 
-    private static String getPath (File file){
+    public static String getRelativePath(File file) {
         //if windows system, make unix style pathname
-        if (File.separatorChar == '\\'){
+        if (File.separatorChar == '\\') {
             return file.getPath().replace(":", "").replace('\\', '/');
         }
         return file.getPath().substring(1);
