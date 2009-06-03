@@ -3,6 +3,7 @@ package peripheral.logic.sensor;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import peripheral.logic.Logging;
 import peripheral.logic.value.SensorValue;
 
 public class SensorUpdateThread extends Thread implements Observer{
@@ -76,6 +77,7 @@ public class SensorUpdateThread extends Thread implements Observer{
     public void update(Observable o, Object arg) {
         if (arg instanceof SensorSamplingStarted) {
             this.start();
+            Logging.getLogger().fine("SensorUpdateThread for Sensor " + this.getSensor().getName() + " started.");
         }
     }
 }

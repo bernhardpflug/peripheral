@@ -37,8 +37,8 @@ public class SensorValue extends Value {
 
     public Object getValue() {
         //@todo: return real actvalue
-        return 100;
-    //return actValue;
+        //return 8;
+    return actValue;
     }
 
     public Interval getBounds() {

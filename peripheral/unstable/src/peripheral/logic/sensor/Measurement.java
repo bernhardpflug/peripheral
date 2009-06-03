@@ -4,10 +4,10 @@ package peripheral.logic.sensor;
 public class Measurement {
 
     private String mark;
-    private String value;
+    private Object value;
     private String timestamp;
 
-    public Measurement (String mark, String value, String timestamp) {
+    public Measurement (String mark, Object value, String timestamp) {
     	this.mark = mark;
     	this.value = value;
     	this.timestamp = timestamp;
@@ -22,7 +22,7 @@ public class Measurement {
         return timestamp;
     }
 
-    public String getValue () {
+    public Object getValue () {
         return value;
     }
 

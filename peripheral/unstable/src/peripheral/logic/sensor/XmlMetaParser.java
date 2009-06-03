@@ -147,7 +147,7 @@ public class XmlMetaParser extends Thread{
 						
 						// Iterate through channel's children to generate metadata
 						for(int k = 0; k<c_children.getLength(); k++){
-							
+							Node node = c_children.item(k);
 							// Get shortname
 							if(c_children.item(k).getNodeType()==Node.ELEMENT_NODE && c_children.item(k).getNodeName().compareTo("shortname")==0){
 								metadata.put("shortname", c_children.item(k).getTextContent());
