@@ -14,6 +14,7 @@ import peripheral.logic.action.Action;
 import peripheral.logic.action.ActionToolAction;
 import peripheral.logic.filter.Filter;
 import peripheral.logic.positioningtool.ActionTool;
+import peripheral.logic.rule.Condition;
 import peripheral.logic.rule.Rule;
 import peripheral.logic.sensor.Sensor;
 import peripheral.logic.sensor.SensorChannel;
@@ -242,6 +243,9 @@ public class SymbolAdapter implements Serializable {
 
         //second reset all affected userinputs to dummy value
         resetCorruptUserInputs(sensorList);
+
+        //third reset all affected conditions in rules
+        this.resetCorruptConditions(sensorList);
     }
 
     /**
@@ -289,6 +293,45 @@ public class SymbolAdapter implements Serializable {
         }
 
         return result;
+    }
+
+    /**
+     * @return all conditions of set rules that contain invalid conditions
+     * at this time they are checked for invalid sensors
+     */
+    public ArrayList<Condition> getInvalidConditions() {
+
+        ArrayList<Condition> result = new ArrayList<Condition>();
+
+        for (Rule rule : this.rules) {
+            result.addAll(rule.getInvalidConditions());
+        }
+
+        return result;
+    }
+
+    /**
+     * Method to set all conditions of rules containing an no longer available
+     * sensor to sensor channel DUMMY
+     * @param invalidSensors
+     */
+    public void resetCorruptConditions(ArrayList<Sensor> invalidSensors) {
+
+        for (Rule rule : rules) {
+
+            for (Condition condition : rule.getConditions()) {
+
+                for (Sensor sensor : invalidSensors) {
+                    for (SensorChannel channel : sensor.getSensorChannels()) {
+
+                        if (condition.getLeftSideOp().getSensorChannel().equals(channel)) {
+
+                            condition.getLeftSideOp().setSensorChannel(SensorChannel.getDummy());
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public ActionToolAction getDefaultAction() {
