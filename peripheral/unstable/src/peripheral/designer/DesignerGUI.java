@@ -412,6 +412,7 @@ public class DesignerGUI extends javax.swing.JFrame {
     private void addAnimationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAnimationButtonActionPerformed
 
         AddAnimationDialog aaD = new AddAnimationDialog(this);
+        aaD.setLocationRelativeTo(this);
         aaD.setVisible(true);
 
         //remove all positioningtools from preview
