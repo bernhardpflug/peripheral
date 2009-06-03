@@ -66,5 +66,18 @@ public class Rule implements Serializable{
 
         return execute;
     }
+
+    public ArrayList<Condition> getInvalidConditions() {
+
+        ArrayList<Condition> result = new ArrayList<Condition>();
+
+        for (Condition condition : conditions) {
+            if (!condition.isValid()) {
+                result.add(condition);
+            }
+        }
+
+        return result;
+    }
 }
 

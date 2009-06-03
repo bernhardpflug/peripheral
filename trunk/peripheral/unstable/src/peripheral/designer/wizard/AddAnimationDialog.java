@@ -17,6 +17,7 @@ import java.awt.event.WindowListener;
 import javax.swing.JOptionPane;
 import peripheral.designer.DesignerGUI;
 import peripheral.designer.preview.PreviewDialog;
+import peripheral.logic.rule.Condition;
 import peripheral.logic.sensor.Sensor;
 import peripheral.logic.symboladapter.AdapterTemplateFactory;
 import peripheral.logic.symboladapter.SymbolAdapter;
@@ -277,7 +278,19 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         }
         //rules panel
         else if (currentIndex == 3) {
-            closeAnimationDialog();
+
+            java.util.ArrayList<Condition> invalidConditions = this.symbolAdapter.getInvalidConditions();
+
+            //only allow close if all conditions are valid
+            if (invalidConditions.size() > 0) {
+
+                JOptionPane.showMessageDialog(this,
+                        "Please select for every condition a valid sensor"
+                        ,"Invalid Conditions", JOptionPane.ERROR_MESSAGE);
+            }
+            else {
+                closeAnimationDialog();
+            }
         }
     }//GEN-LAST:event_nextButtonActionPerformed
 

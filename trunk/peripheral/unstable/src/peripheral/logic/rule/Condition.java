@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JLabel;
+import peripheral.logic.sensor.SensorChannel;
 import peripheral.logic.value.SensorValue;
 
 public class Condition implements Serializable {
@@ -75,6 +76,16 @@ public class Condition implements Serializable {
 
     public boolean eval() {
         return getOperation().eval(this);
+    }
+
+    public boolean isValid() {
+
+        if (this.leftSideOp != null) {
+            return this.leftSideOp.isValid();
+        }
+        else {
+            return false;
+        }
     }
 }
 
