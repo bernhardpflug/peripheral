@@ -183,7 +183,6 @@ public class DesignerGUI extends javax.swing.JFrame {
         ApplicationMenu = new javax.swing.JMenuBar();
         FileMenu = new javax.swing.JMenu();
         exitMenu = new javax.swing.JMenuItem();
-        EditMenu = new javax.swing.JMenu();
         viewMenu = new javax.swing.JMenu();
         previewItem = new javax.swing.JMenuItem();
 
@@ -229,6 +228,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         cardPanel.setLayout(new java.awt.CardLayout());
 
         SensorPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 1 : Select Sensorserver"));
+        SensorPanel.setLayout(null);
         cardPanel.add(SensorPanel, "card2");
 
         BackgroundPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 2 : Select Background Image of the Scene"));
@@ -388,9 +388,6 @@ public class DesignerGUI extends javax.swing.JFrame {
         FileMenu.add(exitMenu);
 
         ApplicationMenu.add(FileMenu);
-
-        EditMenu.setText("Edit");
-        ApplicationMenu.add(EditMenu);
 
         viewMenu.setText("View");
 
@@ -663,6 +660,11 @@ public class DesignerGUI extends javax.swing.JFrame {
                 } catch (Exception e) {
                 }
 
+                //on mac os enable menu bar at screen top
+                if (System.getProperty("os.name").equals("Mac OS X")) {
+                    System.setProperty("apple.laf.useScreenMenuBar", "true");
+                }
+
                 //display startup dialog
                 StartUpDialog dialog = new StartUpDialog(null);
                 dialog.setLocationRelativeTo(null);
@@ -692,7 +694,6 @@ public class DesignerGUI extends javax.swing.JFrame {
     private javax.swing.JMenuBar ApplicationMenu;
     private javax.swing.JPanel BackgroundPanel;
     private javax.swing.JPanel DefAnimationsPanel;
-    private javax.swing.JMenu EditMenu;
     private javax.swing.JMenu FileMenu;
     private javax.swing.JPanel SensorPanel;
     private javax.swing.JButton addAnimationButton;
