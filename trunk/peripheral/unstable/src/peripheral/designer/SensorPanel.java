@@ -2,6 +2,8 @@ package peripheral.designer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.AbstractTableModel;
@@ -43,6 +46,7 @@ public class SensorPanel extends JPanel implements Observer{
     private javax.swing.JTextField portTextField;
     private javax.swing.JButton reconnectButton;
     private javax.swing.JButton removeButton;
+    private javax.swing.JButton detailButton;
     private javax.swing.JLabel seperatorLabel;
     private javax.swing.JPanel serverPanel;
     private javax.swing.JTable serverTable;
@@ -59,6 +63,7 @@ public class SensorPanel extends JPanel implements Observer{
     private String usernameTextFieldText;
     
     public SensorPanel() {
+    	
     	serverList = DisplayConfiguration.getInstance().getSensorServer();
     	
     	addressTextFieldText = "raab-heim.uni-linz.ac.at";
@@ -66,6 +71,7 @@ public class SensorPanel extends JPanel implements Observer{
     	usernameTextFieldText = "admin";
     	
         initComponents();
+        
     }
 
     private void initComponents() {
@@ -86,17 +92,47 @@ public class SensorPanel extends JPanel implements Observer{
         editButton = new javax.swing.JButton();
         removeButton = new javax.swing.JButton();
         reconnectButton = new javax.swing.JButton();
+        detailButton = new javax.swing.JButton();
         tableModel = new SensorTableModel();
+        
 
+        // Check if Serverlist is empty or not to set table manipulation button states in case of serialized instances
+        if(serverList.size()>0){
+        	removeButton.setEnabled(true);
+        	reconnectButton.setEnabled(true);
+        	editButton.setEnabled(true);
+        	detailButton.setEnabled(true);
+        }else{
+            editButton.setEnabled(false);
+            removeButton.setEnabled(false);
+            reconnectButton.setEnabled(false);
+            detailButton.setEnabled(false);
+        }
+        
         addServerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Server properties"));
 
         addressTextField.setText(addressTextFieldText);
         addressTextField.setMinimumSize(new java.awt.Dimension(200, 28));
-        addressTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addressTextFieldActionPerformed(evt);
-            }
+        addressTextField.addKeyListener(new KeyListener(){
+
+			public void keyPressed(KeyEvent e) {
+				int key = e.getKeyCode();
+		        
+		        if (key == KeyEvent.VK_ENTER) {
+		        	addButtonActionPerformed();
+		        }
+			}
+
+			public void keyReleased(KeyEvent e) {
+				
+			}
+
+			public void keyTyped(KeyEvent e) {
+			
+			}
+        	
         });
+       
 
         addressLabel.setText("Address:");
 
@@ -104,26 +140,54 @@ public class SensorPanel extends JPanel implements Observer{
 
         usernameTextField.setText(usernameTextFieldText);
         usernameTextField.setMinimumSize(new java.awt.Dimension(200, 28));
-        usernameTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                usernameTextFieldActionPerformed(evt);
-            }
+        usernameTextField.addKeyListener(new KeyListener(){
+
+			public void keyPressed(KeyEvent e) {
+				int key = e.getKeyCode();
+		        
+		        if (key == KeyEvent.VK_ENTER) {
+		        	addButtonActionPerformed();
+		        }
+			}
+
+			public void keyReleased(KeyEvent e) {
+				
+			}
+
+			public void keyTyped(KeyEvent e) {
+			
+			}
+        	
         });
 
         portTextField.setText(portTextFieldText);
         portTextField.setMaximumSize(new java.awt.Dimension(80, 28));
         portTextField.setMinimumSize(new java.awt.Dimension(80, 28));
         portTextField.setPreferredSize(new java.awt.Dimension(80, 28));
-        portTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                portTextFieldActionPerformed(evt);
-            }
+        portTextField.addKeyListener(new KeyListener(){
+
+			public void keyPressed(KeyEvent e) {
+				int key = e.getKeyCode();
+		        
+		        if (key == KeyEvent.VK_ENTER) {
+		        	addButtonActionPerformed();
+		        }
+			}
+
+			public void keyReleased(KeyEvent e) {
+				
+			}
+
+			public void keyTyped(KeyEvent e) {
+			
+			}
+        	
         });
 
         addButton.setText("Add");
         addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
+                addButtonActionPerformed();
             }
         });
 
@@ -181,6 +245,8 @@ public class SensorPanel extends JPanel implements Observer{
 
         serverTable.setModel(tableModel);
         serverTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        serverTable.setColumnSelectionAllowed(false);
+        serverTable.setRowSelectionAllowed(true);
         serverTable.addMouseListener(new MouseListener(){
 
 			public void mouseClicked(MouseEvent e) {
@@ -212,28 +278,51 @@ public class SensorPanel extends JPanel implements Observer{
         	
         });
         jScrollPane1.setViewportView(serverTable);
-
+        
         editButton.setText("Edit");
-        editButton.setEnabled(false);
         editButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editButtonActionPerformed(evt);
             }
         });
+        
+        detailButton.setText("Show details");
+        detailButton.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				serverTableMouseDoubleClickPerformed(serverTable);
+			}
+        	
+        });
 
         removeButton.setText("Remove");
-        removeButton.setEnabled(false);
         removeButton.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e) {
-				serverList.remove(serverTable.getSelectedRow());
-				serverTable.repaint();
+				
+				if(serverList.size()>0 && serverTable.getSelectedRow() != -1){
+					
+					serverList.remove(serverTable.getSelectedRow());
+					
+					if(serverList.size()>0){
+						int idx = serverTable.getRowCount()-1;
+						serverTable.setRowSelectionInterval(idx, idx);
+					}
+					
+					serverTable.updateUI();
+					
+					if(serverList.size()==0){
+						removeButton.setEnabled(false);
+						editButton.setEnabled(false);
+						reconnectButton.setEnabled(false);
+						detailButton.setEnabled(false);
+					}
+				}
 			}
         	
         });
 
         reconnectButton.setText("Reconnect");
-        reconnectButton.setEnabled(false);
         reconnectButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 reconnectButtonActionPerformed(evt);
@@ -251,6 +340,8 @@ public class SensorPanel extends JPanel implements Observer{
                     .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
                     .add(leadingLabel)
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, serverPanelLayout.createSequentialGroup()
+                        .add(detailButton)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(reconnectButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                         .add(removeButton)
@@ -267,9 +358,11 @@ public class SensorPanel extends JPanel implements Observer{
                 .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(serverPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                	.add(detailButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(editButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(removeButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .add(reconnectButton, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+             
                 .add(28, 28, 28))
         );
 
@@ -300,16 +393,13 @@ public class SensorPanel extends JPanel implements Observer{
         );
     }
 
-    private void addressTextFieldActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-    }
     private void usernameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
     }
     private void portTextFieldActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
     }
-    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void addButtonActionPerformed() {
        
     	if(addButton.getText().compareTo("Add")==0){
     		
@@ -410,6 +500,7 @@ public class SensorPanel extends JPanel implements Observer{
     	editButton.setEnabled(true);
     	removeButton.setEnabled(true);
     	reconnectButton.setEnabled(true);
+    	detailButton.setEnabled(true);
     	serverTable.setEnabled(true);
     }
     
@@ -417,6 +508,7 @@ public class SensorPanel extends JPanel implements Observer{
     	removeButton.setEnabled(false);
     	reconnectButton.setEnabled(false);
     	editButton.setEnabled(false);
+    	detailButton.setEnabled(false);
     	serverTable.setEnabled(false);
     	
     	addButton.setText("Change");
@@ -648,6 +740,28 @@ public class SensorPanel extends JPanel implements Observer{
 						channelComboBox.setEnabled(true);
 						
 						selectedSensor = server.getSensorList().get(sensorComboBox.getSelectedIndex());
+						
+						SensorChannel selection = selectedSensor.getSensorChannels().get(channelComboBox.getSelectedIndex());
+						
+			            nameText.setText(selection.getMetadata().get("shortname"));
+			            descriptionText.setText(selection.getMetadata().get("description"));
+			            datatypeText.setText(selection.getMetadata().get("datatype"));
+			            unitsText.setText(selection.getMetadata().get("units"));
+			            locationText.setText(selection.getMetadata().get("location"));
+			            upperText.setText(selection.getMetadata().get("upperlimit"));
+			            lowerText.setText(selection.getMetadata().get("lowerlimit"));
+						
+						if(!metadataPanel.isVisible()){
+			            	metadataPanel.setVisible(true);
+				            mySelf.pack();
+			            }
+						
+					}else{
+						
+						if(metadataPanel.isVisible()){
+			            	metadataPanel.setVisible(false);
+				            mySelf.pack();
+			            }
 					}
 				}
 
