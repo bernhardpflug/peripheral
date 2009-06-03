@@ -658,7 +658,7 @@ public class DesignerGUI extends javax.swing.JFrame {
 
             public void run() {
                 try {
-                    UIManager.setLookAndFeel(new com.jgoodies.plaf.plastic.Plastic3DLookAndFeel());
+                    //UIManager.setLookAndFeel(new com.jgoodies.plaf.plastic.Plastic3DLookAndFeel());
                 } catch (Exception e) {
                 }
 
