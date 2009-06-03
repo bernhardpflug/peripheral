@@ -38,7 +38,8 @@ public class Runtime {
     }
 
     public Visualization getVisualization() {
-        //return viz;
+        if (viz != null)
+        return viz;
 
         //@todo: comment out and return real viz-instance
         return new Visualization() {
@@ -105,15 +106,14 @@ public class Runtime {
         executeAdapterInitActions();
 
         //@todo: delete: only for testing purpose
-        executeAdapters();
-    ////@todo: delete: only for testing purpose
-    //startSensorServer();
+        //executeAdapters();
+        ////@todo: delete: only for testing purpose
+        //startSensorServer();
 
-    //createSensorAdapterMapping();
-    //createSensorUpdateThreads();
+        createSensorAdapterMapping();
+        createSensorUpdateThreads();
 
-    //startServers();
-    //startSensorCheckout();
+        startSensorCheckout();
     }
 
     private void startSensorServer() {
@@ -248,6 +248,5 @@ public class Runtime {
             sensor.stopCheckout();
         }
     }
-
 }
 

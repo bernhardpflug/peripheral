@@ -8,7 +8,6 @@
  *
  * Created on 14.05.2009, 14:26:13
  */
-
 package peripheral.designer;
 
 import java.awt.CardLayout;
@@ -21,17 +20,13 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 import peripheral.designer.preview.PreviewDialog;
 import peripheral.designer.property.PropertyPanel;
 import peripheral.designer.wizard.AddAnimationDialog;
 import peripheral.logic.DisplayConfiguration;
 import peripheral.logic.positioningtool.ActionTool;
-import peripheral.logic.positioningtool.Point;
-import peripheral.logic.positioningtool.Region;
 import peripheral.logic.symboladapter.SymbolAdapter;
-import peripheral.logic.value.ConstValue;
-import peripheral.logic.value.SensorValue;
-import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value;
 
 /**
@@ -46,13 +41,13 @@ public class DesignerGUI extends javax.swing.JFrame {
     //reference original adapter where copy has been modified in dialog
     private SymbolAdapter modifying;
 
-
     /** Creates new form DesignerGUI */
     public DesignerGUI() {
         initComponents();
 
         //be informed about file selection to display image preview
         jFileChooser1.addActionListener(new ActionListener() {
+
             public void actionPerformed(ActionEvent e) {
                 if (e.getActionCommand().equals("ApproveSelection")) {
                     handleFilePreview(jFileChooser1.getSelectedFile());
@@ -62,16 +57,16 @@ public class DesignerGUI extends javax.swing.JFrame {
         //define model that allows to modify list data
         this.defAnimationsList.setModel(new DefaultListModel());
 
-        
+
         //fill list with already defined animations
         fillAnimationList();
     }
-    
-    private void handleFilePreview (File selectedFile) {
+
+    private void handleFilePreview(File selectedFile) {
 
         //in case of first display set location beside current window
         if (PreviewDialog.getInstance().getLocation().x == 0) {
-            PreviewDialog.getInstance().setLocation((int)(this.getBounds().getX()+this.getBounds().getWidth()+5), (int)(this.getBounds().getY()));
+            PreviewDialog.getInstance().setLocation((int) (this.getBounds().getX() + this.getBounds().getWidth() + 5), (int) (this.getBounds().getY()));
         }
 
         if (!PreviewDialog.getInstance().isVisible()) {
@@ -79,14 +74,14 @@ public class DesignerGUI extends javax.swing.JFrame {
         }
 
         PreviewDialog.getInstance().setBackgroundImage(selectedFile);
-        
+
     }
 
     private void fillAnimationList() {
 
         for (SymbolAdapter symbolAdapter : DisplayConfiguration.getInstance().getAdapter()) {
 
-            ((DefaultListModel)this.defAnimationsList.getModel()).addElement(symbolAdapter);
+            ((DefaultListModel) this.defAnimationsList.getModel()).addElement(symbolAdapter);
         }
     }
 
@@ -99,8 +94,8 @@ public class DesignerGUI extends javax.swing.JFrame {
 
         if (dialog.completedCreation()) {
             SymbolAdapter created = dialog.getCreatedAdapter();
-            
-            DefaultListModel model = (DefaultListModel)this.defAnimationsList.getModel();
+
+            DefaultListModel model = (DefaultListModel) this.defAnimationsList.getModel();
 
             //in case existing has been modified overwrite existing with new created
             if (dialog.modifiedExisting()) {
@@ -111,17 +106,16 @@ public class DesignerGUI extends javax.swing.JFrame {
                 model.set(index, created);
                 DisplayConfiguration.getInstance().getAdapter().set(index, created);
 
-            }
-            //else add new one to lists
+            } //else add new one to lists
             else {
 
                 model.addElement(created);
                 DisplayConfiguration.getInstance().getAdapter().add(created);
             }
-            
+
             //selected created element
             this.defAnimationsList.setSelectedValue(created, true);
-            
+
         }
 
         //refresh properties list and positioning tools in preview dialog
@@ -148,10 +142,10 @@ public class DesignerGUI extends javax.swing.JFrame {
                 Value invalidValue = invalid.get(0);
 
                 JOptionPane.showMessageDialog(this,
-                            invalidValue.getVarName()+" property of adapter "+adapter.getName()+"\n" +
-                            "has an invalid state.\n" +
-                            "Set an valid value to proceed",
-                            "Invalid property found", JOptionPane.ERROR_MESSAGE);
+                        invalidValue.getVarName() + " property of adapter " + adapter.getName() + "\n" +
+                        "has an invalid state.\n" +
+                        "Set an valid value to proceed",
+                        "Invalid property found", JOptionPane.ERROR_MESSAGE);
                 return false;
             }
         }
@@ -433,7 +427,7 @@ public class DesignerGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_exitMenuActionPerformed
 
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
-        CardLayout cl = ((java.awt.CardLayout)cardPanel.getLayout());
+        CardLayout cl = ((java.awt.CardLayout) cardPanel.getLayout());
 
         //Sensorpanel
         if (currentIndex == 0) {
@@ -442,19 +436,18 @@ public class DesignerGUI extends javax.swing.JFrame {
             //if file is already set display it
             File alreadyExisting = DisplayConfiguration.getInstance().getBackgroundImageFile();
 
-            if (alreadyExisting != null) {         
+            if (alreadyExisting != null) {
                 this.jFileChooser1.setCurrentDirectory(alreadyExisting);
                 this.jFileChooser1.setSelectedFile(alreadyExisting);
             }
 
             currentIndex++;
             cl.next(cardPanel);
-        }
-        //background panel
+        } //background panel
         else if (currentIndex == 1) {
 
             //Save selected image in display configuration
-            File selectedFile=this.jFileChooser1.getSelectedFile();
+            File selectedFile = this.jFileChooser1.getSelectedFile();
 
             if (selectedFile != null && PreviewDialog.isExtentionSupported(selectedFile)) {
 
@@ -464,16 +457,14 @@ public class DesignerGUI extends javax.swing.JFrame {
                 nextButton.setText("Save");
                 currentIndex++;
                 cl.next(cardPanel);
-            }
-            else {
+            } else {
 
                 JOptionPane.showMessageDialog(this, "Please select a supported image file\n" +
                         "Supported are jpg, bmp, gif, png files", "Unable to proceed", JOptionPane.ERROR_MESSAGE);
-                
+
             }
-            
-        }
-        //animation panel
+
+        } //animation panel
         else if (currentIndex == 2) {
 
             //only allow continuing if there are no corrupt symboladapter
@@ -484,29 +475,26 @@ public class DesignerGUI extends javax.swing.JFrame {
 
                 if (saveFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
                     DisplayConfiguration.getInstance().save(saveFileChooser.getSelectedFile().getAbsolutePath());
+                    this.setVisible(false);
+                    this.dispose();
+                    System.exit(0);
                 }
-                
-                this.setVisible(false);
-                this.dispose();
-                System.exit(0);
             }
-            
+
         }
-        
+
     }//GEN-LAST:event_nextButtonActionPerformed
 
     private void prevButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevButtonActionPerformed
-        CardLayout cl = ((java.awt.CardLayout)cardPanel.getLayout());
+        CardLayout cl = ((java.awt.CardLayout) cardPanel.getLayout());
 
         //Sensorpanel
         if (currentIndex == 0) {
             return;
-        }
-        //background panel
+        } //background panel
         else if (currentIndex == 1) {
             prevButton.setEnabled(false);
-        }
-        //animation panel
+        } //animation panel
         else if (currentIndex == 2) {
             nextButton.setText("next");
         }
@@ -522,7 +510,7 @@ public class DesignerGUI extends javax.swing.JFrame {
             //PROPERTYPANEL
             //in case of list selection change display properties of selected
             //symbol adapter
-            PropertyPanel propertyPanel = new PropertyPanel((SymbolAdapter)defAnimationsList.getSelectedValue());
+            PropertyPanel propertyPanel = new PropertyPanel((SymbolAdapter) defAnimationsList.getSelectedValue());
 
             AnimationPropertiesPanel.removeAll();
             AnimationPropertiesPanel.add(propertyPanel, java.awt.BorderLayout.CENTER);
@@ -531,12 +519,11 @@ public class DesignerGUI extends javax.swing.JFrame {
 
             //PREVIEW DIALOG
             //get all Positioningtools of currently selected Symboladapter
-            ActionTool actionTool = ((SymbolAdapter)defAnimationsList.getSelectedValue()).getTool();
+            ActionTool actionTool = ((SymbolAdapter) defAnimationsList.getSelectedValue()).getTool();
 
             PreviewDialog.getInstance().setPositioningtoolsToPaint(actionTool.getElements());
             PreviewDialog.getInstance().updatePreview();
-        }
-        else {
+        } else {
 
             //PROPERTYPANEL
             AnimationPropertiesPanel.removeAll();
@@ -553,7 +540,7 @@ public class DesignerGUI extends javax.swing.JFrame {
 
     private void editAnimationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editAnimationButtonActionPerformed
 
-        SymbolAdapter editAdapter = ((SymbolAdapter)defAnimationsList.getSelectedValue());
+        SymbolAdapter editAdapter = ((SymbolAdapter) defAnimationsList.getSelectedValue());
 
         if (editAdapter != null) {
 
@@ -573,17 +560,16 @@ public class DesignerGUI extends javax.swing.JFrame {
 
         if (this.defAnimationsList.getSelectedValue() != null) {
 
-            SymbolAdapter toDel = (SymbolAdapter)this.defAnimationsList.getSelectedValue();
+            SymbolAdapter toDel = (SymbolAdapter) this.defAnimationsList.getSelectedValue();
             DisplayConfiguration.getInstance().getAdapter().remove(toDel);
 
-            DefaultListModel model = (DefaultListModel)this.defAnimationsList.getModel();
+            DefaultListModel model = (DefaultListModel) this.defAnimationsList.getModel();
             int delIndex = model.indexOf(toDel);
 
             //if deleted is not at first position select upper item
             if (delIndex > 0) {
-                this.defAnimationsList.setSelectedIndex(delIndex -1);
-            }
-            else {
+                this.defAnimationsList.setSelectedIndex(delIndex - 1);
+            } else {
                 if (model.size() > 1) {
                     this.defAnimationsList.setSelectedIndex(1);
                 }
@@ -607,17 +593,17 @@ public class DesignerGUI extends javax.swing.JFrame {
                 //change in datalist
                 List<SymbolAdapter> adapterList = DisplayConfiguration.getInstance().getAdapter();
 
-                SymbolAdapter destination = adapterList.get(position-1);
+                SymbolAdapter destination = adapterList.get(position - 1);
 
                 //swap elements
-                adapterList.set(position-1, adapter);
+                adapterList.set(position - 1, adapter);
                 adapterList.set(position, destination);
 
                 //change in JList
-                DefaultListModel model = (DefaultListModel)this.defAnimationsList.getModel();
+                DefaultListModel model = (DefaultListModel) this.defAnimationsList.getModel();
 
-                model.set(position-1, adapter);
-                model.set(position,destination);
+                model.set(position - 1, adapter);
+                model.set(position, destination);
 
                 //select originally selected value as selected
                 this.defAnimationsList.setSelectedValue(adapter, true);
@@ -636,22 +622,22 @@ public class DesignerGUI extends javax.swing.JFrame {
             List<SymbolAdapter> adapterList = DisplayConfiguration.getInstance().getAdapter();
 
             //only allow priority decrease if not at last position
-            if (position < adapterList.size()-1) {
+            if (position < adapterList.size() - 1) {
 
                 //for both lists just swap current element with bordering element, so there is no problem with indizes changes
 
                 //change in datalist
-                SymbolAdapter destination = adapterList.get(position+1);
+                SymbolAdapter destination = adapterList.get(position + 1);
 
                 //swap elements
-                adapterList.set(position+1, adapter);
+                adapterList.set(position + 1, adapter);
                 adapterList.set(position, destination);
 
                 //change in JList
-                DefaultListModel model = (DefaultListModel)this.defAnimationsList.getModel();
+                DefaultListModel model = (DefaultListModel) this.defAnimationsList.getModel();
 
-                model.set(position+1, adapter);
-                model.set(position,destination);
+                model.set(position + 1, adapter);
+                model.set(position, destination);
 
                 //select originally selected value as selected
                 this.defAnimationsList.setSelectedValue(adapter, true);
@@ -665,12 +651,16 @@ public class DesignerGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_previewItemActionPerformed
 
     /**
-    * @param args the command line arguments
-    */
+     * @param args the command line arguments
+     */
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
+
             public void run() {
-                
+                try {
+                    UIManager.setLookAndFeel(new com.jgoodies.plaf.plastic.Plastic3DLookAndFeel());
+                } catch (Exception e) {
+                }
 
                 //display startup dialog
                 StartUpDialog dialog = new StartUpDialog(null);
@@ -680,8 +670,7 @@ public class DesignerGUI extends javax.swing.JFrame {
                 if (option != null) {
                     if (option.equals(StartUpDialog.StartOption.NEW)) {
                         //no preconfigurations in here
-                    }
-                    else if (option.equals(StartUpDialog.StartOption.EXISTING)) {
+                    } else if (option.equals(StartUpDialog.StartOption.EXISTING)) {
                         //let displayconfiguration load its settings
                         DisplayConfiguration.load(dialog.getConfigFile().getAbsolutePath());
                     }
@@ -689,8 +678,7 @@ public class DesignerGUI extends javax.swing.JFrame {
                     DesignerGUI gui = new DesignerGUI();
                     gui.setLocationRelativeTo(null);
                     gui.setVisible(true);
-                }
-                else {
+                } else {
                     System.exit(0);
                 }
             }
@@ -723,5 +711,4 @@ public class DesignerGUI extends javax.swing.JFrame {
     private javax.swing.JButton removeAnimationButton;
     private javax.swing.JMenu viewMenu;
     // End of variables declaration//GEN-END:variables
-
 }

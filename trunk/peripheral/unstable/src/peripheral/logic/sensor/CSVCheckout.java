@@ -182,7 +182,7 @@ public class CSVCheckout extends Thread {
 				current = Long.parseLong(fullmeas[5]);
 				
 				// Create new Measurement
-				Measurement newmeas = new Measurement(fullmeas[5], fullmeas[4], fullmeas[2]);
+				Measurement newmeas = new Measurement(fullmeas[5], channel.getParsedValue(fullmeas[4]), fullmeas[2]);
 				
 				// Add new Measurement to MeasQueue if mark is not equal to last runs startmark
 				if(stop<current){

@@ -38,7 +38,7 @@ public class DisplayConfiguration implements Serializable {
         sensorServer = new ArrayList<SensorServer>();
 
         //@todo: remove
-        createDummySensorServer();
+        //createDummySensorServer();
     }
 
     public static DisplayConfiguration getInstance() {

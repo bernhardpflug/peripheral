@@ -8,49 +8,48 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import peripheral.logic.datatype.Interval;
 import peripheral.logic.value.SensorValue;
 
-public class SensorChannel implements Serializable{
+public class SensorChannel implements Serializable {
 
     private static SensorChannel DUMMY;
-
-	private static final long serialVersionUID = 1L;
-	private long mid;
+    private static final long serialVersionUID = 1L;
+    private long mid;
     private String fullname;
     private Sensor sensor;
     private ConcurrentLinkedQueue<Measurement> measQueue;
-    private TreeMap<String,String> metadata;
+    private TreeMap<String, String> metadata;
     private List<SensorValue> sensorValues;
 
-    public SensorChannel (long mid, String fullname, Sensor sensor) {
-    	this.mid = mid;
-    	this.fullname = fullname;
-    	this.sensor = sensor;
-    	this.metadata = new TreeMap<String, String>();
+    public SensorChannel(long mid, String fullname, Sensor sensor) {
+        this.mid = mid;
+        this.fullname = fullname;
+        this.sensor = sensor;
+        this.metadata = new TreeMap<String, String>();
 
         this.sensorValues = new ArrayList<SensorValue>();
-    	this.measQueue = new ConcurrentLinkedQueue<Measurement>();
+        this.measQueue = new ConcurrentLinkedQueue<Measurement>();
     }
 
     // GETTERS AND SETTERS
-    public String getFullname () {
+    public String getFullname() {
         return fullname;
     }
 
-    public java.util.concurrent.ConcurrentLinkedQueue<Measurement> getMeasQueue () {
+    public java.util.concurrent.ConcurrentLinkedQueue<Measurement> getMeasQueue() {
         return measQueue;
     }
 
-    public TreeMap<String,String> getMetadata () {
+    public TreeMap<String, String> getMetadata() {
         return metadata;
     }
 
-    public long getMid () {
+    public long getMid() {
         return mid;
     }
 
-    public void flushMeasQueue () {
+    public void flushMeasQueue() {
     }
 
-    public Sensor getSensor () {
+    public Sensor getSensor() {
         return sensor;
     }
 
@@ -58,45 +57,55 @@ public class SensorChannel implements Serializable{
         return sensorValues;
     }
 
-    public Class getDatatype(){
+    public Object getParsedValue(String value) {
+        Double val = Double.valueOf(value);
+        if (this.getDatatype().equals(Long.class)) {
+            return val.longValue();
+        } else if (this.getDatatype().equals(Integer.class)) {
+            return val.intValue();
+        } else if (this.getDatatype().equals(Float.class)) {
+            return val.floatValue();
+        } else if (this.getDatatype().equals(Double.class)) {
+            return val;
+        }
+        return value;
+    }
+
+    public Class getDatatype() {
         String jddacType = metadata.get("datatype");
 
-        if (jddacType.equalsIgnoreCase("String")){
+        if (jddacType.equalsIgnoreCase("String")) {
             return String.class;
-        }
-        else if (jddacType.equalsIgnoreCase("Integer64")){
+        } else if (jddacType.equalsIgnoreCase("Integer64")) {
             return Long.class;
-        }
-        else if (jddacType.startsWith("Integer")){
+        } else if (jddacType.startsWith("Integer")) {
             return Integer.class;
-        }
-        else if (jddacType.equalsIgnoreCase("Float32")){
+        } else if (jddacType.equalsIgnoreCase("Float32")) {
             return Float.class;
-        }
-        else if (jddacType.equalsIgnoreCase("Float64")){
+        } else if (jddacType.equalsIgnoreCase("Float64")) {
             return Double.class;
         }
 
         return Object.class;
     }
 
-    public Interval getBounds (){
+    public Interval getBounds() {
         double lower = 0, upper = 0;
-        try{
+        try {
             lower = Double.parseDouble(metadata.get("lowerlimit").toString());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        try{
+        try {
             upper = Double.parseDouble(metadata.get("upperlimit").toString());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         Interval bounds;
-        try{
+        try {
             bounds = new Interval(lower, upper);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             bounds = new Interval();
         }
@@ -111,16 +120,14 @@ public class SensorChannel implements Serializable{
     public boolean equals(Object obj) {
 
         if (obj instanceof SensorChannel) {
-            SensorChannel sc = (SensorChannel)obj;
+            SensorChannel sc = (SensorChannel) obj;
 
             if (this.mid == sc.getMid()) {
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
-        }
-        else {
+        } else {
             return super.equals(obj);
         }
     }
@@ -128,11 +135,13 @@ public class SensorChannel implements Serializable{
     public static SensorChannel getDummy() {
 
         if (DUMMY == null) {
-            DUMMY = new SensorChannel(-1, "DUMMY",null) {
+            DUMMY = new SensorChannel(-1, "DUMMY", null) {
+
                 public String toString() {
                     return "<none>";
                 }
-                public Class getDatatype(){
+
+                public Class getDatatype() {
                     return Object.class;
                 }
             };

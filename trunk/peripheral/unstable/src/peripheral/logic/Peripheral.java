@@ -4,6 +4,10 @@
  */
 package peripheral.logic;
 
+import java.io.File;
+import javax.swing.JFileChooser;
+import peripheral.designer.StartUpDialog.StartOption;
+
 /**
  *
  * @author Andi
@@ -16,15 +20,30 @@ public class Peripheral {
     public static void main(String[] args) {
         //@todo: read configuration-filename from args
 
-        Runtime.getInstance().startup(null, "displayConfig.zip");
+        String file = "displayConfig.zip";
+        file = showOpenDlg();
+        Runtime.getInstance().startup(null, file);
 
         try {
             System.out.println("Press <Enter> to terminate visualization.");
-            //System.in.read();
+            System.in.read();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         Runtime.getInstance().shutdown();
+    }
+
+    private static String showOpenDlg() {
+        JFileChooser fileChooser = new JFileChooser();
+        //fileChooser.setFileFilter(new ConfigFileFilter());
+        fileChooser.setDialogTitle("Select an configuration file to load");
+        File file = null;
+
+        if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            file = fileChooser.getSelectedFile();
+        }
+
+        return file.getPath();
     }
 }
