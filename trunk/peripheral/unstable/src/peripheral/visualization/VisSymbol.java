@@ -7,15 +7,12 @@ import java.awt.Rectangle;
 import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 import peripheral.logic.symboladapter.*;
-import peripheral.logic.positioningtool.Region;
+import peripheral.logic.positioningtool.*;
 
 public class VisSymbol {
 	private float alpha, alphaSwap;
 	//uses interpolation (Ipl) steps of the current target aspects:
-	private float angleIpl;
-	private float scaleXIpl;
-	private float scaleYIpl;
-	private Point positionIpl;
+	private float angleIpl, scaleXIpl, scaleYIpl, posXIpl, posYIpl;
 	private Symbol symbol;
 	private PImage img, imgSwap;
 	private Region region;
@@ -29,8 +26,8 @@ public class VisSymbol {
 		this.angleIpl = s.getAngle();
 		this.scaleXIpl = s.getScaleX();
 		this.scaleYIpl = s.getScaleY();
-		this.positionIpl = new Point();
-		this.positionIpl.setLocation(s.getPosition());
+		this.posXIpl = (float)s.getPosition().getX();
+		this.posYIpl = (float)s.getPosition().getY();
 		this.img = this.imgSwap = null;
 		this.fadeIn = this.fadeOut = false;
 		this.isVisible = true;
@@ -57,16 +54,15 @@ public class VisSymbol {
 		}
 		//===========================================
 		//compute easing
-		float iplX = (float)positionIpl.getX(), iplY = (float)positionIpl.getY();
-		float dx = (float)symbol.getPosition().getX() - iplX;
+
+		float dx = (float)symbol.getPosition().getX() - posXIpl;
 		if(Math.abs(dx) > 1) {
-			iplX += dx * 0.05; //-> easing val
+			posXIpl += dx * 0.05; //-> easing val
 		}
-		float dy = (float)symbol.getPosition().getY() - iplY;
+		float dy = (float)symbol.getPosition().getY() - posYIpl;
 		if(Math.abs(dy) > 1) {
-			iplY += dy * 0.05;
+			posXIpl += dy * 0.05;
 		}
-		positionIpl.setLocation(iplX, iplY);
 		
 		//===========================================
 		//is img visible?
@@ -77,7 +73,7 @@ public class VisSymbol {
 		if (imgSwap != null){
 			alpha -= 0.02;
 			alphaSwap += 0.02;
-			if (alpha == 0.f){
+			if (alpha <= 0.f){
 				alpha = 1.f;
 				alphaSwap = 0.f;
 				img = imgSwap;
@@ -128,13 +124,15 @@ public class VisSymbol {
 		this.img = img;
 	}
 
-	public Point getPositionIpl() {
-		return positionIpl;
+	public float getPosXIpl(){
+		return posXIpl;
 	}
-
-	public void setPositionIpl(Point positionIpl) {
-		this.positionIpl = positionIpl;
+	
+	public float getPosYIpl(){
+		return posYIpl;
 	}
+	
+	
 
 	public float getScaleXIpl() {
 		return scaleXIpl;
@@ -187,7 +185,7 @@ public class VisSymbol {
 	private void checkVisibility(){
 		if (region == null) return;
 		Rectangle r = region.getBounds();
-		isVisible = r.contains(positionIpl.getLocation());
+		isVisible = r.contains((double)posXIpl, (double)posYIpl);
 	}
 
 	public PImage getImgSwap() {

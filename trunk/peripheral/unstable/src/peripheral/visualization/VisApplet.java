@@ -6,6 +6,7 @@ import peripheral.logic.positioningtool.Region;
 import peripheral.logic.symboladapter.Symbol;
 import processing.core.PApplet;
 import processing.core.PImage;
+import java.io.File;
 
 public class VisApplet extends PApplet implements Visualization {
 
@@ -13,43 +14,56 @@ public class VisApplet extends PApplet implements Visualization {
     private Vector<VisSymbol> symbols;
     private PImage bgImage;
     private Dimension visDim;
-
+    private boolean isInit = false;
+    
     public VisApplet() {
         symbols = new Vector<VisSymbol>();
     }
 
 
-    public void setup() {
-        peripheral.logic.Runtime.getInstance().startup(this, "displayConfig.ser");
+    public void setup() {    	
+    	peripheral.logic.Runtime.getInstance().startup(this, "displayConfig.ser");
         size(screen.width, screen.height, P2D);
-        //size((int) screen.getWidth(), (int) screen.getHeight(), P3D);
         frameRate(60);
         noStroke();
     }
 
     public void draw() {
     	//TODO: interpolate coords to actual screen resolution
-        //background(bgImage);
-        VisSymbol ptr;
-        for (int i = 0; i < symbols.size(); i++) {
-            ptr = symbols.get(i);
-            ptr.calcStep();
-            //draw the image in all its aspects
-            pushMatrix();
-            	//tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlpha()));
-	            translate((float)ptr.getPositionIpl().getX(), (float)ptr.getPositionIpl().getY());
-	            scale(ptr.getScaleXIpl(), ptr.getScaleYIpl());
-	            rotate(radians(ptr.getAngleIpl()));
-	            image(ptr.getImg(), ptr.getImg().width/2, ptr.getImg().height/2);
-            popMatrix();
-        }
+    	if (isInit){
+    		if (bgImage != null)
+        		background(bgImage);
+        	else
+        		background(0);
+        	
+            VisSymbol ptr;
+            for (int i = 0; i < symbols.size(); i++) {
+                ptr = symbols.get(i);
+                ptr.calcStep();
+                //draw the image in all its aspects
+                pushMatrix();
+                	tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlpha()));
+    	            translate(ptr.getPosXIpl(), ptr.getPosYIpl());
+    	            rotate(radians(ptr.getAngleIpl()));
+    	            scale(ptr.getScaleXIpl(), ptr.getScaleYIpl());
+    	            image(ptr.getImg(), 0 - ptr.getImg().width/2, 0 - ptr.getImg().height/2);
+    	            if(ptr.getImgSwap() != null){
+    	            	tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlphaSwap()));
+    	            	image(ptr.getImgSwap(), 0 - ptr.getImgSwap().width/2, 0 - ptr.getImgSwap().height/2);
+    	            }
+                popMatrix();
+            }
+    	}
     }
 
     public void addSymbol(Symbol s, Region region) {
-        VisSymbol vs = new VisSymbol(s, region);
-        vs.setImg(loadImage(s.getFile().getPath()));
-        vs.setFadeIn(true);
-        symbols.add(vs);
+    	VisSymbol vs = findVSforS(s);
+    	if (vs == null){
+	        vs = new VisSymbol(s, region);
+	        vs.setImg(loadImage(s.getFile().getPath()));
+	        vs.setFadeIn(true);
+	        symbols.add(vs);
+    	}
     }
 
     public void brightness(Symbol s, float amount) {
@@ -105,14 +119,14 @@ public class VisApplet extends PApplet implements Visualization {
     }
 
     public void init(String backgroundImageFilename, Dimension resolution) {
-
         bgImage = loadImage(backgroundImageFilename);
         visDim = resolution;
+        if (bgImage != null)
+        	isInit = true;
     }
 
     public void translateSymbol(Symbol s, java.awt.Point targetPosition) {
         s.setPosition(targetPosition);
-
     }
 
      /**
