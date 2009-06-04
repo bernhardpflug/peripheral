@@ -70,7 +70,7 @@ public class RegionAddNewAction extends RegionAction {
         SymbolList symbolsToAdd = getSymbolsToAdd();
         ClonedSymbol clonedSymbol;
 
-        for (Symbol source : symbolsToAdd.getSourceSymbols()) {
+        for (Symbol source : region.getSymbolList().getSourceSymbols()) {
             int nrOfClonesInRegion = region.getSymbolList().getNrOfClones(source);
             int nrOfClonesToAdd = symbolsToAdd.getNrOfClones(source);
             int diff = nrOfClonesToAdd - nrOfClonesInRegion;

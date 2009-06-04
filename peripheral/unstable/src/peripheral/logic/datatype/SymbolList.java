@@ -91,7 +91,7 @@ public class SymbolList implements Serializable {
             e.printStackTrace();
             return null;
         }
-        
+
         symbols.get(source).add(clone);
 
         incNrOfClones(source);
@@ -156,22 +156,31 @@ public class SymbolList implements Serializable {
     }
 
     public int getNrOfClones(Symbol source) {
+        if (symbolCounts.get(source) == null) {
+            return 0;
+        }
         return symbolCounts.get(source);
+    }
+
+    public List<ClonedSymbol> getClones (Symbol source){
+        return this.symbols.get(source);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (Map.Entry<Symbol, Integer> entry : symbolCounts.entrySet()){
+        for (Map.Entry<Symbol, Integer> entry : symbolCounts.entrySet()) {
             sb.append(entry.getKey() + ": " + entry.getValue());
             sb.append("; ");
         }
-        sb.delete(sb.length()-2, sb.length());
+        try {
+            sb.delete(sb.length() - 2, sb.length());
 
-        return sb.toString();
+            return sb.toString();
+        } catch (Exception e) {
+        }
+        return "";
     }
-
-
 }
 

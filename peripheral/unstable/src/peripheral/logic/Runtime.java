@@ -13,8 +13,10 @@ import peripheral.logic.positioningtool.Region;
 import peripheral.logic.sensor.Sensor;
 import peripheral.logic.sensor.SensorServer;
 import peripheral.logic.sensor.SensorUpdateThread;
+import peripheral.logic.symboladapter.ClonedSymbol;
 import peripheral.logic.symboladapter.Symbol;
 import peripheral.logic.symboladapter.SymbolAdapter;
+import peripheral.logic.util.PositionRandomizer;
 import peripheral.visualization.Visualization;
 
 public class Runtime {
@@ -38,8 +40,9 @@ public class Runtime {
     }
 
     public Visualization getVisualization() {
-        if (viz != null)
-        return viz;
+        if (viz != null) {
+            return viz;
+        }
 
         //@todo: comment out and return real viz-instance
         return new Visualization() {
@@ -111,9 +114,9 @@ public class Runtime {
         //startSensorServer();
 
         createSensorAdapterMapping();
-        createSensorUpdateThreads();
+    //createSensorUpdateThreads();
 
-        startSensorCheckout();
+    //startSensorCheckout();
     }
 
     private void startSensorServer() {
@@ -209,8 +212,11 @@ public class Runtime {
     }
 
     private void initRegion(Visualization viz, Region region) {
-        for (Symbol s : region.getSymbols()) {
-            viz.addSymbol(s, region);
+        for (Symbol s : region.getSymbolList().getSourceSymbols()) {
+            for (ClonedSymbol clone : region.getSymbolList().getClones(s)) {
+                clone.setPosition(PositionRandomizer.getRandomPosition(region.getBounds()));
+                viz.addSymbol(clone, region);
+            }
         }
     }
 
@@ -223,6 +229,11 @@ public class Runtime {
                 sensorAdapterMapping.get(s).add(adapter);
             }
         }
+    }
+
+    //only for testing purpose in visualization
+    public List<Sensor> getSensors() {
+        return new ArrayList<Sensor>(this.sensorAdapterMapping.keySet());
     }
 
     public void setSensorChanged(Sensor changedSensor) {
