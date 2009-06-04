@@ -38,7 +38,7 @@ public class DisplayConfiguration implements Serializable {
         sensorServer = new ArrayList<SensorServer>();
 
         //@todo: remove
-        //createDummySensorServer();
+        createDummySensorServer();
     }
 
     public static DisplayConfiguration getInstance() {
@@ -115,7 +115,7 @@ public class DisplayConfiguration implements Serializable {
         }
     }
 
-    private static void updateFilePaths (DisplayConfiguration dc, String unzipFolder){
+    private static void updateFilePaths(DisplayConfiguration dc, String unzipFolder) {
         for (SymbolAdapter adapter : dc.getAdapter()) {
             for (PositioningTool pt : adapter.getTool().getElements()) {
                 for (Symbol symbol : pt.getSymbols()) {
@@ -161,6 +161,10 @@ public class DisplayConfiguration implements Serializable {
         // Create SensorChannel channel2 for dummysensor
         SensorChannel channel2 = new SensorChannel(32, "admin:Dummy Sensor:Dummy Stim:dummychannel2", dummysensor);
 
+        // Create SensorChannel channel2 for dummysensor
+        SensorChannel channel3 = new SensorChannel(35, "admin:Dummy Sensor:Dummy Stim:dummychannel3", dummysensor);
+
+
         // Create Metadata for channel1
         TreeMap<String, String> metadata1 = channel1.getMetadata();
         metadata1.put("shortname", "AirTemp");
@@ -168,21 +172,33 @@ public class DisplayConfiguration implements Serializable {
         metadata1.put("datatype", "Integer8");
         metadata1.put("units", "Degree Celcius");
         metadata1.put("location", "In your face bitch");
+        metadata1.put("upperlimit", "500");
+        metadata1.put("lowerlimit", "0");
 
         // Create Metadata for channel2
         TreeMap<String, String> metadata2 = channel2.getMetadata();
         metadata2.put("shortname", "SkyCover");
         metadata2.put("description", "Percentage of Sky Cover");
-        metadata2.put("datatype", "String");
+        metadata2.put("datatype", "Integer8");
         metadata2.put("units", "Percent");
         metadata2.put("location", "In your face bitch");
-        metadata2.put("upperlimit", "100");
+        metadata2.put("upperlimit", "10");
         metadata2.put("lowerlimit", "0");
+
+        metadata2 = channel3.getMetadata();
+        metadata2.put("shortname", "FloatVal");
+        metadata2.put("description", "Percentage of Sky Cover");
+        metadata2.put("datatype", "Float");
+        metadata2.put("units", "Percent");
+        metadata2.put("location", "In your face bitch");
+        metadata2.put("upperlimit", "30");
+        metadata2.put("lowerlimit", "-20");
 
         // Add channels to Sensor
         ArrayList<SensorChannel> channellist = dummysensor.getSensorChannels();
         channellist.add(channel1);
         channellist.add(channel2);
+        channellist.add(channel3);
 
         // Add Sensor to Server
         ArrayList<Sensor> sensorlist = dummyserver.getSensorList();

@@ -41,7 +41,7 @@ public class RandomPositioningToolPickerFilter extends RandomValuePickerFilter {
 
         List<PositioningTool> pickedValues;
 
-        nrToPick = 2;
+        //nrToPick = 2;
 
         //if nrToPick >= valueList.size() then all values have to
         //be returned

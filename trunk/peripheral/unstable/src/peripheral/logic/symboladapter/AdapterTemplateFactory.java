@@ -96,7 +96,7 @@ public class AdapterTemplateFactory {
         adapter.setName("Static Symbol");
         adapter.setDescription("Adapter, mit dessen Hilfe ein statisches Symbol in die Szene eingefügt werden kann.");
 
-        adapter.setTool(new ToolList(Point.class));
+        adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
         adapter.setAllowOrientedSymbols(true);

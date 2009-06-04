@@ -1,7 +1,7 @@
 package peripheral.logic.action;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import peripheral.logic.Logging;
 import peripheral.logic.symboladapter.Symbol;
 import peripheral.logic.value.UserInput;
 import peripheral.logic.value.Value;
@@ -32,7 +32,7 @@ public class SymbolSwapAction extends SymbolAction {
     public java.util.List<UserInput> getUserInput() {
         if (this.needFilenameUserInput) {
             if (filename == null) {
-                filename = new ConstValue(adapter, "filename", "", String.class);
+                filename = new ConstValue(adapter, "filename", null, File.class);
                 userInput.add(new UserInput("Filename", "Filename of image to swap", filename));
             }
         }
@@ -44,7 +44,10 @@ public class SymbolSwapAction extends SymbolAction {
     }
 
     public void execute(Symbol s) {
-        Runtime.getInstance().getVisualization().swapSymbol(s, getFilename());
+        if (!s.getFile().getPath().equals(getFilename())) {
+            Runtime.getInstance().getVisualization().swapSymbol(s, getFilename());
+            Logging.getLogger().finest("swap, new file: " + getFilename());
+        }
     }
 }
 
