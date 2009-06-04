@@ -94,7 +94,7 @@ public class ZipPackager {
             return file.getPath().replace(":", "").replace('\\', '/');
         }
         else if (file.getPath().startsWith("/")){
-            return file.getPath().substring(1);
+            return file.getPath().substring(1).replace(":", "");
         }
         return file.getPath();
     }
