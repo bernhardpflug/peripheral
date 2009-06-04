@@ -8,15 +8,22 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.EventObject;
 import java.util.List;
 import javax.swing.DefaultCellEditor;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.CellEditorListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
@@ -211,10 +218,59 @@ public class PropertyPanel extends JPanel {
             else {
 
                 ConstValue cval = (ConstValue) val;
-                System.out.println(cval.getValue().getClass().toString());
+                //System.out.println(cval.getValue().getClass().toString());
 
-                //Boolean
-                if (cval.getValue() instanceof Boolean) {
+
+                if (cval.getValueType().equals(File.class)) {
+                    JButton openButton = new JButton("...");
+                    return new TableCellEditor() {
+
+                        private File file = null;
+
+                        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+                            JButton btn = new JButton("Choose file");
+                            btn.addActionListener(new ActionListener() {
+
+                                public void actionPerformed(ActionEvent e) {
+                                    JFileChooser fc = new JFileChooser();
+                                    if (fc.showOpenDialog(null) == fc.APPROVE_OPTION) {
+                                        file = fc.getSelectedFile();
+                                    }
+                                }
+                            });
+                            return btn;
+                        }
+
+                        public void addCellEditorListener(CellEditorListener l) {
+                            //throw new UnsupportedOperationException("Not supported yet.");
+                        }
+
+                        public void cancelCellEditing() {
+                            //throw new UnsupportedOperationException("Not supported yet.");
+                        }
+
+                        public Object getCellEditorValue() {
+                            return file;//throw new UnsupportedOperationException("Not supported yet.");
+                        }
+
+                        public boolean isCellEditable(EventObject anEvent) {
+                            return true;//throw new UnsupportedOperationException("Not supported yet.");
+                        }
+
+                        public void removeCellEditorListener(CellEditorListener l) {
+                            //throw new UnsupportedOperationException("Not supported yet.");
+                        }
+
+                        public boolean shouldSelectCell(EventObject anEvent) {
+                            return false;//throw new UnsupportedOperationException("Not supported yet.");
+                        }
+
+                        public boolean stopCellEditing() {
+                            return true;//throw new UnsupportedOperationException("Not supported yet.");
+                        }
+                    };
+                } //Boolean
+                else if (cval.getValue() instanceof Boolean) {
 
                     JCheckBox checkBox = new JCheckBox();
                     checkBox.setSelected(((Boolean) val.getValue()).booleanValue());
@@ -283,6 +339,12 @@ public class PropertyPanel extends JPanel {
                         }
 
                         return checkBox;
+                    } else if (cval.getValueType().equals(File.class)) {
+                        String sval = "no file selected";
+                        if (cval.getValue() != null) {
+                            sval = ((File) cval.getValue()).getPath();
+                        }
+                        return super.getTableCellRendererComponent(table, sval, isSelected, hasFocus, row, column);
                     } //for integer / string just display usual textfield
                     else {
                         return super.getTableCellRendererComponent(table, cval.getValue(), isSelected, hasFocus, row, column);
