@@ -96,7 +96,7 @@ public class ZipPackager {
         else if (file.getPath().startsWith("/")){
             return file.getPath().substring(1).replace(":", "");
         }
-        return file.getPath();
+        return file.getPath().replace(":", "");
     }
 
     public static void unzip(String zipFilename, String destinationDirectory) {
