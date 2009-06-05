@@ -7,6 +7,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Random;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import peripheral.logic.DisplayConfiguration;
 import peripheral.logic.Logging;
 import peripheral.logic.datatype.Interval;
@@ -31,6 +33,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
     private Map<SensorChannel, String> logStrings = new HashMap<SensorChannel, String>();
 
+
     public VisApplet() {
         symbols = new Vector<VisSymbol>();
     }
@@ -46,8 +49,10 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
         //        public void run() {
         //if (!setup){
-        peripheral.logic.Runtime.getInstance().startup(VisApplet.this, "g:\\Rotor1.zip");
+        peripheral.logic.Runtime.getInstance().startup(VisApplet.this, "/users/Berni/A_new_config.zip");
         MyTestThread t = new MyTestThread(DisplayConfiguration.getInstance(), (Visualization) this);
+        ProcessingThread pt = new ProcessingThread(symbols,50);
+        pt.start();
         //t.setPriority(Thread.MIN_PRIORITY);
         t.start();
         //System.out.println("startup called");
@@ -77,7 +82,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         VisSymbol ptr;
         for (int i = 0; i < symbols.size(); i++) {
             ptr = symbols.get(i);
-            ptr.calcStep();
+            //ptr.calcStep();
             //draw the image in all its aspects
             tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlpha()));
             pushMatrix();
@@ -93,12 +98,13 @@ public class VisApplet extends PApplet implements Visualization, Observer {
             popMatrix();
         }
 
-        text(frameRate + " fps", 0, 20);
+        text(frameRate + " fps", 0, 80);
         int y = 40;
         for (String s : this.logStrings.values()){
             text(s, 0, y);
             y+=20;
         }
+
     }
 
     public void addSymbol(Symbol s, Region region) {
@@ -209,6 +215,49 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         }
 
     //Runtime.getInstance().shutdown();
+    }
+
+    class ProcessingThread extends Thread {
+
+        private Vector<VisSymbol> symbols;
+        private long updaterate;
+
+        private long previousStep;
+
+        private boolean runFlag = true;
+
+        public ProcessingThread(Vector<VisSymbol> symbols, int updaterate) {
+            this.symbols = symbols;
+            this.updaterate = updaterate;
+
+            this.setPriority(Math.min(Thread.currentThread().getPriority()+1, Thread.MAX_PRIORITY));
+
+            previousStep = System.currentTimeMillis();
+        }
+
+        public void stopThread() {
+            runFlag = false;
+        }
+
+        @Override
+        public void run() {
+
+            while (runFlag) {
+                synchronized (symbols) {
+                    for (VisSymbol symbol : symbols) {
+                        symbol.calcStep();
+                    }
+                }
+                try {
+                    System.out.println("Difference since last call: "+(System.currentTimeMillis()-previousStep));
+                    previousStep = System.currentTimeMillis();
+                    System.out.println("Waiting "+((1f / (float)updaterate)*1000)+" milliseconds");
+                    Thread.sleep((long)(1f / (float)updaterate)*1000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
     }
 
     class MyTestThread extends Thread {
