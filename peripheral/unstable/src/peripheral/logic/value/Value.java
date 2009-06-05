@@ -58,5 +58,17 @@ public abstract class Value implements Serializable {
      */
     public abstract boolean isValid();
 
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Value)){
+            return false;
+        }
+
+        return ((Value)obj).getVarName().equals(this.varName);
+    }
+
+
+    
+
 }
 

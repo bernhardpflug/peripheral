@@ -177,6 +177,9 @@ public class RulePanel extends javax.swing.JPanel {
                 for (SensorChannel channel : this.availableSensorChannels) {
                     sensorValue.addItem(channel);
                 }
+
+                sensorValue.setSelectedItem(condition.getLeftSideOp().getSensorChannel());
+
                 sensorValue.addItemListener(
                         new ItemListener() {
 
@@ -223,6 +226,7 @@ public class RulePanel extends javax.swing.JPanel {
                 operation = new JComboBox();
 
                 this.operations.add(operation);
+
                 operation.addItemListener(
                         new ItemListener() {
 
@@ -307,6 +311,9 @@ public class RulePanel extends javax.swing.JPanel {
 
     private void updateAvailableOperations(Condition condition, JComboBox operation, boolean sensorValueTypeChanged) {
         Object selection = operation.getSelectedItem();
+        if (selection == null){
+            selection = condition.getOperation();
+        }
 
         List<ConditionOperation> operationsToAdd = new ArrayList<ConditionOperation>();
 
@@ -380,7 +387,9 @@ public class RulePanel extends javax.swing.JPanel {
 
     private void addNewCondition() {
 
-        conditions.add(new Condition());
+        Condition cond = new Condition();
+        cond.setLeftSideOp(new SensorValue(adapter, rule.getPrefix(cond), Object.class));
+        conditions.add(cond);
         updateContent();
 
     }
