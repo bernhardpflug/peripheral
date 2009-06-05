@@ -470,10 +470,18 @@ public class DesignerGUI extends javax.swing.JFrame {
                 JFileChooser saveFileChooser = new JFileChooser();
 
                 if (saveFileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-                    DisplayConfiguration.getInstance().save(saveFileChooser.getSelectedFile().getAbsolutePath());
-                    this.setVisible(false);
-                    this.dispose();
-                    System.exit(0);
+                    File selectedFile = saveFileChooser.getSelectedFile();
+
+                    if (selectedFile.getName().endsWith(".zip")) {
+                        DisplayConfiguration.getInstance().save(saveFileChooser.getSelectedFile().getAbsolutePath());
+                        this.setVisible(false);
+                        this.dispose();
+                        System.exit(0);
+                    }
+                    else {
+                        JOptionPane.showMessageDialog(this, "File must use extension '.zip'",
+                                "Invalid file extension", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             }
 
