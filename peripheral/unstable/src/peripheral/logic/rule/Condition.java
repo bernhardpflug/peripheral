@@ -80,12 +80,7 @@ public class Condition implements Serializable {
 
     public boolean isValid() {
 
-        if (this.leftSideOp != null) {
-            return this.leftSideOp.isValid();
-        }
-        else {
-            return false;
-        }
+        return this.leftSideOp.isValid();
     }
 }
 
