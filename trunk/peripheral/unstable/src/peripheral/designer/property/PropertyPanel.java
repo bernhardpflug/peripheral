@@ -340,6 +340,9 @@ public class PropertyPanel extends JPanel {
                         file = fc.getSelectedFile();
                         fireEditingStopped();
                     }
+                    else {
+                        fireEditingCanceled();
+                    }
                 }
             });
 
