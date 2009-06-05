@@ -222,53 +222,8 @@ public class PropertyPanel extends JPanel {
 
 
                 if (cval.getValueType().equals(File.class)) {
-                    JButton openButton = new JButton("...");
-                    return new TableCellEditor() {
-
-                        private File file = null;
-
-                        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-                            JButton btn = new JButton("Choose file");
-                            btn.addActionListener(new ActionListener() {
-
-                                public void actionPerformed(ActionEvent e) {
-                                    JFileChooser fc = new JFileChooser();
-                                    if (fc.showOpenDialog(null) == fc.APPROVE_OPTION) {
-                                        file = fc.getSelectedFile();
-                                    }
-                                }
-                            });
-                            return btn;
-                        }
-
-                        public void addCellEditorListener(CellEditorListener l) {
-                            //throw new UnsupportedOperationException("Not supported yet.");
-                        }
-
-                        public void cancelCellEditing() {
-                            //throw new UnsupportedOperationException("Not supported yet.");
-                        }
-
-                        public Object getCellEditorValue() {
-                            return file;//throw new UnsupportedOperationException("Not supported yet.");
-                        }
-
-                        public boolean isCellEditable(EventObject anEvent) {
-                            return true;//throw new UnsupportedOperationException("Not supported yet.");
-                        }
-
-                        public void removeCellEditorListener(CellEditorListener l) {
-                            //throw new UnsupportedOperationException("Not supported yet.");
-                        }
-
-                        public boolean shouldSelectCell(EventObject anEvent) {
-                            return false;//throw new UnsupportedOperationException("Not supported yet.");
-                        }
-
-                        public boolean stopCellEditing() {
-                            return true;//throw new UnsupportedOperationException("Not supported yet.");
-                        }
-                    };
+                    //return special defined celleditor below that displays filechooser
+                    return new FileTableCellEditor();
                 } //Boolean
                 else if (cval.getValue() instanceof Boolean) {
 
@@ -352,5 +307,44 @@ public class PropertyPanel extends JPanel {
                 }
             }
         }
+    }
+
+    /**
+     * special cell editor that opens a file chooser to allow
+     * file selection for file values
+     */
+    class FileTableCellEditor extends javax.swing.AbstractCellEditor implements TableCellEditor {
+
+        private File file;
+
+        public Object getCellEditorValue() {
+            return file;
+        }
+
+        /**
+         * creates a button that opens the dialog for file selection
+         * @param table
+         * @param value
+         * @param isSelected
+         * @param row
+         * @param column
+         * @return
+         */
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            JButton btn = new JButton("Choose file");
+            btn.addActionListener(new ActionListener() {
+
+                public void actionPerformed(ActionEvent e) {
+                    JFileChooser fc = new JFileChooser();
+                    if (fc.showOpenDialog(null) == fc.APPROVE_OPTION) {
+                        file = fc.getSelectedFile();
+                        fireEditingStopped();
+                    }
+                }
+            });
+
+            return btn;
+        }
+
     }
 }
