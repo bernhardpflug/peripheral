@@ -20,7 +20,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 import peripheral.designer.preview.PreviewDialog;
 import peripheral.designer.property.PropertyPanel;
 import peripheral.designer.wizard.AddAnimationDialog;
@@ -228,8 +227,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         cardPanel.setLayout(new java.awt.CardLayout());
 
         SensorPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 1 : Select Sensorserver"));
-        SensorPanel.setLayout(null);
-        cardPanel.add(SensorPanel, "card2");
+		cardPanel.add(SensorPanel, "card2");
 
         BackgroundPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 2 : Select Background Image of the Scene"));
 
