@@ -212,7 +212,21 @@ public class VisSymbol extends Observable {
             return;
         }
         Rectangle r = region.getBounds();
-        isVisible = r.contains(positionIpl.getLocation());
+
+        Point leftUp = positionIpl.getLocation();
+        Point rightUp = new Point();
+        rightUp.setLocation(positionIpl.getX()+this.img.width, positionIpl.getY());
+        Point leftDown = new Point();
+        leftDown.setLocation(positionIpl.getX(), positionIpl.getY()+this.img.height);
+        Point rightDown = new Point();
+        rightDown.setLocation(positionIpl.getX()+this.img.width, positionIpl.getY()+this.img.height);
+
+        if (r.contains(leftUp) || r.contains(rightUp) || r.contains(leftDown) || r.contains(rightDown)) {
+            isVisible = true;
+        }
+        else {
+            isVisible = false;
+        }
     }
 
     public PImage getImgSwap() {

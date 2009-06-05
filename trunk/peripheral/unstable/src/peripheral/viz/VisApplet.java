@@ -222,17 +222,14 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         private Vector<VisSymbol> symbols;
         private long updaterate;
 
-        private long previousStep;
-
         private boolean runFlag = true;
 
         public ProcessingThread(Vector<VisSymbol> symbols, int updaterate) {
             this.symbols = symbols;
             this.updaterate = updaterate;
 
-            this.setPriority(Math.min(Thread.currentThread().getPriority()+1, Thread.MAX_PRIORITY));
+            this.setPriority(Math.max(Thread.currentThread().getPriority()-1, Thread.MIN_PRIORITY));
 
-            previousStep = System.currentTimeMillis();
         }
 
         public void stopThread() {
@@ -249,10 +246,8 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                     }
                 }
                 try {
-                    System.out.println("Difference since last call: "+(System.currentTimeMillis()-previousStep));
-                    previousStep = System.currentTimeMillis();
-                    System.out.println("Waiting "+((1f / (float)updaterate)*1000)+" milliseconds");
-                    Thread.sleep((long)(1f / (float)updaterate)*1000);
+                    
+                    Thread.sleep((long)((1f / (float)updaterate)*1000));
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
