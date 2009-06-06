@@ -128,6 +128,11 @@ public class ZipPackager {
                 //for each file in this folder create restructured file
                 if (folder.isDirectory()) {
 
+                    //add folder itself to list
+                    RestructuredFile restructuredFolder = new RestructuredFile(folder);
+                    restructuredFolder.setNewPath(folderName);
+                    result.add(restructuredFolder);
+
                     //get all image files in folder
                     File [] files = folder.listFiles(new FileFilter() {
                         public boolean accept(File pathname) {
@@ -352,21 +357,24 @@ public class ZipPackager {
 
             //Add each file that has been selected for save operation
             for (RestructuredFile file : filesToZip) {
-                try {
 
-                    ZipEntry entry = new ZipEntry(file.getNewPath());
-                    in = new FileInputStream(file.getOldFile().getPath());
+                if (file.getOldFile().isFile()) {
+                    try {
 
-                    //Add new entry to archive
-                    out.putNextEntry(entry);
-                    // Append data to new entry
-                    while ((read = in.read(data, 0, 1024)) != -1) {
-                        out.write(data, 0, read);
+                        ZipEntry entry = new ZipEntry(file.getNewPath());
+                        in = new FileInputStream(file.getOldFile().getPath());
+
+                        //Add new entry to archive
+                        out.putNextEntry(entry);
+                        // Append data to new entry
+                        while ((read = in.read(data, 0, 1024)) != -1) {
+                            out.write(data, 0, read);
+                        }
+                        out.closeEntry(); // Commit new entry
+                        in.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    out.closeEntry(); // Commit new entry
-                    in.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
             out.close();
