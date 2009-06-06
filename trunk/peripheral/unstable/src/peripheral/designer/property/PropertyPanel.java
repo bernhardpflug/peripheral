@@ -27,6 +27,8 @@ import javax.swing.event.CellEditorListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+import peripheral.designer.ImageFileChooser;
+import peripheral.logic.datatype.Directory;
 import peripheral.logic.sensor.Sensor;
 import peripheral.logic.sensor.SensorChannel;
 import peripheral.logic.symboladapter.SymbolAdapter;
@@ -42,6 +44,11 @@ import peripheral.logic.value.Value;
  * SENSORATTRIBUTE BENÖTIGT TO_STRING DIE SENSORX.PARAMY GIBT
  */
 public class PropertyPanel extends JPanel {
+
+    public enum FileType {
+            FILE,
+            DIRECTORY
+    }
 
     SymbolAdapter symbolAdapter;
     List<Value> userInputs;
@@ -221,9 +228,15 @@ public class PropertyPanel extends JPanel {
                 //System.out.println(cval.getValue().getClass().toString());
 
 
-                if (cval.getValueType().equals(File.class)) {
+                if (cval.getValueType().equals(Directory.class)) {
                     //return special defined celleditor below that displays filechooser
-                    return new FileTableCellEditor();
+                    //with directory selection only
+                    return new FileTableCellEditor((Directory)cval.getValue(),FileType.DIRECTORY);
+                }
+                else if (cval.getValueType().equals(File.class)) {
+                    //return special defined celleditor below that displays filechooser
+                    //with image selection only
+                    return new FileTableCellEditor((File)cval.getValue(),FileType.FILE);
                 } //Boolean
                 else if (cval.getValue() instanceof Boolean) {
 
@@ -294,10 +307,16 @@ public class PropertyPanel extends JPanel {
                         }
 
                         return checkBox;
-                    } else if (cval.getValueType().equals(File.class)) {
+                    } else if (cval.getValueType().equals(File.class) || cval.getValueType().equals(Directory.class)) {
+
                         String sval = "no file selected";
+
+                        if (cval.getValueType().equals(Directory.class)) {
+                            sval = "no directory selected";
+                        }
+                        
                         if (cval.getValue() != null) {
-                            sval = ((File) cval.getValue()).getPath();
+                            sval = ((File) cval.getValue()).getName();
                         }
                         return super.getTableCellRendererComponent(table, sval, isSelected, hasFocus, row, column);
                     } //for integer / string just display usual textfield
@@ -315,10 +334,23 @@ public class PropertyPanel extends JPanel {
      */
     class FileTableCellEditor extends javax.swing.AbstractCellEditor implements TableCellEditor {
 
+        private FileType type;
+        private File alreadySelected;
         private File file;
 
+        public FileTableCellEditor(File alreadySelected,FileType type) {
+            this.type = type;
+            this.alreadySelected = alreadySelected;
+        }
+        
         public Object getCellEditorValue() {
-            return file;
+
+            if (type == FileType.FILE) {
+                return file;
+            }
+            else {
+                return new Directory(file.getPath());
+            }
         }
 
         /**
@@ -335,7 +367,22 @@ public class PropertyPanel extends JPanel {
             btn.addActionListener(new ActionListener() {
 
                 public void actionPerformed(ActionEvent e) {
-                    JFileChooser fc = new JFileChooser();
+                    JFileChooser fc = null;
+
+                    if (type == FileType.FILE) {
+                        fc = new ImageFileChooser(true);
+                    }
+                    else {
+                        fc = new JFileChooser();
+                        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    }
+
+                    if (alreadySelected != null) {
+                        
+                        fc.setCurrentDirectory(alreadySelected);
+                        fc.setSelectedFile(alreadySelected);
+                    }
+
                     if (fc.showOpenDialog(null) == fc.APPROVE_OPTION) {
                         file = fc.getSelectedFile();
                         fireEditingStopped();
