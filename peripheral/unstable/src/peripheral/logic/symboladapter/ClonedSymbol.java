@@ -7,8 +7,8 @@ public class ClonedSymbol extends Symbol {
 
     private Symbol source;
 
-    public ClonedSymbol (Symbol source, File file) {
-        super(file, null);
+    public ClonedSymbol (Symbol source, File file, SymbolAdapter adapter) {
+        super(file, null, adapter);
 
         this.source = source;
     }
