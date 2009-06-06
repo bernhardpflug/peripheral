@@ -572,7 +572,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
 
                 //create symbol with set files of dialog
                 if (symbolDialog.getLeftFile() != null) {
-                    Symbol symbol = new Symbol(symbolDialog.getLeftFile(), symbolDialog.getRightFile(), pos);
+                    Symbol symbol = new Symbol(symbolDialog.getLeftFile(), symbolDialog.getRightFile(), pos, parent.getCreatedAdapter());
 
                     pos.getSymbols().add(symbol);
 
@@ -595,7 +595,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
                 fileChooser.setDialogTitle("Select an image file for the symbol");
 
                 if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                    Symbol symbol = new Symbol(fileChooser.getSelectedFile(), pos);
+                    Symbol symbol = new Symbol(fileChooser.getSelectedFile(), pos, parent.getCreatedAdapter());
 
                     pos.getSymbols().add(symbol);
 
