@@ -12,7 +12,7 @@ import peripheral.logic.value.Value;
 import peripheral.logic.Runtime;
 import peripheral.logic.symboladapter.ClonedSymbol;
 import peripheral.logic.util.PositionRandomizer;
-import peripheral.visualization.Visualization;
+import peripheral.viz.Visualization;
 
 public class RegionAddNewAction extends RegionAction {
 

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.positioningtool.Point;
 import peripheral.logic.positioningtool.PositioningTool;
@@ -17,7 +18,8 @@ import peripheral.logic.symboladapter.ClonedSymbol;
 import peripheral.logic.symboladapter.Symbol;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.util.PositionRandomizer;
-import peripheral.visualization.Visualization;
+import peripheral.viz.VisSymbol;
+import peripheral.viz.Visualization;
 
 public class Runtime {
 
@@ -90,6 +92,12 @@ public class Runtime {
             public void translateSymbol(Symbol s, java.awt.Point targetPosition) {
                 Logging.getLogger().finer("Visualization: translated symbol to position " + targetPosition);
             }
+
+            public Vector<VisSymbol> getSymbols() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+
         };
     }
 
