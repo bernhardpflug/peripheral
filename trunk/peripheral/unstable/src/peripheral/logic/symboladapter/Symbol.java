@@ -21,9 +21,11 @@ public class Symbol implements Serializable, Cloneable {
     private java.awt.Point position;
     private float scaleX = 1.0f;
     private float scaleY = 1.0f;
+    private SymbolAdapter adapter;
 
-    public Symbol(File file, PositioningTool tool) {
+    public Symbol(File file, PositioningTool tool, SymbolAdapter adapter) {
         this.file = file;
+        this.adapter = adapter;
 
         if (tool != null) {
             if (tool instanceof Point) {
@@ -34,9 +36,9 @@ public class Symbol implements Serializable, Cloneable {
         }
     }
 
-    public Symbol(File file, File secondFile, PositioningTool tool) {
+    public Symbol(File file, File secondFile, PositioningTool tool, SymbolAdapter adapter) {
 
-        this(file,tool);
+        this(file,tool,adapter);
 
         this.secondFile = secondFile;
     }
@@ -92,11 +94,15 @@ public class Symbol implements Serializable, Cloneable {
         this.secondFile = secondFile;
     }
 
+    public SymbolAdapter getAdapter() {
+        return adapter;
+    }
+
     public ClonedSymbol cloneSymbol() throws CloneNotSupportedException {
         Symbol source = null;
         source = (Symbol) this.clone();
 
-        return new ClonedSymbol(source, this.file);
+        return new ClonedSymbol(source, this.file, this.getAdapter());
     }
 
     public BufferedImage getBufferedImage() {
