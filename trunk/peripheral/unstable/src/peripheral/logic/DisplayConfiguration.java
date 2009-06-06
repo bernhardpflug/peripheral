@@ -11,6 +11,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.TreeMap;
+import peripheral.logic.datatype.Directory;
+import peripheral.logic.datatype.RestructuredFile;
 import peripheral.logic.positioningtool.PositioningTool;
 import peripheral.logic.sensor.Sensor;
 import peripheral.logic.sensor.SensorChannel;
@@ -19,6 +21,8 @@ import peripheral.logic.sensor.SensorServer.status;
 import peripheral.logic.symboladapter.Symbol;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.util.ZipPackager;
+import peripheral.logic.value.ConstValue;
+import peripheral.logic.value.Value;
 
 public class DisplayConfiguration implements Serializable {
 
@@ -77,6 +81,12 @@ public class DisplayConfiguration implements Serializable {
     public void save(String filename) {
         dimension = new Dimension(getWidth(), getHeight());
 
+        //get all files to change path for
+        ArrayList<RestructuredFile> files = ZipPackager.getRestructuredFiles();
+
+        //change to relative path for all files to serialize it
+        ZipPackager.setRestructuredFilePaths(files);
+
         File configFile = new File(CONFIG_FILE);
 
         try {
@@ -90,7 +100,10 @@ public class DisplayConfiguration implements Serializable {
             e.printStackTrace();
         }
 
-        ZipPackager.zip(filename, configFile);
+        //reset path for all files to be able to zip files
+        ZipPackager.resetRestructuredFilePaths(files);
+
+        ZipPackager.zip(filename, configFile, files);
         configFile.delete();
     }
 
@@ -116,15 +129,38 @@ public class DisplayConfiguration implements Serializable {
     }
 
     private static void updateFilePaths(DisplayConfiguration dc, String unzipFolder) {
+
+        //BACKGROUND IMAGE
+        dc.setBackgroundImageFile(new File(unzipFolder, dc.getBackgroundImageFile().getPath()));
+
         for (SymbolAdapter adapter : dc.getAdapter()) {
+
+            //SYMBOLS
             for (PositioningTool pt : adapter.getTool().getElements()) {
                 for (Symbol symbol : pt.getSymbols()) {
-                    symbol.setFile(new File(unzipFolder, ZipPackager.getRelativePath(symbol.getFile())));
+                    symbol.setFile(new File(unzipFolder, symbol.getFile().getPath()));
+
+                    if (symbol.getSecondFile() != null) {
+                        symbol.setSecondFile(new File(unzipFolder, symbol.getSecondFile().getPath()));
+                    }
+                }
+            }
+
+            //VARPOOL
+            for (Value value : adapter.getVarpool().values()) {
+                //check all constValue whether they include a file or a directory
+                if (value instanceof ConstValue) {
+                    ConstValue constVal = (ConstValue) value;
+                    Object val = value.getValue();
+                    if (val.getClass().equals(File.class)) {
+                        constVal.setValue(new File(unzipFolder, ((File) val).getPath()));
+
+                    } else if (val.getClass().equals(Directory.class)) {
+                        constVal.setValue(new Directory(unzipFolder, ((File) val).getPath()));
+                    }
                 }
             }
         }
-
-        dc.setBackgroundImageFile(new File(unzipFolder, ZipPackager.getRelativePath(dc.getBackgroundImageFile())));
     }
 
     public int getWidth() {
