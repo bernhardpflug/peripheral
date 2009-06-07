@@ -94,7 +94,7 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         boolean enablePreselect = copyToEdit.getRequiredSteps().get(SymbolAdapter.RequiredStep.Preselect).booleanValue();
         this.preselectSensorPanel1.setPreselectionEnabled(enablePreselect);
 
-        this.ruleBasedAdapterFlag = symbolAdapter.getRequiredSteps().get(SymbolAdapter.RequiredStep.Rules).booleanValue();
+        this.ruleBasedAdapterFlag = copyToEdit.getRequiredSteps().get(SymbolAdapter.RequiredStep.Rules).booleanValue();
 
         modifyFlag = true;
 
