@@ -13,7 +13,7 @@ public class VisSymbol extends Observable {
 
     public enum Event {
 
-        FadeInCompleted, FadeOutCompleted
+        FadeInCompleted, FadeOutCompleted, PositionReached
     }
     private float alpha,  alphaSwap;
     //uses interpolation (Ipl) steps of the current target aspects:
@@ -26,6 +26,7 @@ public class VisSymbol extends Observable {
     private Region region;
     private float brightness;
     private boolean fadeIn,  fadeOut,  isVisible;
+    private boolean newPositionSet = false;
 
     public VisSymbol(Symbol s, Region r) {
         this.symbol = s;
@@ -43,11 +44,21 @@ public class VisSymbol extends Observable {
     }
 
     private void setFadeInCompleted() {
+        this.setChanged();
         this.notifyObservers(Event.FadeInCompleted);
     }
 
     private void setFadeOutCompleted() {
+        this.setChanged();
         this.notifyObservers(Event.FadeOutCompleted);
+    }
+
+    private void setPositionReached() {
+        if (this.isNewPositionSet()) {
+            this.setNewPositionSet(false);
+            this.setChanged();
+            this.notifyObservers(Event.PositionReached);
+        }
     }
 
     public void calcStep() {
@@ -73,14 +84,20 @@ public class VisSymbol extends Observable {
         //compute easing
         float iplX = (float) positionIpl.getX(), iplY = (float) positionIpl.getY();
         float dx = (float) symbol.getPosition().getX() - iplX;
-        if (Math.abs(dx) > 1) {
-            iplX += dx * 0.05; //-> easing val
+        boolean positionReached = true;
+        if (Math.abs(dx) > 0) {
+            iplX += Math.signum(dx) * 1;//dx * 0.05; //-> easing val
+            positionReached = false;
         }
         float dy = (float) symbol.getPosition().getY() - iplY;
-        if (Math.abs(dy) > 1) {
-            iplY += dy * 0.05;
+        if (Math.abs(dy) > 0) {
+            iplY += Math.signum(dy) * 1;//dy * 0.05;
+            positionReached = false;
         }
         positionIpl.setLocation(iplX, iplY);
+        if (positionReached) {
+            setPositionReached();
+        }
 
         //===========================================
         //is img visible?
@@ -151,12 +168,25 @@ public class VisSymbol extends Observable {
         this.img = img;
     }
 
+    public boolean isNewPositionSet() {
+        return newPositionSet;
+    }
+
+    public void setNewPositionSet(boolean newPositionSet) {
+        this.newPositionSet = newPositionSet;
+    }
+
     public Point getPositionIpl() {
         return positionIpl;
     }
 
     public void setPositionIpl(Point positionIpl) {
         this.positionIpl = positionIpl;
+    }
+
+    public void setPositionImmediately (Point position){
+        this.getSymbol().setPosition(position);
+        this.positionIpl = position;
     }
 
     public float getScaleXIpl() {
@@ -185,6 +215,10 @@ public class VisSymbol extends Observable {
 
     public void setFadeIn(boolean fadeIn) {
         this.fadeIn = fadeIn;
+    }
+
+    public boolean isFadeIn() {
+        return fadeIn;
     }
 
     public void setFadeOut(boolean fadeOut) {

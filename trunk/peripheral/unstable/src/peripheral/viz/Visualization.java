@@ -1,4 +1,4 @@
-package peripheral.visualization;
+package peripheral.viz;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -100,5 +100,8 @@ public interface Visualization {
      */
     public void init (String backgroundImageFilename, Dimension resolution);
 
+
+    //public Vector<VisSymbol> getSymbols();
+    public void addVisSymbol (VisSymbol s);
 }
 

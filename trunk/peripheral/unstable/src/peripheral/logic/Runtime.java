@@ -93,9 +93,11 @@ public class Runtime {
                 Logging.getLogger().finer("Visualization: translated symbol to position " + targetPosition);
             }
 
-            public Vector<VisSymbol> getSymbols() {
+            public void addVisSymbol(VisSymbol s) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
+
+
 
 
         };
@@ -222,6 +224,10 @@ public class Runtime {
     private void initRegion(Visualization viz, Region region) {
         for (Symbol s : region.getSymbolList().getSourceSymbols()) {
             for (ClonedSymbol clone : region.getSymbolList().getClones(s)) {
+                clone.setFile(s.getFile());
+                if (s.getSecondFile() != null){
+                    clone.setSecondFile(s.getFile());
+                }
                 clone.setPosition(PositionRandomizer.getRandomPosition(region.getBounds()));
                 viz.addSymbol(clone, region);
             }
