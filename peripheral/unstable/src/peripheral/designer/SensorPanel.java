@@ -16,7 +16,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.AbstractTableModel;
@@ -505,24 +504,30 @@ public class SensorPanel extends JPanel implements Observer{
     }
     
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {
-    	removeButton.setEnabled(false);
-    	reconnectButton.setEnabled(false);
-    	editButton.setEnabled(false);
-    	detailButton.setEnabled(false);
-    	serverTable.setEnabled(false);
     	
-    	addButton.setText("Change");
-    	addressTextField.setText(serverList.get(serverTable.getSelectedRow()).getAddress().substring(7));
-    	portTextField.setText(serverList.get(serverTable.getSelectedRow()).getPort());
-    	usernameTextField.setText(serverList.get(serverTable.getSelectedRow()).getUsername());
+        if (serverTable.getSelectedRow() != -1) {
+            removeButton.setEnabled(false);
+            reconnectButton.setEnabled(false);
+            editButton.setEnabled(false);
+            detailButton.setEnabled(false);
+            serverTable.setEnabled(false);
+
+            addButton.setText("Change");
+            addressTextField.setText(serverList.get(serverTable.getSelectedRow()).getAddress().substring(7));
+            portTextField.setText(serverList.get(serverTable.getSelectedRow()).getPort());
+            usernameTextField.setText(serverList.get(serverTable.getSelectedRow()).getUsername());
+        }
     }
     
     private void reconnectButtonActionPerformed(java.awt.event.ActionEvent evt) {
-    	serverList.get(serverTable.getSelectedRow()).reconnect();
+
+        if (serverTable.getSelectedRow() != -1) {
+            serverList.get(serverTable.getSelectedRow()).reconnect();
+        }
     }
 	
     private void serverTableMouseDoubleClickPerformed(JTable source) {
-    	if(serverTable.getRowCount()>0 && serverTable.isEnabled()){
+    	if(serverTable.getRowCount()>0 && serverTable.isEnabled() && serverTable.getSelectedRow() != -1){
         	if(serverList.get(source.getSelectedRow()).getConnectionStatus().toString().compareTo("online")==0){
         		ServerDetailFrame frame = new ServerDetailFrame(source.getSelectedRow());
         		frame.setLocationRelativeTo(null);
