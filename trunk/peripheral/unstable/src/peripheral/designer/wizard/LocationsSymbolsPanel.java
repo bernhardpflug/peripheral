@@ -553,65 +553,77 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
 
         if (this.LocationList.getSelectedValue() != null) {
 
-            PositioningTool pos = (PositioningTool)this.LocationList.getSelectedValue();
+            PositioningTool pos = (PositioningTool) this.LocationList.getSelectedValue();
 
-            //if two images are allowed open own dialog for selection
-            if (parent.getCreatedAdapter().areOrientedSymbolsAllowed()) {
+            //only allow add if adapter allows more symbols than already created
+            if (pos.getSymbols().size() < parent.getCreatedAdapter().getAllowedNumberOfSymbols() ||
+                    parent.getCreatedAdapter().getAllowedNumberOfSymbols() == -1) {
 
-                if (symbolDialog == null) {
-                    symbolDialog = new SymbolSelectionDialog(parent,true);
+
+                //if two images are allowed open own dialog for selection
+                if (parent.getCreatedAdapter().areOrientedSymbolsAllowed()) {
+
+                    if (symbolDialog == null) {
+                        symbolDialog = new SymbolSelectionDialog(parent, true);
+                    }
+                    //reset selection to be able to use same dialog several times
+                    //to remember file path
+                    symbolDialog.resetSelection();
+
+                    symbolDialog.setLocationRelativeTo(this);
+
+                    //run modal dialog
+                    symbolDialog.setVisible(true);
+
+                    //create symbol with set files of dialog
+                    if (symbolDialog.getLeftFile() != null) {
+                        Symbol symbol = new Symbol(symbolDialog.getLeftFile(), symbolDialog.getRightFile(), pos, parent.getCreatedAdapter());
+
+                        pos.getSymbols().add(symbol);
+
+                        fillSymbolList(pos);
+
+                        //select new one as selected
+                        this.symbolList.setSelectedValue(symbol, true);
+
+                        //display symbol in preview if checkbox enabled
+                        PreviewDialog.getInstance().updatePreview();
+                    }
+
+                } //else display just filedialog
+                else {
+                    if (fileChooser == null) {
+                        fileChooser = new ImageFileChooser();
+                    }
+
+                    fileChooser.setDialogTitle("Select an image file for the symbol");
+
+                    if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                        Symbol symbol = new Symbol(fileChooser.getSelectedFile(), pos, parent.getCreatedAdapter());
+
+                        pos.getSymbols().add(symbol);
+
+                        fillSymbolList(pos);
+
+                        //select new one as selected
+                        this.symbolList.setSelectedValue(symbol, true);
+
+                        //display symbol in preview if checkbox enabled
+                        PreviewDialog.getInstance().updatePreview();
+                    }
                 }
-                //reset selection to be able to use same dialog several times
-                //to remember file path
-                symbolDialog.resetSelection();
-
-                symbolDialog.setLocationRelativeTo(this);
-
-                //run modal dialog
-                symbolDialog.setVisible(true);
-
-                //create symbol with set files of dialog
-                if (symbolDialog.getLeftFile() != null) {
-                    Symbol symbol = new Symbol(symbolDialog.getLeftFile(), symbolDialog.getRightFile(), pos, parent.getCreatedAdapter());
-
-                    pos.getSymbols().add(symbol);
-
-                    fillSymbolList(pos);
-
-                    //select new one as selected
-                    this.symbolList.setSelectedValue(symbol, true);
-
-                    //display symbol in preview if checkbox enabled
-                    PreviewDialog.getInstance().updatePreview();
-                }
-                
             }
-            //else display just filedialog
+            //number of symbol check
             else {
-                if (fileChooser == null) {
-                    fileChooser = new ImageFileChooser();
-                }
-
-                fileChooser.setDialogTitle("Select an image file for the symbol");
-
-                if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                    Symbol symbol = new Symbol(fileChooser.getSelectedFile(), pos, parent.getCreatedAdapter());
-
-                    pos.getSymbols().add(symbol);
-
-                    fillSymbolList(pos);
-
-                    //select new one as selected
-                    this.symbolList.setSelectedValue(symbol, true);
-
-                    //display symbol in preview if checkbox enabled
-                    PreviewDialog.getInstance().updatePreview();
-                }
+                JOptionPane.showMessageDialog(this,
+                        "No more symbols allowed for this animationtype","Max number of symbols reached", JOptionPane.WARNING_MESSAGE);
             }
 
         }
+        //position check
         else {
-            JOptionPane.showMessageDialog(this, "Select a Position to add the Symbol to","No Position selected", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Select a Position to add the Symbol to","No Position selected", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_addSymbolButtonActionPerformed
 
