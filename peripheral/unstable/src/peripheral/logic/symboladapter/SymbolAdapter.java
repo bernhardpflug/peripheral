@@ -27,6 +27,7 @@ public class SymbolAdapter implements Serializable {
 
     public enum RequiredStep implements Serializable {
 
+        Preselect,
         Rules
     }
     private ActionTool tool;
@@ -42,6 +43,8 @@ public class SymbolAdapter implements Serializable {
     private Map<RequiredStep, Boolean> requiredSteps;
     private ActionToolAction defaultAction;
     private List<ActionToolAction> initActions;
+    //define as -1 for infinite
+    private int allowedNumberOfSymbols;
 
     //defines whether symbols of the positioningtools of this adapter
     //may add a second file for a symbol if the symbol changes its direction
@@ -66,6 +69,12 @@ public class SymbolAdapter implements Serializable {
         initActions = new ArrayList<ActionToolAction>();
 
         allowOrientedSymbols = false;
+
+        allowedNumberOfSymbols = 1;
+
+        //set default values for required steps
+        requiredSteps.put(RequiredStep.Preselect, true);
+        requiredSteps.put(RequiredStep.Rules, false);
     }
 
     public java.util.List<Filter> getAfterFilter() {
@@ -136,6 +145,14 @@ public class SymbolAdapter implements Serializable {
 
     public boolean areOrientedSymbolsAllowed() {
         return this.allowOrientedSymbols;
+    }
+
+    public int getAllowedNumberOfSymbols() {
+        return allowedNumberOfSymbols;
+    }
+
+    public void setAllowedNumberOfSymbols(int allowedNumberOfSymbols) {
+        this.allowedNumberOfSymbols = allowedNumberOfSymbols;
     }
 
     public SymbolAdapter createCopy() {
