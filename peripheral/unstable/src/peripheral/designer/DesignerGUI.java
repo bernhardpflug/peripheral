@@ -25,6 +25,7 @@ import peripheral.designer.property.PropertyPanel;
 import peripheral.designer.wizard.AddAnimationDialog;
 import peripheral.logic.DisplayConfiguration;
 import peripheral.logic.positioningtool.ActionTool;
+import peripheral.logic.positioningtool.PositioningTool;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.Value;
 
@@ -115,10 +116,27 @@ public class DesignerGUI extends javax.swing.JFrame {
             //selected created element
             this.defAnimationsList.setSelectedValue(created, true);
 
+            //update preview dialog - display all positioningtools of all symboladapter in this view
+            previewAllSymbolAdapters();
         }
 
         //refresh properties list and positioning tools in preview dialog
         this.defAnimationsListValueChanged(null);
+    }
+
+    /**
+     * method that displays all created symboladpaters in preview dialog
+     */
+    private void previewAllSymbolAdapters() {
+
+        ArrayList<PositioningTool> tools = new ArrayList<PositioningTool>();
+
+        for (SymbolAdapter adapter : DisplayConfiguration.getInstance().getAdapter()) {
+            tools.addAll(adapter.getTool().getElements());
+        }
+
+        PreviewDialog.getInstance().setPositioningtoolsToPaint(tools);
+        PreviewDialog.getInstance().updatePreview();
     }
 
     /**
@@ -521,12 +539,14 @@ public class DesignerGUI extends javax.swing.JFrame {
 
             this.validate();
 
+            //-- deleted this because preview displays all symboladapter, not only selected one;
+            //-- is now handled in animationDialogClosed
             //PREVIEW DIALOG
             //get all Positioningtools of currently selected Symboladapter
-            ActionTool actionTool = ((SymbolAdapter) defAnimationsList.getSelectedValue()).getTool();
-
-            PreviewDialog.getInstance().setPositioningtoolsToPaint(actionTool.getElements());
-            PreviewDialog.getInstance().updatePreview();
+//            ActionTool actionTool = ((SymbolAdapter) defAnimationsList.getSelectedValue()).getTool();
+//
+//            PreviewDialog.getInstance().setPositioningtoolsToPaint(actionTool.getElements());
+//            PreviewDialog.getInstance().updatePreview();
         } else {
 
             //PROPERTYPANEL
@@ -537,8 +557,8 @@ public class DesignerGUI extends javax.swing.JFrame {
 
             //PREVIEW DIALOG
             //if no symboladapter is selected display just background
-            PreviewDialog.getInstance().setPositioningtoolsToPaint(null);
-            PreviewDialog.getInstance().updatePreview();
+//            PreviewDialog.getInstance().setPositioningtoolsToPaint(null);
+//            PreviewDialog.getInstance().updatePreview();
         }
     }//GEN-LAST:event_defAnimationsListValueChanged
 
@@ -579,6 +599,9 @@ public class DesignerGUI extends javax.swing.JFrame {
                 }
             }
             model.removeElement(toDel);
+
+            //update preview
+            this.previewAllSymbolAdapters();
         }
     }//GEN-LAST:event_removeAnimationButtonActionPerformed
 
