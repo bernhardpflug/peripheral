@@ -306,6 +306,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
 
         LocationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Point(s), Area(s)"));
 
+        LocationList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         LocationList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 LocationListValueChanged(evt);
@@ -448,6 +449,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
             }
         });
 
+        symbolList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         symbolList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 symbolListValueChanged(evt);

@@ -94,9 +94,7 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         boolean enablePreselect = copyToEdit.getRequiredSteps().get(SymbolAdapter.RequiredStep.Preselect).booleanValue();
         this.preselectSensorPanel1.setPreselectionEnabled(enablePreselect);
 
-        if (copyToEdit.getRequiredSteps().get(SymbolAdapter.RequiredStep.Rules).booleanValue()) {
-            this.ruleBasedAdapterFlag = true;
-        }
+        this.ruleBasedAdapterFlag = symbolAdapter.getRequiredSteps().get(SymbolAdapter.RequiredStep.Rules).booleanValue();
 
         modifyFlag = true;
 
@@ -195,9 +193,7 @@ public class AddAnimationDialog extends javax.swing.JDialog {
                 boolean enablePreselect = symbolAdapter.getRequiredSteps().get(SymbolAdapter.RequiredStep.Preselect).booleanValue();
                 this.preselectSensorPanel1.setPreselectionEnabled(enablePreselect);
 
-                if (symbolAdapter.getRequiredSteps().get(SymbolAdapter.RequiredStep.Rules).booleanValue()) {
-                    this.ruleBasedAdapterFlag = true;
-                }
+                this.ruleBasedAdapterFlag = symbolAdapter.getRequiredSteps().get(SymbolAdapter.RequiredStep.Rules).booleanValue();
 
 
                 //must be called here as now symboladapter is determined which is needed
