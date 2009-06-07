@@ -90,6 +90,10 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         currentIndex++;
         cl.next(cardPanel);
 
+        //set properties for panels depending on flags of adapter
+        boolean enablePreselect = copyToEdit.getRequiredSteps().get(SymbolAdapter.RequiredStep.Preselect).booleanValue();
+        this.preselectSensorPanel1.setPreselectionEnabled(enablePreselect);
+
         if (copyToEdit.getRequiredSteps().get(SymbolAdapter.RequiredStep.Rules).booleanValue()) {
             this.ruleBasedAdapterFlag = true;
         }
@@ -186,9 +190,15 @@ public class AddAnimationDialog extends javax.swing.JDialog {
                 //create instance for selected template to work on
                 this.symbolAdapter = AdapterTemplateFactory.getInstance().createInstanceFor(selectedTemplate);
 
+                //SET properties depending on defined flags for displaying panels
+
+                boolean enablePreselect = symbolAdapter.getRequiredSteps().get(SymbolAdapter.RequiredStep.Preselect).booleanValue();
+                this.preselectSensorPanel1.setPreselectionEnabled(enablePreselect);
+
                 if (symbolAdapter.getRequiredSteps().get(SymbolAdapter.RequiredStep.Rules).booleanValue()) {
                     this.ruleBasedAdapterFlag = true;
                 }
+
 
                 //must be called here as now symboladapter is determined which is needed
                 this.preselectSensorPanel1.initPanel();

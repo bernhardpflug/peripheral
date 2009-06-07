@@ -66,6 +66,13 @@ public class PreselectSensorPanel extends javax.swing.JPanel {
         return this.symboladapterNameTextfield.getText();
     }
 
+    public void setPreselectionEnabled(boolean enabled) {
+        this.availableSensorList.setEnabled(enabled);
+        this.selectedSensorList.setEnabled(enabled);
+        this.addButton.setEnabled(enabled);
+        this.removeButton.setEnabled(enabled);
+    }
+
     private void initUserDefinedSensors() {
 
         userDefinedSensors = new ArrayList<Sensor>();
