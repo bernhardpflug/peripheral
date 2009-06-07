@@ -28,7 +28,6 @@ import peripheral.logic.positioningtool.PositioningTool;
 import peripheral.logic.positioningtool.Region;
 import peripheral.logic.positioningtool.ToolList;
 import peripheral.logic.rule.Rule;
-import peripheral.logic.rule.TrueCondition;
 import peripheral.logic.value.ConstValue;
 import peripheral.logic.value.SensorIntervalVarValue;
 import peripheral.logic.value.SensorValue;
@@ -153,7 +152,7 @@ public class AdapterTemplateFactory {
         adapter.getBeforeFilter().add(stf);
 
         Rule rule = new Rule(adapter);
-        rule.getConditions().add(new TrueCondition());
+        //rule.getConditions().add(new TrueCondition());
         symbolAction = new SymbolSwapAction(adapter, new VarValue(adapter, "filename"));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         rule.getActions().add(wrapperAction);
@@ -213,7 +212,7 @@ public class AdapterTemplateFactory {
         adapter.getBeforeFilter().add(posf);
 
         Rule rule = new Rule(adapter);
-        rule.getConditions().add(new TrueCondition());
+        //rule.getConditions().add(new TrueCondition());
         SymbolAction symbolAction = new SymbolTranslateAction(adapter, new VarValue(adapter, "position"));
         PointWrapperAction wrapperAction = new PointWrapperAction(adapter, symbolAction);
         rule.getActions().add(wrapperAction);
@@ -252,7 +251,7 @@ public class AdapterTemplateFactory {
         adapter.getBeforeFilter().add(mf);
 
         Rule rule = new Rule(adapter);
-        rule.getConditions().add(new TrueCondition());
+        //rule.getConditions().add(new TrueCondition());
         SymbolAction symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "factorX", 1.0, Float.class), new VarValue(adapter, "factor"));
         PointWrapperAction wrapperAction = new PointWrapperAction(adapter, symbolAction);
         rule.getActions().add(wrapperAction);
@@ -312,7 +311,7 @@ public class AdapterTemplateFactory {
         adapter.getBeforeFilter().add(mf);
 
         rule = new Rule(adapter);
-        rule.getConditions().add(new TrueCondition());
+        //rule.getConditions().add(new TrueCondition());
         symbolAction = new SymbolScaleAction(adapter, new VarValue(adapter, "factorX"), new VarValue(adapter, "factorY"));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         rule.getActions().add(wrapperAction);
@@ -354,7 +353,7 @@ public class AdapterTemplateFactory {
         adapter.getNeededUserInput().add(input);
 
         Rule rule = new Rule(adapter);
-        rule.getConditions().add(new TrueCondition());
+        //rule.getConditions().add(new TrueCondition());
         SymbolAction symbolAction = new SymbolRotateAction(adapter, new VarValue(adapter, "sensorValue"));
         PointWrapperAction wrapperAction = new PointWrapperAction(adapter, symbolAction);
         rule.getActions().add(wrapperAction);
@@ -393,7 +392,7 @@ public class AdapterTemplateFactory {
         adapter.getBeforeFilter().add(pif);
 
         rule = new Rule(adapter);
-        rule.getConditions().add(new TrueCondition());
+        //rule.getConditions().add(new TrueCondition());
         symbolAction = new SymbolRotateAction(adapter, new VarValue(adapter, "angle"));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         rule.getActions().add(wrapperAction);
@@ -448,7 +447,7 @@ public class AdapterTemplateFactory {
         adapter.getBeforeFilter().add(rpf);
 
         Rule rule = new Rule(adapter);
-        rule.getConditions().add(new TrueCondition());
+        //rule.getConditions().add(new TrueCondition());
         ListShowAction listShowAction = new ListShowAction(adapter, new VarValue(adapter, "pickedValues"), new ConstValue(adapter, "hideOthers", true, Boolean.class));
         rule.getActions().add(listShowAction);
         //rule.getActions().add(new ListHideAction(adapter, new VarValue(adapter, "pickedValues")));
@@ -485,7 +484,7 @@ public class AdapterTemplateFactory {
         adapter.getBeforeFilter().add(rpf);
 
         rule = new Rule(adapter);
-        rule.getConditions().add(new TrueCondition());
+        //rule.getConditions().add(new TrueCondition());
         RegionAddNewAction regionAddNewAction = new RegionAddNewAction(adapter, new VarValue(adapter, "pickedSymbols"));
         rule.getActions().add(regionAddNewAction);
         adapter.getRules().add(rule);
