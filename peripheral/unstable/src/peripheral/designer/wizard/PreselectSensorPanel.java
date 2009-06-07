@@ -85,6 +85,8 @@ public class PreselectSensorPanel extends javax.swing.JPanel {
 
     private void initAvailableList() {
 
+        availableModel.clear();
+
         List<Sensor> alreadyPreselected = parent.getCreatedAdapter().getPreselectedSensors();
 
         for (Sensor sensor : userDefinedSensors) {
@@ -97,6 +99,8 @@ public class PreselectSensorPanel extends javax.swing.JPanel {
     }
 
     private void initSelectedList() {
+
+        selectedModel.clear();
 
         List<Sensor> alreadyPreselected = parent.getCreatedAdapter().getPreselectedSensors();
 
