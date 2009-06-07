@@ -13,6 +13,7 @@ import peripheral.logic.action.SymbolShowAction;
 import peripheral.logic.action.SymbolSwapAction;
 import peripheral.logic.action.SymbolTranslateAction;
 import peripheral.logic.animation.Mover;
+import peripheral.logic.datatype.Directory;
 import peripheral.logic.datatype.Interval;
 import peripheral.logic.filter.MultiplyFilter;
 import peripheral.logic.filter.IntervalValueToPercentageFilter;
@@ -97,6 +98,7 @@ public class AdapterTemplateFactory {
 
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
+        adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Preselect, false);
 
         adapter.setAllowOrientedSymbols(true);
 
@@ -142,6 +144,10 @@ public class AdapterTemplateFactory {
 
         val = new ConstValue(adapter, "filenameTemplate", "file_###VAL###.png", String.class);
         input = new UserInput("Dateinamen-Template", "", val);
+        adapter.getNeededUserInput().add(input);
+
+        val = new ConstValue(adapter, "fileFolder", null, Directory.class);
+        input = new UserInput("Folder, which contains swap-images", "", val);
         adapter.getNeededUserInput().add(input);
 
         StringTemplateFilter stf = new StringTemplateFilter(adapter, "filename");
