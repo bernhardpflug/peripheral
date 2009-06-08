@@ -273,6 +273,32 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
         }
     }
 
+    /**
+     * method that checks wether all positioning tools of this adapter
+     * have at least min number of symbols defined in symboladapter
+     * @return
+     */
+    public boolean minNumberOfSymbolsCheck() {
+
+        //handle toollist
+        if (actionTool instanceof ToolList) {
+
+            ToolList toollist = (ToolList) actionTool;
+
+            for (PositioningTool tool : toollist.getElements()) {
+                if (tool.getSymbols().size() < parent.getCreatedAdapter().getMinAllowedNumberOfSymbols()) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        //handle spimple positioning tool
+        else {
+            return ((PositioningTool)actionTool).getSymbols().size() >= parent.getCreatedAdapter().getMinAllowedNumberOfSymbols();
+        }
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -558,8 +584,8 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
             PositioningTool pos = (PositioningTool) this.LocationList.getSelectedValue();
 
             //only allow add if adapter allows more symbols than already created
-            if (pos.getSymbols().size() < parent.getCreatedAdapter().getAllowedNumberOfSymbols() ||
-                    parent.getCreatedAdapter().getAllowedNumberOfSymbols() == -1) {
+            if (pos.getSymbols().size() < parent.getCreatedAdapter().getMaxAllowedNumberOfSymbols() ||
+                    parent.getCreatedAdapter().getMaxAllowedNumberOfSymbols() == -1) {
 
 
                 //if two images are allowed open own dialog for selection
