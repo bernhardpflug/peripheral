@@ -32,7 +32,7 @@ public class SymbolContrastAction extends SymbolAction {
     public java.util.List<UserInput> getUserInput() {
         if (this.needAmountUserInput) {
             if (amount == null) {
-                amount = new ConstValue(adapter, "amount", 1.0f, float.class);
+                amount = new ConstValue(adapter, "amount", 1.0f, Float.class);
                 userInput.add(new UserInput("Amount", "Amount of contrast ...?", amount));
             }
         }

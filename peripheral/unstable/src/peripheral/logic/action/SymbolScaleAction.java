@@ -42,13 +42,13 @@ public class SymbolScaleAction extends SymbolAction {
     public java.util.List<UserInput> getUserInput() {
         if (this.needFactorXUserInput) {
             if (factorX == null) {
-                factorX = new ConstValue(adapter, "factorX", 1.0f, float.class);
+                factorX = new ConstValue(adapter, "factorX", 1.0f, Float.class);
                 userInput.add(new UserInput("Factor x-Axis", "Factor to which the symbol should be scaled on the x-axis.", factorX));
             }
         }
         if (this.needFactorYUserInput) {
             if (factorY == null) {
-                factorY = new ConstValue(adapter, "factorY", 1.0f, float.class);
+                factorY = new ConstValue(adapter, "factorY", 1.0f, Float.class);
                 userInput.add(new UserInput("Factor x-Axis", "Factor to which the symbol should be scaled on the y-axis.", factorY));
             }
         }
