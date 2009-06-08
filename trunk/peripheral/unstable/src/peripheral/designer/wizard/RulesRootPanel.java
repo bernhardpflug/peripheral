@@ -22,6 +22,8 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+
+import peripheral.logic.rule.DefaultRule;
 import peripheral.logic.rule.Rule;
 import peripheral.logic.symboladapter.SymbolAdapter;
 
@@ -33,15 +35,19 @@ public class RulesRootPanel extends javax.swing.JPanel {
 
     private Window parent;
     public GridBagLayout layout;
+    private JButton addRuleButton;
+    private JButton addDefaultRuleButton;
     private SymbolAdapter symbolAdapter;
     private JPanel buttonPanel;
     private ArrayList<RulePanel> rulePanels;
     private List<JButton> removeButtons;
+    
+    //defines whether default rule is already set
+    private boolean defaultRuleFlag;
 
     /** Creates new form rulesPanel */
     public RulesRootPanel(Window parent) {
         initComponents();
-
 
         this.parent = parent;
 
@@ -77,51 +83,78 @@ public class RulesRootPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void setDefaultRuleEnabled(boolean flag) {
+    	defaultRuleFlag = flag;
+    	addDefaultRuleButton.setEnabled(flag);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
     public void setSymbolAdapter(SymbolAdapter symbolAdapter) {
 
+    	setDefaultRuleEnabled(true);
+    	
         this.symbolAdapter = symbolAdapter;
 
         rulePanels.clear();
 
-        createConditionPanels();
+        createRulePanels();
 
         if (symbolAdapter.getRules().size() == 0) {
-            addNewRule();
+            addNewRule(false);
         }
 
         this.windowChanged();
     }
 
-    private void createConditionPanels() {
+    private void createRulePanels() {
 
+    	int index = 1;
         for (Rule rule : symbolAdapter.getRules()) {
 
-            RulePanel rulePanel = new RulePanel(rule, parent);
+            RulePanel rulePanel = new RulePanel(rule, parent,index);
             rulePanels.add(rulePanel);
 
+            //if there is already a defaultrule disable add
+            if (rule instanceof DefaultRule) {
+            	setDefaultRuleEnabled(false);
+            }
+            
+            index++;
         }
     }
 
     private JPanel createButtonPanel() {
         JPanel localButtonPanel = new JPanel();
-        localButtonPanel.setLayout(null);
+        localButtonPanel.setLayout(new java.awt.FlowLayout());
 
-        JButton addRuleButton = new JButton("Add Rule");
+        addRuleButton = new JButton("Add Rule");
         addRuleButton.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
 
-                addNewRule();
+            	//create new usual rule
+                addNewRule(false);
+
+            }
+        });
+        
+        addDefaultRuleButton = new JButton("Add Defaultrule");
+        addDefaultRuleButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+
+            	//create new default rule
+                addNewRule(true);
 
             }
         });
 
-        localButtonPanel.setSize(100, 20);
-        addRuleButton.setSize(100, 20);
+        localButtonPanel.setSize(250, 20);
+        //addRuleButton.setSize(100, 20);
+        //addDefaultRuleButton.setSize(120,20);
         localButtonPanel.add(addRuleButton);
+        localButtonPanel.add(addDefaultRuleButton);
 
         return localButtonPanel;
     }
@@ -168,8 +201,8 @@ public class RulesRootPanel extends javax.swing.JPanel {
 
                         public void actionPerformed(ActionEvent e) {
                             int index = removeButtons.indexOf(removeButton);
-                            rulePanels.remove(index);
-                            windowChanged();
+                            
+                            removeRulePanel(rulePanels.get(index));  
                         }
                     });
 
@@ -190,13 +223,21 @@ public class RulesRootPanel extends javax.swing.JPanel {
 
     }
 
-    private void addNewRule() {
+    private void addNewRule(boolean defaultRule) {
 
-        Rule newRule = new Rule(symbolAdapter);
+    	Rule newRule= null;
+    	
+    	if (defaultRule) {
+    		newRule = new DefaultRule(symbolAdapter);
+    		this.setDefaultRuleEnabled(false);
+    	}
+    	else {
+    		newRule = new Rule(symbolAdapter);
+    	}
 
         symbolAdapter.getRules().add(newRule);
 
-        RulePanel rulePanel = new RulePanel(newRule, parent);
+        RulePanel rulePanel = new RulePanel(newRule, parent,symbolAdapter.getRules().indexOf(newRule)+1);
         rulePanels.add(rulePanel);
 
         this.windowChanged();
@@ -204,8 +245,16 @@ public class RulesRootPanel extends javax.swing.JPanel {
 
     public void removeRulePanel(RulePanel rulePanel) {
 
+    	//update all indices of previous rulepanels in list
+    	for (int i=rulePanels.indexOf(rulePanel); i <rulePanels.size() ; i++) {
+    		rulePanels.get(i).setRuleIndex(i);
+    	}
         rulePanels.remove(rulePanel);
         symbolAdapter.getRules().remove(rulePanel.getRule());
+        
+        if (rulePanel.getRule() instanceof DefaultRule) {
+        	this.setDefaultRuleEnabled(true);
+        }
 
         windowChanged();
     }
