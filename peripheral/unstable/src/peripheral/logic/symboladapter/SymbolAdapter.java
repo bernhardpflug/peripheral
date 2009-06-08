@@ -44,7 +44,8 @@ public class SymbolAdapter implements Serializable {
     private ActionToolAction defaultAction;
     private List<ActionToolAction> initActions;
     //define as -1 for infinite
-    private int allowedNumberOfSymbols;
+    private int maxAllowedNumberOfSymbols;
+    private int minAllowedNumberOfSymbols;
 
     //defines whether symbols of the positioningtools of this adapter
     //may add a second file for a symbol if the symbol changes its direction
@@ -70,7 +71,8 @@ public class SymbolAdapter implements Serializable {
 
         allowOrientedSymbols = false;
 
-        allowedNumberOfSymbols = 1;
+        maxAllowedNumberOfSymbols = 1;
+        minAllowedNumberOfSymbols = 1;
 
         //set default values for required steps
         requiredSteps.put(RequiredStep.Preselect, true);
@@ -147,12 +149,27 @@ public class SymbolAdapter implements Serializable {
         return this.allowOrientedSymbols;
     }
 
-    public int getAllowedNumberOfSymbols() {
-        return allowedNumberOfSymbols;
+    public int getMaxAllowedNumberOfSymbols() {
+        return maxAllowedNumberOfSymbols;
     }
 
-    public void setAllowedNumberOfSymbols(int allowedNumberOfSymbols) {
-        this.allowedNumberOfSymbols = allowedNumberOfSymbols;
+    public void setMaxAllowedNumberOfSymbols(int maxAllowedNumberOfSymbols) {
+        this.maxAllowedNumberOfSymbols = maxAllowedNumberOfSymbols;
+    }
+
+    public int getMinAllowedNumberOfSymbols() {
+        return minAllowedNumberOfSymbols;
+    }
+
+    public void setMinAllowedNumberOfSymbols(int minAllowedNumberOfSymbols) {
+        if (minAllowedNumberOfSymbols <= this.maxAllowedNumberOfSymbols || this.maxAllowedNumberOfSymbols==-1) {
+            this.minAllowedNumberOfSymbols = minAllowedNumberOfSymbols;
+        }
+        else {
+            peripheral.logic.Logging.getLogger().finer(minAllowedNumberOfSymbols+
+                    " for minNumberOfSymbols is higher as defined maxvalue "+this.maxAllowedNumberOfSymbols+"\n" +
+                    "minvalue not updated");
+        }
     }
 
     public SymbolAdapter createCopy() {

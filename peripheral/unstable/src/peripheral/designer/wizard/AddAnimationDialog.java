@@ -270,20 +270,30 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         //create points/areas
         else if (currentIndex == 2) {
 
-            //unregister changelistener from preview dialog
-            PreviewDialog.getInstance().removePreviewListener(createLocationsSymbolsPanel1);
+            //check if all positioningtools have at least minimum number of symbols defined in adapter
+            if (this.createLocationsSymbolsPanel1.minNumberOfSymbolsCheck()) {
 
-            if (!this.ruleBasedAdapterFlag) {
-                closeAnimationDialog();
+                //unregister changelistener from preview dialog
+                PreviewDialog.getInstance().removePreviewListener(createLocationsSymbolsPanel1);
+
+                if (!this.ruleBasedAdapterFlag) {
+                    closeAnimationDialog();
+                }
+                else {
+                    nextButton.setText("Finish");
+
+                    //set symboladapter for rulespanel
+                    this.rulesRootPanel1.setSymbolAdapter(symbolAdapter);
+
+                    currentIndex++;
+                    cl.next(cardPanel);
+                }
             }
             else {
-                nextButton.setText("Finish");
-
-                //set symboladapter for rulespanel
-                this.rulesRootPanel1.setSymbolAdapter(symbolAdapter);
-
-                currentIndex++;
-                cl.next(cardPanel);
+                JOptionPane.showMessageDialog(this,
+                        "Every position must have at least "+symbolAdapter.getMinAllowedNumberOfSymbols()+
+                        " symbol(s)"
+                        ,"Insufficient number of symbols", JOptionPane.ERROR_MESSAGE);
             }
         }
         //rules panel
