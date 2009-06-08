@@ -132,6 +132,13 @@ public class SensorChannel implements Serializable {
         }
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 29 * hash + (int) (this.mid ^ (this.mid >>> 32));
+        return hash;
+    }
+
     public static SensorChannel getDummy() {
 
         if (DUMMY == null) {
