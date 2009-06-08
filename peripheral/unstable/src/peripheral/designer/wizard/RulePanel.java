@@ -27,6 +27,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import peripheral.designer.property.PropertyPanel;
+import peripheral.logic.Logging;
 import peripheral.logic.rule.Condition;
 import peripheral.logic.rule.ConditionOperation;
 import peripheral.logic.rule.Rule;
@@ -205,11 +206,11 @@ public class RulePanel extends javax.swing.JPanel {
                                 }
                                 updateRightSideComponent(co, index);
                                 condition.setOperation(co);
-                                /*if (co != null) {
-                                    rightSideComponents.set(index, co.getRightSideComponent());
-                                } else {
-                                    rightSideComponents.set(index, null);
-                                }*/
+                            /*if (co != null) {
+                            rightSideComponents.set(index, co.getRightSideComponent());
+                            } else {
+                            rightSideComponents.set(index, null);
+                            }*/
                             }
                         });
             } else {
@@ -234,9 +235,12 @@ public class RulePanel extends javax.swing.JPanel {
                                 if (e.getStateChange() == ItemEvent.SELECTED) {
                                     JComboBox operation = ((JComboBox) e.getSource());
                                     ConditionOperation co = (ConditionOperation) operation.getSelectedItem();
-                                    updateRightSideComponent(co, operations.indexOf(operation));
-                                    condition.setOperation(co);
-                                    //rightSideComponents.set(operations.indexOf(operation), co.getRightSideComponent());
+                                    Logging.getLogger().finest(co.toString());
+                                    if (co != null) {
+                                        updateRightSideComponent(co, operations.indexOf(operation));
+                                        condition.setOperation(co);
+                                    }
+                                //rightSideComponents.set(operations.indexOf(operation), co.getRightSideComponent());
                                 //updateContent();
                                 }
                             }
@@ -311,7 +315,7 @@ public class RulePanel extends javax.swing.JPanel {
 
     private void updateAvailableOperations(Condition condition, JComboBox operation, boolean sensorValueTypeChanged) {
         Object selection = operation.getSelectedItem();
-        if (selection == null){
+        if (selection == null) {
             selection = condition.getOperation();
         }
 
@@ -331,7 +335,11 @@ public class RulePanel extends javax.swing.JPanel {
                 if (existingOperation != -1) {
                     operationsToAdd.add((ConditionOperation) operation.getItemAt(existingOperation));
                 } else {
-                    operationsToAdd.add(op);
+                    if (op.equals(selection)) {
+                        operationsToAdd.add((ConditionOperation)selection);
+                    } else {
+                        operationsToAdd.add(op);
+                    }
                 }
             }
         }
@@ -348,7 +356,14 @@ public class RulePanel extends javax.swing.JPanel {
             }
         } else {
             operation.setSelectedItem(selection);
+            ConditionOperation test = (ConditionOperation) operation.getSelectedItem();
+            test.getRightSideComponent().repaint();
         }
+
+
+        this.validate();
+        this.revalidate();
+    //com.repaint();
     }
 
     private void updateRightSideComponent(ConditionOperation operation, int index) {
