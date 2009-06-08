@@ -30,6 +30,7 @@ import peripheral.designer.property.PropertyPanel;
 import peripheral.logic.Logging;
 import peripheral.logic.rule.Condition;
 import peripheral.logic.rule.ConditionOperation;
+import peripheral.logic.rule.DefaultRule;
 import peripheral.logic.rule.Rule;
 import peripheral.logic.sensor.Sensor;
 import peripheral.logic.sensor.SensorChannel;
@@ -55,9 +56,8 @@ public class RulePanel extends javax.swing.JPanel {
     private PropertyPanel actionPropertyPanel;
 
     /** Creates new form rulePanel */
-    public RulePanel(Rule rule, Container parent) {
+    public RulePanel(Rule rule, Container parent, int index) {
         initComponents();
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Rule"));
 
         this.parent = parent;
 
@@ -88,10 +88,17 @@ public class RulePanel extends javax.swing.JPanel {
 
         createLayout();
 
-        if (conditions.size() == 0) {
-
-            addNewCondition();
+        if (rule instanceof DefaultRule) {
+        	setBorder(javax.swing.BorderFactory.createTitledBorder("Defaultrule - Behavior if no other rule is valid"));
         }
+        else {
+        	this.setRuleIndex(index);
+        	if (conditions.size() == 0) {
+
+                addNewCondition();
+            }
+        }
+        
 
     }
 
@@ -130,6 +137,10 @@ public class RulePanel extends javax.swing.JPanel {
                 addNewCondition();
             }
         });
+        
+        if (rule instanceof DefaultRule) {
+        	addRuleButton.setEnabled(false);
+        }
 
         buttonPanel.setSize(90, 25);
         buttonPanel.setPreferredSize(new Dimension(90, 25));
@@ -426,6 +437,10 @@ public class RulePanel extends javax.swing.JPanel {
      */
     public Rule getRule() {
         return rule;
+    }
+    
+    public void setRuleIndex(int index) {
+    	setBorder(javax.swing.BorderFactory.createTitledBorder("Rule "+index));
     }
 
     public Dimension getMinimumDisplaySize() {
