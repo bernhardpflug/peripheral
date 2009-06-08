@@ -576,6 +576,7 @@ public class DesignerGUI extends javax.swing.JFrame {
             //set reference that can be read after dialog close
             this.modifying = editAdapter;
 
+            aaD.setLocationRelativeTo(this);
             aaD.setVisible(true);
         }
     }//GEN-LAST:event_editAnimationButtonActionPerformed

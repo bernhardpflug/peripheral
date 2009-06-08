@@ -216,6 +216,10 @@ public class AddAnimationDialog extends javax.swing.JDialog {
                 nextButton.setText("Finish");
             }
 
+            if (modifyFlag) {
+                prevButton.setEnabled(true);
+            }
+
             //set action tool for location panel after selection of a symboladpater
             this.createLocationsSymbolsPanel1.setActionTool(symbolAdapter.getTool());
 
@@ -322,6 +326,10 @@ public class AddAnimationDialog extends javax.swing.JDialog {
         }
         //points /areas panel
         else if (currentIndex == 2) {
+
+            if (modifyFlag) {
+                prevButton.setEnabled(false);
+            }
 
             if (!this.ruleBasedAdapterFlag) {
                 nextButton.setText(">");
