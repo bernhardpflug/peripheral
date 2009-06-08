@@ -82,19 +82,17 @@ public class RulesRootPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
     public void setSymbolAdapter(SymbolAdapter symbolAdapter) {
 
-        if (this.symbolAdapter != symbolAdapter) {
-            this.symbolAdapter = symbolAdapter;
+        this.symbolAdapter = symbolAdapter;
 
-            rulePanels.clear();
+        rulePanels.clear();
 
-            createConditionPanels();
+        createConditionPanels();
 
-            if (symbolAdapter.getRules().size() == 0) {
-                addNewRule();
-            }
-
-            this.windowChanged();
+        if (symbolAdapter.getRules().size() == 0) {
+            addNewRule();
         }
+
+        this.windowChanged();
     }
 
     private void createConditionPanels() {
