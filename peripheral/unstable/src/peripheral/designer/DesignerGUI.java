@@ -116,11 +116,12 @@ public class DesignerGUI extends javax.swing.JFrame {
             //selected created element
             this.defAnimationsList.setSelectedValue(created, true);
 
-            //update preview dialog - display all positioningtools of all symboladapter in this view
-            previewAllSymbolAdapters();
         }
 
-        //refresh properties list and positioning tools in preview dialog
+        //update preview dialog - display all positioningtools of all symboladapter in this view
+        previewAllSymbolAdapters();
+
+        //refresh properties list
         this.defAnimationsListValueChanged(null);
     }
 
