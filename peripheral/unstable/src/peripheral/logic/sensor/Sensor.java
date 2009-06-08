@@ -177,6 +177,13 @@ public class Sensor extends Observable implements Serializable {
     }
 
     @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (int) (this.pid ^ (this.pid >>> 32));
+        return hash;
+    }
+
+    @Override
     public String toString() {
         return this.name;
     }
