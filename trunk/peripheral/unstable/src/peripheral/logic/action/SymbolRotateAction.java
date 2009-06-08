@@ -32,7 +32,7 @@ public class SymbolRotateAction extends SymbolAction {
     public java.util.List<UserInput> getUserInput() {
         if (this.needAngleUserInput) {
             if (angle == null) {
-                angle = new ConstValue(adapter, "angle", 0.0f, float.class);
+                angle = new ConstValue(adapter, "angle", 0.0f, Float.class);
                 userInput.add(new UserInput("Angle", "Angle to which the symbol should be rotated.", angle));
             }
         }

@@ -57,13 +57,13 @@ public class SymbolTranslateAction extends SymbolAction {
     public java.util.List<UserInput> getUserInput() {
         if (this.needTargetPositionXUserInput) {
             if (targetPositionX == null) {
-                targetPositionX = new ConstValue(adapter, "targetPositionX", 0, int.class);
+                targetPositionX = new ConstValue(adapter, "targetPositionX", 0, Integer.class);
                 userInput.add(new UserInput("Target position x", "x-value to which the symbol should be moved.", targetPositionX));
             }
         }
         if (this.needTargetPositionYUserInput) {
             if (targetPositionY == null) {
-                targetPositionY = new ConstValue(adapter, "targetPositionY", 0, int.class);
+                targetPositionY = new ConstValue(adapter, "targetPositionY", 0, Integer.class);
                 userInput.add(new UserInput("Target position y", "y-value to which the symbol should be moved.", targetPositionY));
             }
         }

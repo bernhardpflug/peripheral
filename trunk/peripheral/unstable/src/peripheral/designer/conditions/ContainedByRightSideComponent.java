@@ -8,7 +8,6 @@
  *
  * Created on 28.05.2009, 18:16:20
  */
-
 package peripheral.designer.conditions;
 
 /**
@@ -54,12 +53,20 @@ public class ContainedByRightSideComponent extends javax.swing.JPanel {
         add(textFieldUpperBound);
     }// </editor-fold>//GEN-END:initComponents
 
-    public double getLowerBound (){
+    public double getLowerBound() {
         return Double.parseDouble(this.textFieldLowerBound.getText().replace(',', '.'));
     }
 
-    public double getUpperBound (){
+    public double getUpperBound() {
         return Double.parseDouble(this.textFieldUpperBound.getText().replace(',', '.'));
+    }
+
+    public void setLowerBound(double lower) {
+        this.textFieldLowerBound.setText(String.valueOf(lower));
+    }
+
+    public void setUpperBound(double upper) {
+        this.textFieldUpperBound.setText(String.valueOf(upper));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -67,5 +74,4 @@ public class ContainedByRightSideComponent extends javax.swing.JPanel {
     private javax.swing.JFormattedTextField textFieldLowerBound;
     private javax.swing.JFormattedTextField textFieldUpperBound;
     // End of variables declaration//GEN-END:variables
-
 }

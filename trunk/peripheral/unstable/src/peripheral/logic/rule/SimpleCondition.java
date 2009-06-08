@@ -94,17 +94,21 @@ public class SimpleCondition extends ConditionOperation {
 
     public java.awt.Component getRightSideComponent() {
         if (rightSideComponent == null) {
-            Object value = null;
-            try {
-                Class type = condition.getLeftSideOp().getSensorChannel().getDatatype();
-                String s = "";
-                if (condition.isLeftSideOpTypeNumber()){
-                    s = "0";
+            Object value = this.rightSideOp;
+
+            if (value == null) {
+                try {
+                    Class type = condition.getLeftSideOp().getSensorChannel().getDatatype();
+                    String s = "";
+                    if (condition.isLeftSideOpTypeNumber()) {
+                        s = "0";
+                    }
+                    value = type.getConstructor(String.class).newInstance(s);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                value = type.getConstructor(String.class).newInstance(s);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+            
             rightSideComponent = new JFormattedTextField(value);
             rightSideComponent.setPreferredSize(new Dimension(50, 10));
         }

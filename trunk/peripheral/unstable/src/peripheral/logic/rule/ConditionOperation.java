@@ -36,10 +36,10 @@ public abstract class ConditionOperation implements Serializable {
      * @param out
      * @throws java.io.IOException
      */
-    private void writeObject(ObjectOutputStream out) throws IOException {
+    /*private void writeObject(ObjectOutputStream out) throws IOException {
         saveValuesFromRightSideComponent();
 
         out.defaultWriteObject();
-    }
+    }*/
 }
 
