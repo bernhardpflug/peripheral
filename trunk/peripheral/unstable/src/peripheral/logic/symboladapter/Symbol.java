@@ -3,6 +3,7 @@ package peripheral.logic.symboladapter;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import javax.imageio.ImageIO;
 import peripheral.logic.action.SymbolAction;
@@ -129,5 +130,6 @@ public class Symbol implements Serializable, Cloneable {
     public String toString() {
         return file.getName();
     }
+
 }
 

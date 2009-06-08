@@ -189,6 +189,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
             }
             else if (pos instanceof Line) {
                 ((Line)pos).getStartPoint().x = value;
+                ((Line)pos).getPosition().x = value;
             }
             else if (pos instanceof Region) {
                 ((Region)pos).getBounds().x = value;
@@ -202,6 +203,7 @@ public class LocationsSymbolsPanel extends javax.swing.JPanel implements ChangeL
             }
             else if (pos instanceof Line) {
                 ((Line)pos).getStartPoint().y = value;
+                ((Line)pos).getPosition().y = value;
             }
             else if (pos instanceof Region) {
                 ((Region)pos).getBounds().y = value;

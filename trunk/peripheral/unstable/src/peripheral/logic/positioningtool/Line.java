@@ -52,6 +52,7 @@ public class Line extends Point {
 
     public void setStartPoint (java.awt.Point val) {
         this.startPoint = val;
+        this.setPosition(val);
     }
 
     public String toString() {
@@ -182,6 +183,10 @@ public class Line extends Point {
         if (draggingPoint != null) {
             this.draggingPoint.x = newPosition.x - dragOffset.x;
             this.draggingPoint.y = newPosition.y - dragOffset.y;
+
+            if (draggingPoint == startPoint){
+                this.setPosition(draggingPoint);
+            }
         }
     }
 

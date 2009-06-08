@@ -3,23 +3,21 @@ package peripheral.logic.positioningtool;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import peripheral.logic.symboladapter.Symbol; 
+import java.util.List;
+import peripheral.logic.symboladapter.Symbol;
 
 public class Point extends PositioningTool {
 
     private static final int CROSSRANGE = 10;
-
     private java.awt.Point position;
-
     private Symbol actSymbol;
-
     private boolean dragFlag = false;
 
     //offset between origin of symbol and current mouse cursor
     //(otherwise first drag creates a jump if click was far away from origin)
     private java.awt.Point dragOffset;
 
-    public Point () {
+    public Point() {
         super();
 
         position = new java.awt.Point();
@@ -29,22 +27,39 @@ public class Point extends PositioningTool {
         dragOffset = new java.awt.Point();
     }
 
-    public java.awt.Point getPosition () {
+    public java.awt.Point getPosition() {
         return position;
     }
 
-    public void setPosition (java.awt.Point val) {
+    public void setPosition(java.awt.Point val) {
         this.position = val;
+        for (Symbol s : getSymbols()){
+            s.setPosition(val);
+        }
     }
 
-    public void draw (java.awt.Graphics g) {
+    @Override
+    public List<Symbol> getSymbols() {
+        for (Symbol s : symbols){
+            s.setPosition(position);
+        }
+
+        return super.getSymbols();
     }
 
-    public Symbol getActSymbol () {
-        return getSymbols().get(0);//actSymbol;
+
+
+    public void draw(java.awt.Graphics g) {
     }
 
-    public void setActSymbol (Symbol val) {
+    public Symbol getActSymbol() {
+        if (getSymbols().size() > 0) {
+            return getSymbols().get(0);//actSymbol;
+        }
+        return null;
+    }
+
+    public void setActSymbol(Symbol val) {
         this.actSymbol = val;
     }
 
@@ -56,13 +71,11 @@ public class Point extends PositioningTool {
     /*
      * GRAPHICAL METHODS
      */
-
-
     @Override
     public void paint(Graphics g, float scale) {
 
         //in case of painting symbol paint for symbol
-        if (super.getDisplayedSymbol()!=null && super.isSymbolDisplayed()) {
+        if (super.getDisplayedSymbol() != null && super.isSymbolDisplayed()) {
 
             Symbol symbol = super.getDisplayedSymbol();
 
@@ -75,45 +88,42 @@ public class Point extends PositioningTool {
             g.drawImage(symbolImage, (int) symbolBounds.getX(), (int) symbolBounds.getY(), (int) symbolBounds.getX() + (int) symbolBounds.getWidth(), (int) symbolBounds.getY() + (int) symbolBounds.getHeight(),
                     0, 0, symbolImage.getWidth(), symbolImage.getHeight(), null, null);
 
-        }
-        //else just paint a cross with the point in the middle
+        } //else just paint a cross with the point in the middle
         else {
 
-            int scaledPosX = (int)((float)position.x*scale);
-            int scaledPosY = (int)((float)position.y*scale);
+            int scaledPosX = (int) ((float) position.x * scale);
+            int scaledPosY = (int) ((float) position.y * scale);
 
-            g.drawLine(scaledPosX-(int)(CROSSRANGE*scale), scaledPosY-(int)(CROSSRANGE*scale), scaledPosX+(int)(CROSSRANGE*scale), scaledPosY+(int)(CROSSRANGE*scale));
-            g.drawLine(scaledPosX-(int)(CROSSRANGE*scale), scaledPosY+(int)(CROSSRANGE*scale), scaledPosX+(int)(CROSSRANGE*scale), scaledPosY-(int)(CROSSRANGE*scale));
+            g.drawLine(scaledPosX - (int) (CROSSRANGE * scale), scaledPosY - (int) (CROSSRANGE * scale), scaledPosX + (int) (CROSSRANGE * scale), scaledPosY + (int) (CROSSRANGE * scale));
+            g.drawLine(scaledPosX - (int) (CROSSRANGE * scale), scaledPosY + (int) (CROSSRANGE * scale), scaledPosX + (int) (CROSSRANGE * scale), scaledPosY - (int) (CROSSRANGE * scale));
         }
     }
 
     @Override
     public boolean dragable(int x, int y) {
-        
+
         //in case symbol is displayed size of symbol is drag area
-        if (super.getDisplayedSymbol()!=null && super.isSymbolDisplayed()) {
+        if (super.getDisplayedSymbol() != null && super.isSymbolDisplayed()) {
 
             Symbol symbol = super.getDisplayedSymbol();
-            
+
             if (x >= position.x && x <= (position.x + symbol.getBufferedImage().getWidth()) &&
-                    y >=position.y && y <= (position.y + symbol.getBufferedImage().getHeight())) {
+                    y >= position.y && y <= (position.y + symbol.getBufferedImage().getHeight())) {
 
                 return true;
             }
 
             return false;
-        }
-        else {
+        } else {
             //if only point is displayed (cross) allow dragging within
             //cross range
-            
-            if (x >= position.x -CROSSRANGE && x <= position.x + CROSSRANGE &&
+
+            if (x >= position.x - CROSSRANGE && x <= position.x + CROSSRANGE &&
                     y >= position.y - CROSSRANGE && y <= position.y + CROSSRANGE) {
-                
+
                 return true;
-            }
-            else {
-                
+            } else {
+
                 return false;
             }
         }
@@ -122,7 +132,7 @@ public class Point extends PositioningTool {
     @Override
     public void dragStart(java.awt.Point origin) {
 
-        if (dragable(origin.x,origin.y)) {
+        if (dragable(origin.x, origin.y)) {
             //save offset between current curser and origin
             dragOffset.x = origin.x - position.x;
             dragOffset.y = origin.y - position.y;
@@ -144,6 +154,5 @@ public class Point extends PositioningTool {
     public void dragStop() {
         dragFlag = false;
     }
-
 }
 
