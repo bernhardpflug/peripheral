@@ -1,7 +1,6 @@
 package peripheral.viz;
 
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -11,6 +10,7 @@ import java.util.Vector;
 import peripheral.logic.DisplayConfiguration;
 import peripheral.logic.Logging;
 import peripheral.logic.datatype.Interval;
+import peripheral.logic.positioningtool.Line;
 import peripheral.logic.positioningtool.Region;
 import peripheral.logic.sensor.Sensor;
 import peripheral.logic.sensor.SensorChannel;
@@ -29,10 +29,13 @@ public class VisApplet extends PApplet implements Visualization, Observer {
     //private boolean setup = false;
     private boolean initialized = false;
     private Map<SensorChannel, String> logStrings = new HashMap<SensorChannel, String>();
+    private String noSensorChanges = "";
     private ProcessingThread pt;
     private MyTestThread t;
     private static final String UNZIP_DIR = "unzip/";
     private final Object symbolsSynObj = new Object();
+    private Map<String, PImage> imageCache = new HashMap<String, PImage>();
+    private float globalFactor;
 
     public VisApplet() {
         symbols = new Vector<VisSymbol>();
@@ -42,6 +45,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
     public void setup() {
         //size(800, 600, OPENGL);
         size(screen.width, screen.height, OPENGL);
+
         //size(1680, 1050, P2D);
         //size(screen.width, screen.height, P2D);
         //size(200, 200, OPENGL);
@@ -81,30 +85,42 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         }
         //TODO: interpolate coords to actual screen resolution
         //background(bgImage);
-        background(100);
-        camera(width/2.0f, height/2.0f, (height/2.0f) / (float)Math.tan(PI*60.0 / 360.0), width/2.0f, height/2.0f, 0, 0, 1, -1);
+        //background(100);
+        //background(bgImage);
+        imageMode(CORNER);
+        image(bgImage, 0, 0, screen.width, screen.height);
+        //camera(width/2.0f, height/2.0f, (height/2.0f) / (float)Math.tan(PI*60.0 / 360.0), width/2.0f, height/2.0f, 1, 0, 1, 1);
         VisSymbol ptr;
 
         for (int i = 0; i < symbols.size(); i++) {
             ptr = symbols.get(i);
 
-            if (ptr.getSymbol().getAdapter().getTool() instanceof Region) {
-                Rectangle bounds = ((Region) ptr.getSymbol().getAdapter().getTool()).getBounds();
-                this.line(bounds.x, bounds.y, bounds.x, bounds.y + bounds.height);
-                this.line(bounds.x + bounds.width, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height);
+            /*if (ptr.getSymbol().getAdapter().getTool() instanceof Region) {
+            Rectangle bounds = ((Region) ptr.getSymbol().getAdapter().getTool()).getBounds();
+            this.line(bounds.x, bounds.y, bounds.x, bounds.y + bounds.height);
+            this.line(bounds.x + bounds.width, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height);
+            }*/
+            if (ptr.getSymbol().getAdapter().getTool() instanceof Line) {
+                Line l = (Line) ptr.getSymbol().getAdapter().getTool();
+                stroke(126);
+                line(l.getStartPoint().x * globalFactor, l.getStartPoint().y * globalFactor, l.getEndPoint().x * globalFactor, l.getEndPoint().y * globalFactor);
             }
 
             //ptr.calcStep();
             //draw the image in all its aspects
-            tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlpha()));
+            //tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlpha()));
+
             pushMatrix();
-            translate((float) ptr.getPositionIpl().getX() + ptr.getScaledWidth() / 2, (float) ptr.getPositionIpl().getY() + ptr.getScaledHeight() / 2);
-            scale(ptr.getScaleXIpl(), ptr.getScaleYIpl());
+            tint(255, 255 * ptr.getAlpha());
+            //translate((float) (ptr.getPositionIpl().getX() + ptr.getScaledWidth() / 2) * globalFactor, (float) (ptr.getPositionIpl().getY() + ptr.getScaledHeight() / 2) * globalFactor);
+            translate((float) (ptr.getIplX() + ptr.getScaledWidth() / 2) * globalFactor, (float) ((ptr.getIplY() + ptr.getScaledHeight() / 2) - (ptr.getScaledHeight() - ptr.getImg().height)) * globalFactor);
+            scale(ptr.getScaleXIpl() * globalFactor, ptr.getScaleYIpl() * globalFactor);
             imageMode(CENTER);
             rotate(radians(ptr.getAngleIpl()));//, (float)ptr.getPositionIpl().getX(), (float) ptr.getPositionIpl().getY(), 0);
             image(ptr.getImg(), 0, 0);
             if (ptr.getImgSwap() != null) {
-                tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlphaSwap()));
+                //tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlphaSwap()));
+                tint(255, 255 * ptr.getAlphaSwap());
                 image(ptr.getImgSwap(), 0, 0);
             }
             popMatrix();
@@ -112,12 +128,14 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
 
         //Logging.getLogger().finest("" + frameRate);
-        text(frameRate + " fps", 0, 80);
-        int y = 40;
+        noTint();
+        text(frameRate + " fps", 0, 40);
+        int y = 60;
         for (String s : this.logStrings.values()) {
             text(s, 0, y);
             y += 20;
         }
+        text(noSensorChanges, 0, y);
     }
 
     public void addSymbol(Symbol s, Region region) {
@@ -130,9 +148,9 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
             if (s.getAdapter().getAnimator() == null) {
                 vs.setFadeIn(true);
-                synchronized (symbolsSynObj) {
-                    symbols.add(vs);
-                }
+                //synchronized (symbolsSynObj) {
+                symbols.add(vs);
+            //}
             } else {
                 Logging.getLogger().finer("create visAnimator");
                 VisAnimator animator = s.getAdapter().getAnimator().getVisAnimator(this, vs);
@@ -145,12 +163,10 @@ public class VisApplet extends PApplet implements Visualization, Observer {
     }
 
     public void addVisSymbol(VisSymbol vs) {
-        synchronized (symbolsSynObj){
-            symbols.add(vs);
-        }
+        //synchronized (symbolsSynObj) {
+        symbols.add(vs);
+    //}
     }
-
-
 
     public void brightness(Symbol s, float amount) {
         VisSymbol vs = findVSforS(s);
@@ -165,10 +181,10 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
     public void hideSymbol(Symbol s) {
         VisSymbol vs = findVSforS(s);
-        synchronized (vs) {
-            vs.setFadeOut(true);
-            vs.setVisible(false);
-        }
+        //synchronized (vs) {
+        vs.setFadeOut(true);
+        vs.setVisible(false);
+    //}
     }
 
     public void removeSymbol(Symbol s) {
@@ -183,7 +199,11 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
     public void rotateSymbol(Symbol s, float angle) {
         synchronized (s) {
-            s.setAngle(angle);
+            if (angle == 360) {
+                s.setAngle(angle);
+            } else {
+                s.setAngle(angle % 360);
+            }
         }
     }
 
@@ -204,9 +224,44 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
     public void swapSymbol(Symbol s, String filename) {
         VisSymbol vs = findVSforS(s);
-        PImage tempImg = loadImage(filename);
-        synchronized (vs) {
-            vs.setImgSwap(tempImg);
+        boolean newSymbol = false;
+
+        if (vs == null && filename != null) {
+            newSymbol = true;
+            vs = new VisSymbol(s, null);
+            vs.setVisible(false);
+        }
+
+        if (vs.isVisible()) {
+            try {
+                PImage tempImg = loadImage(filename);
+
+                if (tempImg != null) {
+                    synchronized (vs) {
+                        vs.setImgSwap(tempImg);
+                    }
+                } else {
+                    hideSymbol(s);
+                }
+            } catch (Exception e) {
+                //Exception is thrown, if filename is an invalid filepath
+                hideSymbol(s);
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                if (filename != null) {
+                    vs.setImg(loadImage(filename));
+
+                    if (newSymbol) {
+                        this.addVisSymbol(vs);
+                    }
+
+                    showSymbol(s);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -225,6 +280,9 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
         bgImage = loadImage(backgroundImageFilename);
         visDim = resolution;
+
+        globalFactor = (float) screen.width / bgImage.width;
+
         bgImage.resize(screen.width, screen.height);
 
         initialized = true;
@@ -239,9 +297,8 @@ public class VisApplet extends PApplet implements Visualization, Observer {
     }
 
     /*public Vector<VisSymbol> getSymbols() {
-        return this.symbols;
+    return this.symbols;
     }L*/
-
     public void update(Observable o, Object arg) {
         if (arg instanceof VisSymbol.Event) {
             VisSymbol.Event event = (VisSymbol.Event) arg;
@@ -249,10 +306,10 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
             if (event == VisSymbol.Event.FadeOutCompleted) {
                 symbol.deleteObserver(this);
-                synchronized (symbolsSynObj) {
-                    symbols.remove(symbol);
-                    Logging.getLogger().finest("removed vissymbol");
-                }
+                //synchronized (symbolsSynObj) {
+                symbols.remove(symbol);
+                Logging.getLogger().finest("removed vissymbol");
+            //}
             }
         }
     }
@@ -264,17 +321,26 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         super.stop();
     }
 
-    /*@Override
+    @Override
     public PImage loadImage(String filename) {
-    filename = UNZIP_DIR + filename;
-    return super.loadImage(filename);
-    }*/
+        if (filename == null) {
+            return null;
+        }
+
+        if (imageCache.containsKey(filename)) {
+            return imageCache.get(filename);
+        }
+        PImage img = super.loadImage(filename);
+        imageCache.put(filename, img);
+        return img;
+    }
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         //@todo: read configuration-filename from args
-
+        System.out.println(System.getProperty("java.library.path"));
         //Runtime.getInstance().startup("displayConfig.ser");
         PApplet.main(new String[]{"--present", "peripheral.viz.VisApplet", "test"});
 
@@ -298,7 +364,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
             this.symbols = symbols;
             this.updaterate = updaterate;
 
-            this.setPriority(Math.max(Thread.currentThread().getPriority()-1, Thread.MIN_PRIORITY));
+            this.setPriority(Math.max(Thread.currentThread().getPriority() - 1, Thread.MIN_PRIORITY));
 
         }
 
@@ -314,21 +380,21 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                     break;
                 }
 
-                synchronized (symbolsSynObj) {
-                    //Logging.getLogger().finest("start iterating through all vis symbols");
-                    Vector<VisSymbol> copyOfSymbols = new Vector<VisSymbol>();
-                    copyOfSymbols.addAll(symbols);
-                    for (VisSymbol symbol : copyOfSymbols) {
-                        synchronized (symbol) {
-                            symbol.calcStep();
-                            //Logging.getLogger().finest("calc next step for symbol");
-                        }
+                //synchronized (symbolsSynObj) {
+                //Logging.getLogger().finest("start iterating through all vis symbols");
+                Vector<VisSymbol> copyOfSymbols = new Vector<VisSymbol>();
+                copyOfSymbols.addAll(symbols);
+                for (VisSymbol symbol : copyOfSymbols) {
+                    synchronized (symbol) {
+                        symbol.calcStep();
+                    //Logging.getLogger().finest("calc next step for symbol");
                     }
-                    //Logging.getLogger().finest("stopped iterating through all vis symbols");
                 }
+                //Logging.getLogger().finest("stopped iterating through all vis symbols");
+                //}
                 try {
-                    
-                    Thread.sleep((long)((1f / (float)updaterate)*1000));
+
+                    Thread.sleep((long) ((1f / (float) updaterate) * 1000));
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                     interrupt();
@@ -371,11 +437,13 @@ public class VisApplet extends PApplet implements Visualization, Observer {
             scaleSymbol(symbol2, 0.2f, 0.8f);
             //}*/
 
+            int cnt = 0;
             while (true) {
                 if (isInterrupted()) {
                     break;
                 }
 
+                cnt++;
                 for (Sensor s : peripheral.logic.Runtime.getInstance().getSensors()) {
                     for (SensorChannel c : s.getSensorChannels()) {
                         Object actValue = null;
@@ -386,7 +454,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                             if (c.getDatatype().equals(Integer.class)) {
                                 iVal = Math.abs(r.nextInt());
                                 if (bounds != null) {
-                                    iVal = (int) bounds.getLowerBound() + (int) (iVal % bounds.getUpperBound());
+                                    iVal = (int) bounds.getLowerBound() + (int) (iVal % (bounds.getUpperBound()));
                                 }
                                 actValue = iVal;
                             } else {
@@ -406,7 +474,15 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                             v.setActValue(actValue);
                         }
                     }
-                    peripheral.logic.Runtime.getInstance().setSensorChanged(s);
+
+                    if (cnt <= 3) {
+                        noSensorChanges = "";
+                        peripheral.logic.Runtime.getInstance().setSensorChanged(s);
+                    } else {
+                        cnt = 0;
+                        noSensorChanges = "set no sensor changes";
+                        peripheral.logic.Runtime.getInstance().setSensorNoChanges(s);
+                    }
                 }
                 try {
                     sleep(5000);

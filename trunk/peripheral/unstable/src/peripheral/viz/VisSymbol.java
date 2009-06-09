@@ -6,6 +6,7 @@ import java.awt.Rectangle;
 
 
 import java.util.Observable;
+import peripheral.logic.Logging;
 import peripheral.logic.symboladapter.*;
 import peripheral.logic.positioningtool.Region;
 
@@ -20,13 +21,14 @@ public class VisSymbol extends Observable {
     private float angleIpl;
     private float scaleXIpl;
     private float scaleYIpl;
-    private Point positionIpl;
+    //private Point positionIpl;
     private Symbol symbol;
     private PImage img,  imgSwap;
     private Region region;
     private float brightness;
     private boolean fadeIn,  fadeOut,  isVisible;
     private boolean newPositionSet = false;
+    private float iplX,  iplY;
 
     public VisSymbol(Symbol s, Region r) {
         this.symbol = s;
@@ -34,8 +36,9 @@ public class VisSymbol extends Observable {
         this.angleIpl = s.getAngle();
         this.scaleXIpl = s.getScaleX();
         this.scaleYIpl = s.getScaleY();
-        this.positionIpl = new Point();
-        this.positionIpl.setLocation(s.getPosition());
+        //this.positionIpl = new Point();
+        //this.positionIpl.setLocation(s.getPosition());
+        this.setIpl(s.getPosition());
         this.img = this.imgSwap = null;
         this.fadeIn = this.fadeOut = false;
         this.isVisible = true;
@@ -65,7 +68,7 @@ public class VisSymbol extends Observable {
         //===========================================
         //compute alpha value
         if (fadeIn) {
-            alpha += 0.02;
+            alpha += 0.02f;
             if (alpha >= 1.f) {
                 alpha = 1.f;
                 fadeIn = false;
@@ -73,7 +76,7 @@ public class VisSymbol extends Observable {
             }
         }
         if (fadeOut) {
-            alpha -= 0.02;
+            alpha -= 0.02f;
             if (alpha <= 0.f) {
                 alpha = 0.f;
                 fadeOut = false;
@@ -82,19 +85,27 @@ public class VisSymbol extends Observable {
         }
         //===========================================
         //compute easing
-        float iplX = (float) positionIpl.getX(), iplY = (float) positionIpl.getY();
+        //float iplX = (float) positionIpl.getX(), iplY = (float) positionIpl.getY();
         float dx = (float) symbol.getPosition().getX() - iplX;
-        boolean positionReached = true;
-        if (Math.abs(dx) > 0) {
-            iplX += Math.signum(dx) * 1;//dx * 0.05; //-> easing val
-            positionReached = false;
-        }
         float dy = (float) symbol.getPosition().getY() - iplY;
-        if (Math.abs(dy) > 0) {
-            iplY += Math.signum(dy) * 1;//dy * 0.05;
+        float factorX = 1, factorY = 1;
+        if (Math.abs(dx) > Math.abs(dy)) {
+            factorY = Math.abs(dy) / Math.abs(dx);
+        } else {
+            factorX = Math.abs(dx) / Math.abs(dy);
+        }
+        //Logging.getLogger().finest("dx=" + dx + ", dy=" + dy + ", factorX=" + factorX + ", factorY=" + factorY);
+
+        boolean positionReached = true;
+        if (Math.abs(dx) > 1) {
+            iplX += Math.signum(dx) * factorX;//dx * 0.05; //-> easing val
             positionReached = false;
         }
-        positionIpl.setLocation(iplX, iplY);
+        if (Math.abs(dy) > 1) {
+            iplY += Math.signum(dy) * factorY;//dy * 0.05;
+            positionReached = false;
+        }
+        //positionIpl.setLocation(iplX, iplY);
         if (positionReached) {
             setPositionReached();
         }
@@ -106,8 +117,8 @@ public class VisSymbol extends Observable {
         //===========================================
         //swap necessary?
         if (imgSwap != null) {
-            alpha -= 0.02;
-            alphaSwap += 0.02;
+            alpha -= 0.02f;
+            alphaSwap += 0.02f;
             if (alpha <= 0.f) {
                 alpha = 1.f;
                 alphaSwap = 0.f;
@@ -119,26 +130,28 @@ public class VisSymbol extends Observable {
         //===========================================
         //calc rotation
         //symbol.setAngle(symbol.getAngle()%360); angleIpl = angleIpl%360;
-        if (symbol.getAngle() > angleIpl) {
-            angleIpl += 0.1;
-        } else if (symbol.getAngle() < angleIpl) {
-            angleIpl -= 0.1;
+        if (Math.abs(symbol.getAngle() - angleIpl) > 0.3f) {
+            if (symbol.getAngle() > angleIpl) {
+                angleIpl += 0.3f;
+            } else if (symbol.getAngle() < angleIpl) {
+                angleIpl -= 0.3f;
+            }
         }
 
         //===========================================
         //calc scaling
-        if (Math.abs(symbol.getScaleX() - scaleXIpl) > 0.05) {
+        if (Math.abs(symbol.getScaleX() - scaleXIpl) > 0.01f) {
             if (symbol.getScaleX() > scaleXIpl) {
-                scaleXIpl += 0.05;
+                scaleXIpl += 0.01f;
             } else {
-                scaleXIpl -= 0.05;
+                scaleXIpl -= 0.01f;
             }
         }
-        if (Math.abs(symbol.getScaleY() - scaleYIpl) > 0.05) {
+        if (Math.abs(symbol.getScaleY() - scaleYIpl) > 0.01f) {
             if (symbol.getScaleY() > scaleYIpl) {
-                scaleYIpl += 0.05;
+                scaleYIpl += 0.01f;
             } else {
-                scaleYIpl -= 0.05;
+                scaleYIpl -= 0.01f;
             }
         }
 
@@ -176,17 +189,31 @@ public class VisSymbol extends Observable {
         this.newPositionSet = newPositionSet;
     }
 
-    public Point getPositionIpl() {
-        return positionIpl;
+    public float getIplX() {
+        return iplX;
+    }
+
+    public float getIplY() {
+        return iplY;
+    }
+
+    public void setIpl(Point position) {
+        this.iplX = position.x;
+        this.iplY = position.y;
+    }
+
+    /*public Point getPositionIpl() {
+    return positionIpl;
     }
 
     public void setPositionIpl(Point positionIpl) {
-        this.positionIpl = positionIpl;
-    }
-
-    public void setPositionImmediately (Point position){
+    this.positionIpl = positionIpl;
+    }*/
+    public void setPositionImmediately(Point position) {
         this.getSymbol().setPosition(position);
-        this.positionIpl = position;
+        //this.positionIpl = position;
+        this.iplX = position.x;
+        this.iplY = position.y;
     }
 
     public float getScaleXIpl() {
@@ -215,6 +242,9 @@ public class VisSymbol extends Observable {
 
     public void setFadeIn(boolean fadeIn) {
         this.fadeIn = fadeIn;
+        if (fadeIn) {
+            setFadeOut(false);
+        }
     }
 
     public boolean isFadeIn() {
@@ -223,6 +253,9 @@ public class VisSymbol extends Observable {
 
     public void setFadeOut(boolean fadeOut) {
         this.fadeOut = fadeOut;
+        if (fadeOut) {
+            setFadeIn(false);
+        }
     }
 
     public float getBrightness() {
@@ -247,18 +280,17 @@ public class VisSymbol extends Observable {
         }
         Rectangle r = region.getBounds();
 
-        Point leftUp = positionIpl.getLocation();
+        Point leftUp = new Point((int) iplX, (int) iplY);//positionIpl.getLocation();
         Point rightUp = new Point();
-        rightUp.setLocation(positionIpl.getX()+this.img.width, positionIpl.getY());
+        rightUp.setLocation(leftUp.getX() + this.img.width, leftUp.getY());
         Point leftDown = new Point();
-        leftDown.setLocation(positionIpl.getX(), positionIpl.getY()+this.img.height);
+        leftDown.setLocation(leftUp.getX(), leftUp.getY() + this.img.height);
         Point rightDown = new Point();
-        rightDown.setLocation(positionIpl.getX()+this.img.width, positionIpl.getY()+this.img.height);
+        rightDown.setLocation(leftUp.getX() + this.img.width, leftUp.getY() + this.img.height);
 
         if (r.contains(leftUp) || r.contains(rightUp) || r.contains(leftDown) || r.contains(rightDown)) {
             isVisible = true;
-        }
-        else {
+        } else {
             isVisible = false;
         }
     }
