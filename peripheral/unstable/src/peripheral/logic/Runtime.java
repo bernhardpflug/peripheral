@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.positioningtool.Point;
 import peripheral.logic.positioningtool.PositioningTool;
@@ -96,10 +95,6 @@ public class Runtime {
             public void addVisSymbol(VisSymbol s) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
-
-
-
-
         };
     }
 
@@ -218,14 +213,16 @@ public class Runtime {
     }
 
     private void initPoint(Visualization viz, Point point) {
-        viz.addSymbol(point.getActSymbol(), null);
+        if (point.getActSymbol() != null) {
+            viz.addSymbol(point.getActSymbol(), null);
+        }
     }
 
     private void initRegion(Visualization viz, Region region) {
         for (Symbol s : region.getSymbolList().getSourceSymbols()) {
             for (ClonedSymbol clone : region.getSymbolList().getClones(s)) {
                 clone.setFile(s.getFile());
-                if (s.getSecondFile() != null){
+                if (s.getSecondFile() != null) {
                     clone.setSecondFile(s.getFile());
                 }
                 clone.setPosition(PositionRandomizer.getRandomPosition(region.getBounds()));
@@ -253,6 +250,12 @@ public class Runtime {
     public void setSensorChanged(Sensor changedSensor) {
         for (SymbolAdapter adapterToNotify : sensorAdapterMapping.get(changedSensor)) {
             adapterToNotify.execute();
+        }
+    }
+
+    public void setSensorNoChanges(Sensor noChangesSensor) {
+        for (SymbolAdapter adapterToNotify : sensorAdapterMapping.get(noChangesSensor)) {
+            adapterToNotify.executeInitActions();
         }
     }
 

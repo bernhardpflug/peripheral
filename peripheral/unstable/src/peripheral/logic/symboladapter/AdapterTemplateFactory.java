@@ -1,5 +1,6 @@
 package peripheral.logic.symboladapter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import peripheral.logic.action.ListHideAction;
@@ -120,10 +121,16 @@ public class AdapterTemplateFactory {
 
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, true);
+        adapter.setMinAllowedNumberOfSymbols(0);
+        adapter.setMaxAllowedNumberOfSymbols(0);
 
         SymbolAction symbolAction = new SymbolSwapAction(adapter);
         PointWrapperAction wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.setDefaultAction(wrapperAction);
+
+        symbolAction = new SymbolSwapAction(adapter, new ConstValue(adapter, "nullFile", null, File.class));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        adapter.getInitActions().add(wrapperAction);
 
         templates.add(adapter);
 
@@ -137,6 +144,9 @@ public class AdapterTemplateFactory {
 
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
+
+        adapter.setMinAllowedNumberOfSymbols(0);
+        adapter.setMaxAllowedNumberOfSymbols(0);
 
         Value val = new SensorValue(adapter, "sensorValue", Integer.class);
         UserInput input = new UserInput("Sensorwert", "Wert vom Sensor", val);
@@ -159,10 +169,14 @@ public class AdapterTemplateFactory {
 
         Rule rule = new Rule(adapter);
         //rule.getConditions().add(new TrueCondition());
-        symbolAction = new SymbolSwapAction(adapter, new VarValue(adapter, "filename"));
+        symbolAction = new SymbolSwapAction(adapter, new VarValue(adapter, "filename"), new VarValue(adapter, "fileFolder"));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         rule.getActions().add(wrapperAction);
         adapter.getRules().add(rule);
+
+        symbolAction = new SymbolSwapAction(adapter, new ConstValue(adapter, "nullFile", null, File.class));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        adapter.getInitActions().add(wrapperAction);
 
         templates.add(adapter);
 
@@ -247,7 +261,7 @@ public class AdapterTemplateFactory {
         UserInput input = new UserInput("Sensorwert", "Wert vom Sensor", val);
         adapter.getNeededUserInput().add(input);
 
-        val = new ConstValue(adapter, "multiplyFactor", 1.0, Float.class);
+        val = new ConstValue(adapter, "multiplyFactor", 1.0f, Float.class);
         input = new UserInput("MultiplyFactor", "Faktor, mit dem der eingehende Sensorwert multipliziert wird. Skalierungsfaktor ergibt sich aus Sensorwert*MultiplyFactor", val);
         adapter.getNeededUserInput().add(input);
 
@@ -322,6 +336,8 @@ public class AdapterTemplateFactory {
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         rule.getActions().add(wrapperAction);
         adapter.getRules().add(rule);
+
+        templates.add(adapter);
 
         /**
          * scaler 4: rule based scaler
