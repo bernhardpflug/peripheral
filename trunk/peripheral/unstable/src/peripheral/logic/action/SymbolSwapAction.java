@@ -12,20 +12,50 @@ import peripheral.logic.value.ConstValue;
 public class SymbolSwapAction extends SymbolAction {
 
     private Value filename = null;
+    private Value fileFolder = null;
     private boolean needFilenameUserInput = true;
 
     public SymbolSwapAction(SymbolAdapter adapter) {
         super(adapter);
     }
 
-    public SymbolSwapAction(SymbolAdapter adapter, Value filename) {
+    public SymbolSwapAction(SymbolAdapter adapter, Value filename, Value fileFolder) {
         this(adapter);
         this.filename = filename;
+        this.fileFolder = fileFolder;
         this.needFilenameUserInput = false;
     }
 
+    public SymbolSwapAction(SymbolAdapter adapter, Value filename) {
+        this(adapter, filename, null);
+    }
+
     public String getFilename() {
-        return filename.getValue().toString();
+        Object val = filename.getValue();
+        if (val == null) {
+            return null;
+        }
+        if (val instanceof File) {
+            return getFileFolder() + ((File) val).getPath();
+        }
+        return getFileFolder() + val.toString();
+    }
+
+    private String getFileFolder() {
+        if (fileFolder == null) {
+            return "";
+        }
+
+        Object val = fileFolder.getValue();
+        if (val == null) {
+            return "";
+        }
+
+        if (val instanceof File) {
+            return ((File) val).getPath() + "/";
+        }
+
+        return "";
     }
 
     @Override
@@ -44,9 +74,29 @@ public class SymbolSwapAction extends SymbolAction {
     }
 
     public void execute(Symbol s) {
-        if (!s.getFile().getPath().equals(getFilename())) {
-            Runtime.getInstance().getVisualization().swapSymbol(s, getFilename());
-            Logging.getLogger().finest("swap, new file: " + getFilename());
+        boolean execute = s.getFile() == null;
+        String path = getFilename() == null ? null : getFilename();
+        if (!execute) {
+            if (path == null) {
+                execute = true;
+            } else {
+                execute = !s.getFile().getPath().replace("\\", "/").equals(path.replace("\\", "/"));
+            }
+        }
+
+        if (execute) {
+            if (path != null) {
+                File newFile = new File(path);
+                if (!newFile.exists()) {
+                    newFile = null;
+                    path = null;
+                }
+                s.setFile(newFile);
+            } else {
+                s.setFile(null);
+            }
+            Runtime.getInstance().getVisualization().swapSymbol(s, path);
+            Logging.getLogger().finest("swap, new file: " + path);
         }
     }
 }

@@ -39,6 +39,7 @@ public class SensorUpdateThread extends Thread implements Observer{
      */
     public void run() {
         boolean sensorChanged;
+        int nrOfNoMeas = 0;
 
         while (true) {
             if (isInterrupted()){
@@ -63,7 +64,15 @@ public class SensorUpdateThread extends Thread implements Observer{
             if (sensorChanged) {
                 peripheral.logic.Runtime.getInstance().setSensorChanged(sensor);
             }
-            
+            else{
+                nrOfNoMeas++;
+            }
+
+            if (nrOfNoMeas >= 10){
+                peripheral.logic.Runtime.getInstance().setSensorNoChanges(sensor);
+                nrOfNoMeas = 0;
+            }
+
             try {
                 float samplingRate = sensor.getSamplerate();
                 sleep((long) (samplingRate * 1000));

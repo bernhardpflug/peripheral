@@ -152,11 +152,13 @@ public class DisplayConfiguration implements Serializable {
                 if (value instanceof ConstValue) {
                     ConstValue constVal = (ConstValue) value;
                     Object val = value.getValue();
-                    if (val.getClass().equals(File.class)) {
-                        constVal.setValue(new File(unzipFolder, ((File) val).getPath()));
+                    if (val != null) {
+                        if (val.getClass().equals(File.class)) {
+                            constVal.setValue(new File(unzipFolder, ((File) val).getPath()));
 
-                    } else if (val.getClass().equals(Directory.class)) {
-                        constVal.setValue(new Directory(unzipFolder, ((File) val).getPath()));
+                        } else if (val.getClass().equals(Directory.class)) {
+                            constVal.setValue(new Directory(unzipFolder, ((File) val).getPath()));
+                        }
                     }
                 }
             }
@@ -224,7 +226,7 @@ public class DisplayConfiguration implements Serializable {
         metadata2 = channel3.getMetadata();
         metadata2.put("shortname", "FloatVal");
         metadata2.put("description", "Percentage of Sky Cover");
-        metadata2.put("datatype", "Float");
+        metadata2.put("datatype", "Float32");
         metadata2.put("units", "Percent");
         metadata2.put("location", "In your face bitch");
         metadata2.put("upperlimit", "30");
