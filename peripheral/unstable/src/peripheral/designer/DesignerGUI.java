@@ -492,10 +492,19 @@ public class DesignerGUI extends javax.swing.JFrame {
                     File selectedFile = saveFileChooser.getSelectedFile();
 
                     if (selectedFile.getName().endsWith(".zip")) {
-                        DisplayConfiguration.getInstance().save(saveFileChooser.getSelectedFile().getAbsolutePath());
-                        this.setVisible(false);
-                        this.dispose();
-                        System.exit(0);
+
+                        try {
+                            DisplayConfiguration.getInstance().save(saveFileChooser.getSelectedFile().getAbsolutePath());
+                            this.setVisible(false);
+                            this.dispose();
+                            System.exit(0);
+                        }
+                        catch (java.io.IOException ex) {
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(this, "INTERNAL ERROR\nConfiguration couldn't be saved" +
+                                    "\nSee console output for further information",
+                                "Failed to save file", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                     else {
                         JOptionPane.showMessageDialog(this, "File must use extension '.zip'",

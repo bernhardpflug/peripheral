@@ -342,13 +342,14 @@ public class ZipPackager {
         }
     }
 
-    public static void zip(String destFilename, File configFile, ArrayList<RestructuredFile> filesToZip) {
+    public static void zip(String destFilename, File configFile, ArrayList<RestructuredFile> filesToZip)
+    throws IOException{
 
         int read = 0;
         FileInputStream in;
         byte[] data = new byte[1024];
 
-        try {
+//        try {
             // connect Zip-Archiv with Stream
             ZipOutputStream out =
                     new ZipOutputStream(new FileOutputStream(destFilename));
@@ -362,7 +363,7 @@ public class ZipPackager {
             for (RestructuredFile file : filesToZip) {
 
                 if (file.getOldFile().isFile()) {
-                    try {
+                    //try {
 
                         ZipEntry entry = new ZipEntry(file.getNewPath());
                         in = new FileInputStream(file.getOldFile().getPath());
@@ -375,15 +376,15 @@ public class ZipPackager {
                         }
                         out.closeEntry(); // Commit new entry
                         in.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
                 }
             }
             out.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
     }
 
     public static void unzip(String zipFilename, String destinationDirectory) {
