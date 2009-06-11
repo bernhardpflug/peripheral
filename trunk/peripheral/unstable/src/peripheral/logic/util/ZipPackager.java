@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -102,6 +103,10 @@ public class ZipPackager {
          *** and save their new path in restructured image ***
          *****************************************************/
 
+        //keeps all generated filesnames to check at creating whether
+        //same name hasn't already been created before
+        HashSet<String> autoGenFileNames = new HashSet<String>();
+
         //go through all items in map and create new restructed file
         //with old file in it and additional new path with renamed
         //filename for zip file
@@ -110,10 +115,12 @@ public class ZipPackager {
 
             for (int i = 0; i < corFilenames.size(); i++) {
                 RestructuredFile restructuredFile = new RestructuredFile(corFilenames.get(i));
-                restructuredFile.setNewPath(getNewFilePath(corFilenames.get(i), i));
+                restructuredFile.setNewPath(getNewFilePath(corFilenames.get(i),fileMap,autoGenFileNames, i));
                 result.add(restructuredFile);
             }
         }
+
+        HashSet<String> autoGenFolderNames = new HashSet<String>();
 
         //for all directories create extended path with folder name and add
         //all files in this dir to restructured files
@@ -124,7 +131,7 @@ public class ZipPackager {
                 //folder
                 File folder = dirs.get(i);
                 //get new name of folder
-                String folderName = getNewFilePath(folder, i) + "/";
+                String folderName = getNewFilePath(folder,dirMap,autoGenFolderNames, i) + "/";
 
                 //for each file in this folder create restructured file
                 if (folder.isDirectory()) {
@@ -168,9 +175,19 @@ public class ZipPackager {
 
         //if map already contains list for this filename add file to this list
         if (reMap.containsKey(file.getName())) {
-            reMap.get(file.getName()).add(file);
+
+            List<File> filesList = reMap.get(file.getName());
+
+            //only rename this file if it is not completely the same (same path)
+            //otherwise there is no need to create several references for the same file
+            if (!filesList.get(0).equals(file)) {
+                
+                filesList.add(file);
+            }
+            
         } //else create new entry in map with new arraylist
         else {
+            
             ArrayList<File> filesList = new ArrayList<File>();
             filesList.add(file);
             reMap.put(file.getName(), filesList);
@@ -187,11 +204,12 @@ public class ZipPackager {
      * @param oldFile
      * @param index
      */
-    private static String getNewFilePath(File oldFile, int index) {
+    private static String getNewFilePath(File oldFile, Map<String, List<File>> fileMap,HashSet<String> autoGenFileNames, int index) {
 
         String name = oldFile.getName();
 
         if (index == 0) {
+            
             return RESOURCE_PATH + name;
         } //if more than one file exists add index at end of filename
         else {
@@ -200,7 +218,19 @@ public class ZipPackager {
             if (extensionIndex == -1) {
                 extensionIndex = name.length();
             }
-            return RESOURCE_PATH + name.substring(0, extensionIndex) + index + name.substring(extensionIndex, name.length());
+
+            String newName= name.substring(0, extensionIndex) + index + name.substring(extensionIndex, name.length());
+
+            //increase appended index as long as filename
+            while (fileMap.containsKey(newName) || autoGenFileNames.contains(newName)) {
+                index++;
+                newName = name.substring(0, extensionIndex) + index + name.substring(extensionIndex, name.length());
+            }
+
+            //add new created name to auto generated file names
+            autoGenFileNames.add(newName);
+
+            return RESOURCE_PATH + newName;
         }
 
     }
