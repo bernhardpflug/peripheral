@@ -78,7 +78,7 @@ public class DisplayConfiguration implements Serializable {
         return dimension;
     }
 
-    public void save(String filename) {
+    public void save(String filename) throws IOException{
         dimension = new Dimension(getWidth(), getHeight());
 
         //get all files to change path for
