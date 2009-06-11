@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.java.jddac.common.meas.MeasAttr;
 import net.java.jddac.common.type.ArgArray;
 import net.java.jddac.jmdi.fblock.MeasInfoBlock;
 import net.java.jddac.jmdi.fblock.MetadataStoreBlock;
@@ -179,17 +180,17 @@ public class MetadataServlet extends HttpServlet {
 					}
 					
 					// Upperlimit
-					if(metadata.getString("upperlimit")==null){
-						writer.println("				<upperlimit></upperlimit>");
+					if(metadata.getString("upperLimit")==null){
+						writer.println("				<upperlimit>null</upperlimit>");
 					}else{
-						writer.println("				<upperlimit>" + metadata.getString("upperlimit") + "</upperlimit>");
+						writer.println("				<upperlimit>" + metadata.getString("upperLimit") + "</upperlimit>");
 					}
 					
 					// Lowerlimit
-					if(metadata.getString("lowerlimit")==null){
-						writer.println("				<lowerlimit></lowerlimit>");
+					if(metadata.getString(MeasAttr.LOWER_LIMIT)==null){
+						writer.println("				<lowerlimit>null</lowerlimit>");
 					}else{
-						writer.println("				<lowerlimit>" + metadata.getString("lowerlimit") + "</lowerlimit>");
+						writer.println("				<lowerlimit>" + metadata.getString(MeasAttr.LOWER_LIMIT) + "</lowerlimit>");
 					}
 					
 					writer.println("			</channel>");
