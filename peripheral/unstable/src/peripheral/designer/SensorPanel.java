@@ -13,6 +13,7 @@ import java.util.Observer;
 import java.util.TreeMap;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -26,6 +27,7 @@ import peripheral.logic.sensor.SensorChannel;
 import peripheral.logic.sensor.SensorServer;
 import peripheral.logic.sensor.ServerConnectionStatusChangedEvent;
 import peripheral.logic.sensor.SensorServer.status;
+import peripheral.logic.symboladapter.SymbolAdapter;
 
 /**
  *
@@ -300,8 +302,53 @@ public class SensorPanel extends JPanel implements Observer{
 			public void actionPerformed(ActionEvent e) {
 				
 				if(serverList.size()>0 && serverTable.getSelectedRow() != -1){
-					
-					serverList.remove(serverTable.getSelectedRow());
+
+                    SensorServer toDel = serverList.get(serverTable.getSelectedRow());
+
+                    //check if some sensors of the sensorserver are currently used by
+                    //at least one adapter
+                    ArrayList<Sensor> usedSensors = new ArrayList<Sensor>();
+
+                    for (SymbolAdapter adapter : DisplayConfiguration.getInstance().getAdapter()) {
+                        for (Sensor sensor : toDel.getSensorList()) {
+                            if (adapter.isUsed(sensor)) {
+                                if (!usedSensors.contains(sensor)) {
+                                    usedSensors.add(sensor);
+                                }
+                            }
+                        }
+                    }
+
+                    if (usedSensors.size() > 0) {
+                        //ask user if really wants to delete this sensor
+                        Object[] options = {"YES","NO"};
+                        String title = "Usage found";
+                        String text = "Some sensors of this server are used by animations\n" +
+                                "By deletion all references will be reset\n" +
+                                "Remove anyway?";
+
+                        int answer = JOptionPane.showOptionDialog(
+                                null,
+                                text,
+                                title,
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.WARNING_MESSAGE,
+                                null,
+                                options,
+                                options[1]);
+
+                        //if user does not commit deletion return
+                        if (answer != JOptionPane.YES_OPTION) {
+                            return;
+                        }
+
+                        //delete dependencies of all sensors of this server
+                        for (SymbolAdapter adapter : DisplayConfiguration.getInstance().getAdapter()) {
+                            adapter.removeSensorsWithDependencies(usedSensors);
+                        }
+                    }
+
+					serverList.remove(toDel);
 					
 					if(serverList.size()>0){
 						int idx = serverTable.getRowCount()-1;
