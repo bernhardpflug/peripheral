@@ -426,7 +426,7 @@ public class SensorPanel extends JPanel implements Observer{
     				metadata1.put("description", "Air Temperature");
     				metadata1.put("datatype", "Integer8");
     				metadata1.put("units", "Degree Celcius");
-    				metadata1.put("location", "In your face bitch");
+    				metadata1.put("location", "Planet earth");
     				
     				// Create Metadata for channel2
     				TreeMap<String, String> metadata2 = channel2.getMetadata();
@@ -434,7 +434,7 @@ public class SensorPanel extends JPanel implements Observer{
     				metadata2.put("description", "Percentage of Sky Cover");
     				metadata2.put("datatype", "Integer8");
     				metadata2.put("units", "Percent");
-    				metadata2.put("location", "In your face bitch");
+    				metadata2.put("location", "Planet earth");
     				metadata2.put("upperlimit", "100");
     				metadata2.put("lowerlimit", "0");
     				
