@@ -70,7 +70,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         //size((int) screen.getWidth(), (int) screen.getHeight(), P3D);
         //background(100);
         //background(bgImage);
-        frameRate(20);
+        //frameRate(600);
         noStroke();
 
         PFont font = createFont("Arial", 20);
@@ -92,7 +92,8 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         //camera(width/2.0f, height/2.0f, (height/2.0f) / (float)Math.tan(PI*60.0 / 360.0), width/2.0f, height/2.0f, 1, 0, 1, 1);
         VisSymbol ptr;
 
-        for (int i = 0; i < symbols.size(); i++) {
+        for (int i = symbols.size() - 1; i >= 0; i--) {
+            //for (int i=0; i< symbols.size(); i++){
             ptr = symbols.get(i);
 
             /*if (ptr.getSymbol().getAdapter().getTool() instanceof Region) {
@@ -121,6 +122,9 @@ public class VisApplet extends PApplet implements Visualization, Observer {
             if (ptr.getImgSwap() != null) {
                 //tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlphaSwap()));
                 tint(255, 255 * ptr.getAlphaSwap());
+                imageMode(CENTER);
+                translate((float) (ptr.getIplX() + ptr.getScaledWidth() / 2) * -globalFactor, (float) ((ptr.getIplY() + ptr.getScaledHeight() / 2) - (ptr.getScaledHeight() - ptr.getImg().height)) * -globalFactor);
+                translate((float) (ptr.getIplX() + ptr.getSwapScaledWidth() / 2) * globalFactor, (float) ((ptr.getIplY() + ptr.getSwapScaledHeight() / 2) - (ptr.getSwapScaledHeight() - ptr.getImgSwap().height)) * globalFactor);
                 image(ptr.getImgSwap(), 0, 0);
             }
             popMatrix();
@@ -145,11 +149,14 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         if (vs == null) {
             vs = new VisSymbol(s, region);
             vs.setImg(loadImage(s.getFile().getPath()));
+            if (s.getSecondFile() != null){
+                vs.setSecondImage(loadImage(s.getSecondFile().getPath()));
+            }
 
             if (s.getAdapter().getAnimator() == null) {
                 vs.setFadeIn(true);
                 //synchronized (symbolsSynObj) {
-                symbols.add(vs);
+                addVisSymbol(vs);
             //}
             } else {
                 Logging.getLogger().finer("create visAnimator");
@@ -164,7 +171,17 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
     public void addVisSymbol(VisSymbol vs) {
         //synchronized (symbolsSynObj) {
-        symbols.add(vs);
+        boolean inserted = false;
+        for (int i = 0; i < symbols.size(); i++) {
+            if (symbols.get(i).getSymbol().getAdapter() == vs.getSymbol().getAdapter()) {
+                symbols.insertElementAt(vs, i);
+                inserted = true;
+                break;
+            }
+        }
+        if (!inserted) {
+            symbols.add(vs);
+        }
     //}
     }
 
@@ -485,7 +502,10 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                     }
                 }
                 try {
-                    sleep(5000);
+                    sleep(50000);
+                    if (cnt==0){
+                        //sleep(15000);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                     interrupt();

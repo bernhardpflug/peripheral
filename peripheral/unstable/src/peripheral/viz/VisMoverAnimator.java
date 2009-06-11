@@ -31,7 +31,7 @@ public class VisMoverAnimator implements VisAnimator, Observer {
     private Point startPosition;
     private Visualization viz;
     private Point nextPosition;
-    private boolean doFadeIn;
+    //private boolean doFadeIn;
 
     public VisMoverAnimator(Mover mover, VisSymbol symbol, Visualization viz) {
         this.mover = mover;
@@ -61,22 +61,24 @@ public class VisMoverAnimator implements VisAnimator, Observer {
 
             //fadeIn = Mover.FadeIn.Left;
             //mover.setDirection(Direction.Horizontal);
+            int fadeInStartPositionRandX = (new Random()).nextInt() % symbol.getImg().width;
+            int fadeInStartPositionRandY = (new Random()).nextInt() % symbol.getImg().height;
             switch (fadeIn) {
                 case LeftOrTop:
                     if (mover.getDirection() == Direction.Horizontal) {
-                        fadeInStartPosition.x = region.getBounds().x - symbol.getImg().width;
+                        fadeInStartPosition.x = region.getBounds().x - (symbol.getImg().width + fadeInStartPositionRandX);
                         startPosition.x = region.getBounds().x;
                         endPosition.y = fadeInStartPosition.y;
-                        if (mover.isRepeat()) {
+                        if (!mover.isBounds()) {
                             endPosition.x = region.getBounds().x + region.getBounds().width;
                         } else {
                             endPosition.x = region.getBounds().x + region.getBounds().width - symbol.getImg().width;
                         }
                     } else if (mover.getDirection() == Direction.Vertical) {
-                        fadeInStartPosition.y = region.getBounds().y - symbol.getImg().height;
+                        fadeInStartPosition.y = region.getBounds().y - (symbol.getImg().height + fadeInStartPositionRandY);
                         startPosition.y = region.getBounds().y;
                         endPosition.x = fadeInStartPosition.x;
-                        if (mover.isRepeat()) {
+                        if (!mover.isBounds()) {
                             endPosition.y = region.getBounds().y + region.getBounds().height;
                         } else {
                             endPosition.y = region.getBounds().y + region.getBounds().height - symbol.getImg().height;
@@ -85,19 +87,19 @@ public class VisMoverAnimator implements VisAnimator, Observer {
                     break;
                 case RightOrBottom:
                     if (mover.getDirection() == Direction.Horizontal) {
-                        fadeInStartPosition.x = region.getBounds().x + region.getBounds().width;
+                        fadeInStartPosition.x = region.getBounds().x + (region.getBounds().width + fadeInStartPositionRandX);
                         startPosition.x = region.getBounds().x + region.getBounds().width - symbol.getImg().width;
                         endPosition.y = fadeInStartPosition.y;
-                        if (mover.isRepeat()) {
+                        if (!mover.isBounds()) {
                             endPosition.x = region.getBounds().x - symbol.getImg().width;
                         } else {
                             endPosition.x = region.getBounds().x;
                         }
                     } else if (mover.getDirection() == Direction.Vertical) {
-                        fadeInStartPosition.y = region.getBounds().y + region.getBounds().height;
+                        fadeInStartPosition.y = region.getBounds().y + (region.getBounds().height + fadeInStartPositionRandY);
                         startPosition.y = region.getBounds().y + region.getBounds().height - symbol.getImg().height;
                         endPosition.x = fadeInStartPosition.x;
-                        if (mover.isRepeat()) {
+                        if (!mover.isBounds()) {
                             endPosition.y = region.getBounds().y - symbol.getImg().height;
                         } else {
                             endPosition.y = region.getBounds().y;
@@ -123,8 +125,13 @@ public class VisMoverAnimator implements VisAnimator, Observer {
                 } else {*/
                 if (mover.isBounds()) {
                     nextPosition = nextPosition == startPosition ? endPosition : startPosition;
+                    symbol.toogleImage();
                     viz.translateSymbol(symbol.getSymbol(), nextPosition);
                     Logging.getLogger().finer("move symbol to " + nextPosition);
+                } else {
+                    symbol.setPositionImmediately(fadeInStartPosition);
+                    symbol.setFadeIn(true);
+                    //viz.translateSymbol(symbol.getSymbol(), endPosition);
                 }
             //}
             } else if (((Event) arg) == Event.FadeInCompleted) {

@@ -16,6 +16,7 @@ import peripheral.logic.action.SymbolTranslateAction;
 import peripheral.logic.animation.Mover;
 import peripheral.logic.datatype.Directory;
 import peripheral.logic.datatype.Interval;
+import peripheral.logic.datatype.SymbolList;
 import peripheral.logic.filter.MultiplyFilter;
 import peripheral.logic.filter.IntervalValueToPercentageFilter;
 import peripheral.logic.filter.PercentageToIntervalValueFilter;
@@ -101,7 +102,7 @@ public class AdapterTemplateFactory {
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Preselect, false);
 
-        adapter.setAllowOrientedSymbols(true);
+        //adapter.setAllowOrientedSymbols(true);
 
         SymbolAction symbolAction = new SymbolShowAction(adapter);
         PointWrapperAction wrapperAction = new PointWrapperAction(adapter, symbolAction);
@@ -130,7 +131,8 @@ public class AdapterTemplateFactory {
 
         symbolAction = new SymbolSwapAction(adapter, new ConstValue(adapter, "nullFile", null, File.class));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
-        adapter.getInitActions().add(wrapperAction);
+        //adapter.getInitActions().add(wrapperAction);
+        adapter.getSensorFailureActions().add(wrapperAction);
 
         templates.add(adapter);
 
@@ -176,7 +178,7 @@ public class AdapterTemplateFactory {
 
         symbolAction = new SymbolSwapAction(adapter, new ConstValue(adapter, "nullFile", null, File.class));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
-        adapter.getInitActions().add(wrapperAction);
+        adapter.getSensorFailureActions().add(wrapperAction);
 
         templates.add(adapter);
 
@@ -238,6 +240,10 @@ public class AdapterTemplateFactory {
         rule.getActions().add(wrapperAction);
         adapter.getRules().add(rule);
 
+        symbolAction = new SymbolTranslateAction(adapter, new ConstValue(adapter, "startPos", ((Line) adapter.getTool()).getStartPoint(), java.awt.Point.class));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        adapter.getSensorFailureActions().add(wrapperAction);
+
         templates.add(adapter);
 
     /**
@@ -276,6 +282,10 @@ public class AdapterTemplateFactory {
         PointWrapperAction wrapperAction = new PointWrapperAction(adapter, symbolAction);
         rule.getActions().add(wrapperAction);
         adapter.getRules().add(rule);
+
+        symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "failureFactorX", 1.0, Float.class), new ConstValue(adapter, "failureFactorY", 1.0, Float.class));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        adapter.getSensorFailureActions().add(wrapperAction);
 
         templates.add(adapter);
 
@@ -337,6 +347,10 @@ public class AdapterTemplateFactory {
         rule.getActions().add(wrapperAction);
         adapter.getRules().add(rule);
 
+        symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "failureFactorX", 1.0, Float.class), new ConstValue(adapter, "failureFactorY", 1.0, Float.class));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        adapter.getSensorFailureActions().add(wrapperAction);
+
         templates.add(adapter);
 
         /**
@@ -354,6 +368,10 @@ public class AdapterTemplateFactory {
         symbolAction = new SymbolScaleAction(adapter);
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.setDefaultAction(wrapperAction);
+
+        symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "failureFactorX", 1.0, Float.class), new ConstValue(adapter, "failureFactorY", 1.0, Float.class));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        adapter.getSensorFailureActions().add(wrapperAction);
 
         templates.add(adapter);
     }
@@ -380,6 +398,10 @@ public class AdapterTemplateFactory {
         PointWrapperAction wrapperAction = new PointWrapperAction(adapter, symbolAction);
         rule.getActions().add(wrapperAction);
         adapter.getRules().add(rule);
+
+        symbolAction = new SymbolRotateAction(adapter, new ConstValue(adapter, "failureAngle", 0.0, Float.class));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        adapter.getSensorFailureActions().add(wrapperAction);
 
         templates.add(adapter);
 
@@ -420,6 +442,10 @@ public class AdapterTemplateFactory {
         rule.getActions().add(wrapperAction);
         adapter.getRules().add(rule);
 
+        symbolAction = new SymbolRotateAction(adapter, new ConstValue(adapter, "failureAngle", 0.0, Float.class));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        adapter.getSensorFailureActions().add(wrapperAction);
+
         templates.add(adapter);
 
         /**
@@ -430,13 +456,17 @@ public class AdapterTemplateFactory {
         adapter.setName("Rule-based rotor");
         adapter.setDescription("Rotor, bei dem der Rotationswinkel pro Regel explizit festgelegt wird.");
 
-        adapter.setTool(new Line());
+        adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, true);
 
         rule = new Rule(adapter);
         symbolAction = new SymbolRotateAction(adapter);
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.setDefaultAction(wrapperAction);
+
+        symbolAction = new SymbolRotateAction(adapter, new ConstValue(adapter, "failureAngle", 0.0, Float.class));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        adapter.getSensorFailureActions().add(wrapperAction);
 
         templates.add(adapter);
     }
@@ -453,16 +483,12 @@ public class AdapterTemplateFactory {
         adapter.setTool(new ToolList(Point.class));
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
-        List<PositioningTool> posTools = adapter.getTool().getElements();
-        ListHideAction listHideAction = new ListHideAction(adapter, new ConstValue(adapter, "elementsToHide", posTools, posTools.getClass()));
-        adapter.getInitActions().add(listHideAction);
-
         Value val = new SensorValue(adapter, "sensorValue", Integer.class);
         UserInput input = new UserInput("Sensorwert", "Wert vom Sensor, der die Anzahl der anzuzeigenden Punkte angibt.", val);
         adapter.getNeededUserInput().add(input);
 
         RandomValuePickerFilter rpf = new RandomPositioningToolPickerFilter(adapter, "pickedValues");
-        posTools = adapter.getTool().getElements();
+        List<PositioningTool> posTools = adapter.getTool().getElements();
         new ConstValue(adapter, "valueList", posTools, posTools.getClass());
         rpf.putFilterInputValue("valueList", new VarValue(adapter, "valueList"));
         rpf.putFilterInputValue("nrToPick", new VarValue(adapter, "sensorValue"));
@@ -476,6 +502,11 @@ public class AdapterTemplateFactory {
         //rule.getActions().add(listShowAction);
         adapter.getRules().add(rule);
 
+        posTools = adapter.getTool().getElements();
+        ListHideAction listHideAction = new ListHideAction(adapter, new ConstValue(adapter, "elementsToHide", posTools, posTools.getClass()));
+        adapter.getInitActions().add(listHideAction);
+        adapter.getSensorFailureActions().add(listHideAction);
+
         templates.add(adapter);
 
         /**
@@ -488,6 +519,7 @@ public class AdapterTemplateFactory {
 
         adapter.setTool(new Region());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
+        adapter.setMaxAllowedNumberOfSymbols(-1);
 
         val = new SensorValue(adapter, "sensorValue", Integer.class);
         input = new UserInput("Sensorwert", "Wert vom Sensor, der die Anzahl der anzuzeigenden Symbole angibt.", val);
@@ -510,6 +542,10 @@ public class AdapterTemplateFactory {
         RegionAddNewAction regionAddNewAction = new RegionAddNewAction(adapter, new VarValue(adapter, "pickedSymbols"));
         rule.getActions().add(regionAddNewAction);
         adapter.getRules().add(rule);
+
+        regionAddNewAction = new RegionAddNewAction(adapter, new ConstValue(adapter, "initSymbols", new SymbolList(), SymbolList.class));
+        adapter.getInitActions().add(regionAddNewAction);
+        adapter.getSensorFailureActions().add(regionAddNewAction);
 
         templates.add(adapter);
 

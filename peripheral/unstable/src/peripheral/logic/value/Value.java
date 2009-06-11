@@ -1,15 +1,13 @@
 package peripheral.logic.value;
 
 import java.io.Serializable;
+import peripheral.logic.Logging;
 import peripheral.logic.symboladapter.SymbolAdapter;
-
 
 public abstract class Value implements Serializable {
 
     private Class valueType;
-
     protected SymbolAdapter adapter;
-
     protected String varName;
 
     /**
@@ -19,36 +17,45 @@ public abstract class Value implements Serializable {
      * 
      * @param adapter
      */
-    protected Value(SymbolAdapter adapter){
+    protected Value(SymbolAdapter adapter) {
         this.adapter = adapter;
     }
 
-    public Value (SymbolAdapter adapter, String name) {
+    public Value(SymbolAdapter adapter, String name) {
         this(adapter);
         this.varName = name;
 
-        this.adapter.getVarpool().put(name, this);
+        if (this instanceof ConstValue || this instanceof SensorValue) {
+            if (adapter.getVarpool().containsKey(varName)) {
+                Logging.getLogger().warning("Varpool already contains a value named '" + varName + "'");
+            }
+            else{
+                this.adapter.getVarpool().put(name, this);
+            }
+        }
+        else{
+            this.adapter.getVarpool().put(name, this);
+        }
     }
 
-    public Value (SymbolAdapter adapter, String name, Class valueType){
+    public Value(SymbolAdapter adapter, String name, Class valueType) {
         this(adapter, name);
         this.valueType = valueType;
     }
 
-    public abstract Object getValue ();
+    public abstract Object getValue();
 
-    public Class getValueType () {
+    public Class getValueType() {
         return valueType;
     }
 
     /*public void setValueType (Class val) {
-        this.valueType = val;
+    this.valueType = val;
     }*/
-
-    public String getVarName () {
+    public String getVarName() {
         return varName;
     }
-    
+
     public SymbolAdapter getAdapter() {
         return adapter;
     }
@@ -60,15 +67,11 @@ public abstract class Value implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Value)){
+        if (!(obj instanceof Value)) {
             return false;
         }
 
-        return ((Value)obj).getVarName().equals(this.varName);
+        return ((Value) obj).getVarName().equals(this.varName);
     }
-
-
-    
-
 }
 

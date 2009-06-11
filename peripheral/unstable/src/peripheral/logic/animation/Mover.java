@@ -42,7 +42,7 @@ public class Mover extends SymbolAnimator {
     private Value valDirection;
     private Value valSpeed;
     private Value valBounds;
-    private Value valRepeat;
+    //private Value valRepeat;
     private Value valFadeIn;
 
     List<UserInput> ui;
@@ -55,13 +55,13 @@ public class Mover extends SymbolAnimator {
         valDirection = new ConstValue(adapter, "Mover.direction", direction, direction.getClass());
         valSpeed = new ConstValue(adapter, "Mover.speed", 1.0, Double.class);
         valBounds = new ConstValue(adapter, "Mover.bounds", true, Boolean.class);
-        valRepeat = new ConstValue(adapter, "Mover.repeat", false, Boolean.class);
+        //valRepeat = new ConstValue(adapter, "Mover.repeat", false, Boolean.class);
         valFadeIn = new ConstValue(adapter, "Mover.fadeIn", fadeIn, fadeIn.getClass());
 
         ui.add(new UserInput("Direction", "", valDirection));
         ui.add(new UserInput("Speed", "", valSpeed));
         ui.add(new UserInput("Bounds", "", valBounds));
-        ui.add(new UserInput("Repeat", "", valRepeat));
+        //ui.add(new UserInput("Repeat", "", valRepeat));
         ui.add(new UserInput("FadeIn", "", valFadeIn));
     }
 
@@ -94,9 +94,9 @@ public class Mover extends SymbolAnimator {
     public void setFadeOut(boolean fadeOut) {
     this.fadeOut = fadeOut;
     }*/
-    public boolean isRepeat() {
+    /*public boolean isRepeat() {
         return (Boolean) valRepeat.getValue();
-    }
+    }*/
 
     /*public void setRepeat(boolean repeat) {
     this.repeat = repeat;

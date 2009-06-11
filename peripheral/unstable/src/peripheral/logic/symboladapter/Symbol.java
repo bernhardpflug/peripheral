@@ -103,7 +103,7 @@ public class Symbol implements Serializable, Cloneable {
         Symbol source = null;
         source = (Symbol) this.clone();
 
-        return new ClonedSymbol(source, this.file, this.getAdapter());
+        return new ClonedSymbol(source, this.file, this.secondFile, this.getAdapter());
     }
 
     public BufferedImage getBufferedImage() {

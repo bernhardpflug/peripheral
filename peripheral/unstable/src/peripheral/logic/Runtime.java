@@ -119,7 +119,7 @@ public class Runtime {
         //startSensorServer();
 
         createSensorAdapterMapping();
-    //createSensorUpdateThreads();
+    //screateSensorUpdateThreads();
 
     //startSensorCheckout();
     }
@@ -255,7 +255,7 @@ public class Runtime {
 
     public void setSensorNoChanges(Sensor noChangesSensor) {
         for (SymbolAdapter adapterToNotify : sensorAdapterMapping.get(noChangesSensor)) {
-            adapterToNotify.executeInitActions();
+            adapterToNotify.executeSensorFailureActions();
         }
     }
 

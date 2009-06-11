@@ -10,11 +10,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import peripheral.logic.action.Action;
 import peripheral.logic.action.ActionToolAction;
 import peripheral.logic.filter.Filter;
 import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.rule.Condition;
+import peripheral.logic.rule.DefaultRule;
 import peripheral.logic.rule.Rule;
 import peripheral.logic.sensor.Sensor;
 import peripheral.logic.sensor.SensorChannel;
@@ -43,9 +43,11 @@ public class SymbolAdapter implements Serializable {
     private Map<RequiredStep, Boolean> requiredSteps;
     private ActionToolAction defaultAction;
     private List<ActionToolAction> initActions;
+    private List<ActionToolAction> sensorFailureActions;
     //define as -1 for infinite
     private int maxAllowedNumberOfSymbols;
     private int minAllowedNumberOfSymbols;
+    private boolean sensorFailure = false;
 
     //defines whether symbols of the positioningtools of this adapter
     //may add a second file for a symbol if the symbol changes its direction
@@ -68,6 +70,8 @@ public class SymbolAdapter implements Serializable {
         requiredSteps = new java.util.HashMap<RequiredStep, Boolean>();
 
         initActions = new ArrayList<ActionToolAction>();
+
+        sensorFailureActions = new ArrayList<ActionToolAction>();
 
         allowOrientedSymbols = false;
 
@@ -162,12 +166,11 @@ public class SymbolAdapter implements Serializable {
     }
 
     public void setMinAllowedNumberOfSymbols(int minAllowedNumberOfSymbols) {
-        if (minAllowedNumberOfSymbols <= this.maxAllowedNumberOfSymbols || this.maxAllowedNumberOfSymbols==-1) {
+        if (minAllowedNumberOfSymbols <= this.maxAllowedNumberOfSymbols || this.maxAllowedNumberOfSymbols == -1) {
             this.minAllowedNumberOfSymbols = minAllowedNumberOfSymbols;
-        }
-        else {
-            peripheral.logic.Logging.getLogger().finer(minAllowedNumberOfSymbols+
-                    " for minNumberOfSymbols is higher as defined maxvalue "+this.maxAllowedNumberOfSymbols+"\n" +
+        } else {
+            peripheral.logic.Logging.getLogger().finer(minAllowedNumberOfSymbols +
+                    " for minNumberOfSymbols is higher as defined maxvalue " + this.maxAllowedNumberOfSymbols + "\n" +
                     "minvalue not updated");
         }
     }
@@ -388,6 +391,10 @@ public class SymbolAdapter implements Serializable {
         return initActions;
     }
 
+    public List<ActionToolAction> getSensorFailureActions() {
+        return sensorFailureActions;
+    }
+
     /*public void save (ObjectOutputStream os) {
     }*/
     public String toString() {
@@ -396,13 +403,31 @@ public class SymbolAdapter implements Serializable {
     }
 
     public void execute() {
+        boolean ruleExecuted = false;
+        Rule defaultRule = null;
+
+        if (sensorFailure) {
+            executeInitActions();
+        }
+
         for (Filter bf : getBeforeFilter()) {
             bf.doFilter();
         }
 
         for (Rule r : getRules()) {
-            if (r.tryExecute()) {
-                break;
+            if (r instanceof DefaultRule) {
+                defaultRule = r;
+            } else {
+                if (r.tryExecute()) {
+                    ruleExecuted = true;
+                    break;
+                }
+            }
+        }
+
+        if (!ruleExecuted) {
+            if (defaultRule != null){
+                defaultRule.tryExecute();
             }
         }
 
@@ -414,6 +439,16 @@ public class SymbolAdapter implements Serializable {
     public void executeInitActions() {
         for (ActionToolAction action : initActions) {
             action.execute(tool);
+        }
+        sensorFailure = false;
+    }
+
+    public void executeSensorFailureActions() {
+        if (!sensorFailure) {
+            for (ActionToolAction action : sensorFailureActions) {
+                action.execute(tool);
+            }
+            sensorFailure = true;
         }
     }
 }
