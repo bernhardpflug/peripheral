@@ -24,6 +24,7 @@ public class VisSymbol extends Observable {
     //private Point positionIpl;
     private Symbol symbol;
     private PImage img,  imgSwap;
+    private PImage secondImage = null;
     private Region region;
     private float brightness;
     private boolean fadeIn,  fadeOut,  isVisible;
@@ -140,18 +141,27 @@ public class VisSymbol extends Observable {
 
         //===========================================
         //calc scaling
-        if (Math.abs(symbol.getScaleX() - scaleXIpl) > 0.01f) {
+        dx = (float) symbol.getScaleX() - scaleXIpl;
+        dy = (float) symbol.getScaleY() - scaleYIpl;
+        factorX = 1;
+        factorY = 1;
+        if (Math.abs(dx) > Math.abs(dy)) {
+            factorY = Math.abs(dy) / Math.abs(dx);
+        } else {
+            factorX = Math.abs(dx) / Math.abs(dy);
+        }
+        if (Math.abs(dx) > 0.01f) {
             if (symbol.getScaleX() > scaleXIpl) {
-                scaleXIpl += 0.01f;
+                scaleXIpl += 0.01f * factorX;
             } else {
-                scaleXIpl -= 0.01f;
+                scaleXIpl -= 0.01f * factorX;
             }
         }
-        if (Math.abs(symbol.getScaleY() - scaleYIpl) > 0.01f) {
+        if (Math.abs(dy) > 0.01f) {
             if (symbol.getScaleY() > scaleYIpl) {
-                scaleYIpl += 0.01f;
+                scaleYIpl += 0.01f * factorY;
             } else {
-                scaleYIpl -= 0.01f;
+                scaleYIpl -= 0.01f * factorY;
             }
         }
 
@@ -179,6 +189,10 @@ public class VisSymbol extends Observable {
 
     public void setImg(PImage img) {
         this.img = img;
+    }
+
+    public void setSecondImage(PImage img) {
+        this.secondImage = img;
     }
 
     public boolean isNewPositionSet() {
@@ -313,5 +327,21 @@ public class VisSymbol extends Observable {
 
     public float getScaledHeight() {
         return this.img.height * this.scaleYIpl;
+    }
+
+    public float getSwapScaledWidth() {
+        return this.imgSwap.width * this.scaleXIpl;
+    }
+
+    public float getSwapScaledHeight() {
+        return this.imgSwap.height * this.scaleYIpl;
+    }
+
+    public void toogleImage() {
+        if (secondImage != null) {
+            PImage temp = img;
+            img = secondImage;
+            secondImage = temp;
+        }
     }
 }
