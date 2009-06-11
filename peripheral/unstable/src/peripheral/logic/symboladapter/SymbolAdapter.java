@@ -227,6 +227,21 @@ public class SymbolAdapter implements Serializable {
             }
         }
 
+        //iterate through rules and check for sensor uage
+        for (Rule rule : rules) {
+
+            for (Condition condition : rule.getConditions()) {
+
+                for (SensorChannel channel : sensor.getSensorChannels()) {
+
+                    if (condition.getLeftSideOp().getSensorChannel().equals(channel)) {
+                        return true;
+                    }
+                }
+
+            }
+        }
+
         return false;
     }
 
