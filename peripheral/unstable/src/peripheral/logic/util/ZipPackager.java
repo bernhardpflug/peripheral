@@ -35,7 +35,7 @@ import peripheral.logic.value.Value;
  */
 public class ZipPackager {
 
-    private static final String RESOURCE_PATH= "resources/";
+    private static final String RESOURCE_PATH = "resources/";
 
     /**
      * Searches for all files and directories in display configuration,
@@ -49,16 +49,16 @@ public class ZipPackager {
         DisplayConfiguration dc = DisplayConfiguration.getInstance();
 
         //map that holds all files sorted by their correlating file names
-        Map<String,List<File>> fileMap = new HashMap<String,List<File>>();
+        Map<String, List<File>> fileMap = new HashMap<String, List<File>>();
         //same for dirs
-        Map<String,List<File>> dirMap = new HashMap<String,List<File>>();
+        Map<String, List<File>> dirMap = new HashMap<String, List<File>>();
 
         /***********************************************
-        *********** SEARCH for all files in DC *********
-        ************************************************/
+         *********** SEARCH for all files in DC *********
+         ************************************************/
 
         //BACKGROUNDIMAGE
-        addToMap(fileMap,dc.getBackgroundImageFile());
+        addToMap(fileMap, dc.getBackgroundImageFile());
 
         for (SymbolAdapter adapter : dc.getAdapter()) {
 
@@ -68,11 +68,11 @@ public class ZipPackager {
                 for (Symbol symbol : pt.getSymbols()) {
 
                     //add every file of each symbol
-                    addToMap(fileMap,symbol.getFile());
+                    addToMap(fileMap, symbol.getFile());
 
                     //if there exists a second file in symbol add it too
-                    if (symbol.getSecondFile()!= null) {
-                        addToMap(fileMap,symbol.getSecondFile());
+                    if (symbol.getSecondFile() != null) {
+                        addToMap(fileMap, symbol.getSecondFile());
                     }
                 }
             }
@@ -85,21 +85,22 @@ public class ZipPackager {
 
                     Object val = value.getValue();
 
-                    if (val.getClass().equals(File.class)) {
+                    if (val != null) {
+                        if (val.getClass().equals(File.class)) {
 
-                        addToMap(fileMap,(File)val);
-                    }
-                    else if (val.getClass().equals(Directory.class)) {
-                        addToMap(dirMap,(Directory)val);
+                            addToMap(fileMap, (File) val);
+                        } else if (val.getClass().equals(Directory.class)) {
+                            addToMap(dirMap, (Directory) val);
+                        }
                     }
                 }
             }
         }
 
         /****************************************************
-        ********** rename all correlating files/dirs ********
-        *** and save their new path in restructured image ***
-        *****************************************************/
+         ********** rename all correlating files/dirs ********
+         *** and save their new path in restructured image ***
+         *****************************************************/
 
         //go through all items in map and create new restructed file
         //with old file in it and additional new path with renamed
@@ -107,9 +108,9 @@ public class ZipPackager {
         for (String key : fileMap.keySet()) {
             List<File> corFilenames = fileMap.get(key);
 
-            for (int i=0; i < corFilenames.size(); i++) {
+            for (int i = 0; i < corFilenames.size(); i++) {
                 RestructuredFile restructuredFile = new RestructuredFile(corFilenames.get(i));
-                restructuredFile.setNewPath(getNewFilePath(corFilenames.get(i),i));
+                restructuredFile.setNewPath(getNewFilePath(corFilenames.get(i), i));
                 result.add(restructuredFile);
             }
         }
@@ -119,11 +120,11 @@ public class ZipPackager {
         for (String key : dirMap.keySet()) {
             List<File> dirs = dirMap.get(key);
 
-            for (int i=0; i < dirs.size(); i++) {
+            for (int i = 0; i < dirs.size(); i++) {
                 //folder
                 File folder = dirs.get(i);
                 //get new name of folder
-                String folderName = getNewFilePath(folder,i)+"/";
+                String folderName = getNewFilePath(folder, i) + "/";
 
                 //for each file in this folder create restructured file
                 if (folder.isDirectory()) {
@@ -134,21 +135,21 @@ public class ZipPackager {
                     result.add(restructuredFolder);
 
                     //get all image files in folder
-                    File [] files = folder.listFiles(new FileFilter() {
+                    File[] files = folder.listFiles(new FileFilter() {
+
                         public boolean accept(File pathname) {
                             return PreviewDialog.isExtentionSupported(pathname);
                         }
                     });
 
                     //add every file in this folder with new foldername and original file name
-                    for (int j=0; j < files.length; j++) {
+                    for (int j = 0; j < files.length; j++) {
                         RestructuredFile restructuredFile = new RestructuredFile(files[j]);
-                        restructuredFile.setNewPath(folderName+files[j].getName());
+                        restructuredFile.setNewPath(folderName + files[j].getName());
                         result.add(restructuredFile);
                     }
-                }
-                else {
-                    System.err.println("ZipPackager:getRestructuredFiles: "+folder.getAbsolutePath()+
+                } else {
+                    System.err.println("ZipPackager:getRestructuredFiles: " + folder.getAbsolutePath() +
                             " was set as directory in ConstValue but is no folder on disk");
                 }
             }
@@ -163,13 +164,12 @@ public class ZipPackager {
      * @param reMap
      * @param file
      */
-    private static void addToMap(Map<String,List<File>> reMap,File file) {
+    private static void addToMap(Map<String, List<File>> reMap, File file) {
 
         //if map already contains list for this filename add file to this list
         if (reMap.containsKey(file.getName())) {
             reMap.get(file.getName()).add(file);
-        }
-        //else create new entry in map with new arraylist
+        } //else create new entry in map with new arraylist
         else {
             ArrayList<File> filesList = new ArrayList<File>();
             filesList.add(file);
@@ -191,10 +191,9 @@ public class ZipPackager {
 
         String name = oldFile.getName();
 
-        if (index ==0) {
-            return RESOURCE_PATH+name;
-        }
-        //if more than one file exists add index at end of filename
+        if (index == 0) {
+            return RESOURCE_PATH + name;
+        } //if more than one file exists add index at end of filename
         else {
             int extensionIndex = name.lastIndexOf(".");
 
@@ -203,7 +202,7 @@ public class ZipPackager {
             }
             return RESOURCE_PATH + name.substring(0, extensionIndex) + index + name.substring(extensionIndex, name.length());
         }
-        
+
     }
 
     /**
@@ -219,7 +218,7 @@ public class ZipPackager {
             //BACKGROUNDIMAGE
             if (dc.getBackgroundImageFile().equals(file.getOldFile())) {
                 dc.setBackgroundImageFile(new File(file.getNewPath()));
-                System.out.println("backgroundimage from "+file.getOldFile().getAbsolutePath()+" to "+file.getNewPath());
+                System.out.println("backgroundimage from " + file.getOldFile().getAbsolutePath() + " to " + file.getNewPath());
             }
 
             for (SymbolAdapter adapter : dc.getAdapter()) {
@@ -230,12 +229,12 @@ public class ZipPackager {
 
                         if (symbol.getFile().equals(file.getOldFile())) {
                             symbol.setFile(new File(file.getNewPath()));
-                            System.out.println("symbolfile from "+file.getOldFile().getAbsolutePath()+" to "+file.getNewPath());
+                            System.out.println("symbolfile from " + file.getOldFile().getAbsolutePath() + " to " + file.getNewPath());
                         }
 
-                        if (symbol.getSecondFile()!= null && symbol.getSecondFile().equals(file.getOldFile())) {
+                        if (symbol.getSecondFile() != null && symbol.getSecondFile().equals(file.getOldFile())) {
                             symbol.setSecondFile(new File(file.getNewPath()));
-                            System.out.println("second symbolfile from "+file.getOldFile().getAbsolutePath()+" to "+file.getNewPath());
+                            System.out.println("second symbolfile from " + file.getOldFile().getAbsolutePath() + " to " + file.getNewPath());
                         }
                     }
                 }
@@ -248,22 +247,24 @@ public class ZipPackager {
 
                         Object val = value.getValue();
 
-                        if (val.getClass().equals(File.class)) {
+                        if (val != null) {
+                            if (val.getClass().equals(File.class)) {
 
-                            File valFile = (File)val;
+                                File valFile = (File) val;
 
-                            if (valFile.equals(file.getOldFile())) {
-                                ((ConstValue)value).setValue(new File(file.getNewPath()));
-                                System.out.println("file constvalue from "+file.getOldFile().getAbsolutePath()+" to "+file.getNewPath());
-                            }
+                                if (valFile.equals(file.getOldFile())) {
+                                    ((ConstValue) value).setValue(new File(file.getNewPath()));
+                                    System.out.println("file constvalue from " + file.getOldFile().getAbsolutePath() + " to " + file.getNewPath());
+                                }
 
-                        } else if (val.getClass().equals(Directory.class)) {
+                            } else if (val.getClass().equals(Directory.class)) {
 
-                            Directory dir = (Directory)val;
+                                Directory dir = (Directory) val;
 
-                            if (dir.equals(file.getOldFile())) {
-                                ((ConstValue)value).setValue(new Directory(file.getNewPath()));
-                                System.out.println("directory constvalue from "+file.getOldFile().getAbsolutePath()+" to "+file.getNewPath());
+                                if (dir.equals(file.getOldFile())) {
+                                    ((ConstValue) value).setValue(new Directory(file.getNewPath()));
+                                    System.out.println("directory constvalue from " + file.getOldFile().getAbsolutePath() + " to " + file.getNewPath());
+                                }
                             }
                         }
                     }
@@ -286,7 +287,7 @@ public class ZipPackager {
             //BACKGROUNDIMAGE
             if (dc.getBackgroundImageFile().equals(new File(file.getNewPath()))) {
                 dc.setBackgroundImageFile(file.getOldFile());
-                System.out.println("reset backgroundimage from "+file.getNewPath()+" to "+file.getOldFile().getAbsolutePath());
+                System.out.println("reset backgroundimage from " + file.getNewPath() + " to " + file.getOldFile().getAbsolutePath());
             }
 
             for (SymbolAdapter adapter : dc.getAdapter()) {
@@ -297,12 +298,12 @@ public class ZipPackager {
 
                         if (symbol.getFile().equals(new File(file.getNewPath()))) {
                             symbol.setFile(file.getOldFile());
-                            System.out.println("reset symbol file from "+file.getNewPath()+" to "+file.getOldFile().getAbsolutePath());
+                            System.out.println("reset symbol file from " + file.getNewPath() + " to " + file.getOldFile().getAbsolutePath());
                         }
 
-                        if (symbol.getSecondFile()!= null && symbol.getSecondFile().equals(new File(file.getNewPath()))) {
+                        if (symbol.getSecondFile() != null && symbol.getSecondFile().equals(new File(file.getNewPath()))) {
                             symbol.setSecondFile(file.getOldFile());
-                            System.out.println("reset symbol second file from "+file.getNewPath()+" to "+file.getOldFile().getAbsolutePath());
+                            System.out.println("reset symbol second file from " + file.getNewPath() + " to " + file.getOldFile().getAbsolutePath());
                         }
                     }
                 }
@@ -315,22 +316,24 @@ public class ZipPackager {
 
                         Object val = value.getValue();
 
-                        if (val.getClass().equals(File.class)) {
+                        if (val != null) {
+                            if (val.getClass().equals(File.class)) {
 
-                            File valFile = (File)val;
+                                File valFile = (File) val;
 
-                            if (valFile.equals(new File(file.getNewPath()))) {
-                                ((ConstValue)value).setValue(file.getOldFile());
-                                System.out.println("reset file constvalue from "+file.getNewPath()+" to "+file.getOldFile().getAbsolutePath());
-                            }
+                                if (valFile.equals(new File(file.getNewPath()))) {
+                                    ((ConstValue) value).setValue(file.getOldFile());
+                                    System.out.println("reset file constvalue from " + file.getNewPath() + " to " + file.getOldFile().getAbsolutePath());
+                                }
 
-                        } else if (val.getClass().equals(Directory.class)) {
+                            } else if (val.getClass().equals(Directory.class)) {
 
-                            Directory dir = (Directory)val;
+                                Directory dir = (Directory) val;
 
-                            if (dir.equals(new File(file.getNewPath()))) {
-                                ((ConstValue)value).setValue(file.getOldFile());
-                                System.out.println("reset directory from "+file.getNewPath()+" to "+file.getOldFile().getAbsolutePath());
+                                if (dir.equals(new File(file.getNewPath()))) {
+                                    ((ConstValue) value).setValue(file.getOldFile());
+                                    System.out.println("reset directory from " + file.getNewPath() + " to " + file.getOldFile().getAbsolutePath());
+                                }
                             }
                         }
                     }
@@ -339,7 +342,7 @@ public class ZipPackager {
         }
     }
 
-    public static void zip(String destFilename,File configFile, ArrayList<RestructuredFile> filesToZip) {
+    public static void zip(String destFilename, File configFile, ArrayList<RestructuredFile> filesToZip) {
 
         int read = 0;
         FileInputStream in;
