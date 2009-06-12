@@ -32,8 +32,13 @@ public class ConstValue extends Value {
 
     public boolean isValid() {
 
-        //check whether set value is of (sub)class of valuetype
-        return this.getValueType().isAssignableFrom(value.getClass());
+        if (value != null) {
+            //check whether set value is of (sub)class of valuetype
+            return this.getValueType().isAssignableFrom(value.getClass());
+        }
+        else {
+            return false;
+        }
     }
 
 }
