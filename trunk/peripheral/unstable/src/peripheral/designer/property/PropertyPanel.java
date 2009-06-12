@@ -12,7 +12,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.List;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
@@ -23,7 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.event.CellEditorListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
@@ -51,7 +49,7 @@ public class PropertyPanel extends JPanel {
     }
 
     SymbolAdapter symbolAdapter;
-    List<Value> userInputs;
+    List<UserInput> userInputs;
 
     public PropertyPanel(SymbolAdapter symbolAdapter) {
         this(symbolAdapter, symbolAdapter.getNeededUserInput());
@@ -62,13 +60,13 @@ public class PropertyPanel extends JPanel {
 
         this.symbolAdapter = symbolAdapter;
 
-        this.userInputs = new ArrayList<Value>();
+        this.userInputs = new ArrayList<UserInput>();
 
         //sort out const and sensor values for display
         for (UserInput uInput : userInputs) {
 
             if (uInput.getValue() instanceof ConstValue || uInput.getValue() instanceof SensorValue) {
-                this.userInputs.add(uInput.getValue());
+                this.userInputs.add(uInput);
             }
         }
 
@@ -131,12 +129,12 @@ public class PropertyPanel extends JPanel {
 
             //name
             if (col == 0) {
-                return userInputs.get(row).getVarName();
+                return userInputs.get(row).getValue().getVarName();
             } else if (col == 1) {
-                Value val = userInputs.get(row);
+                Value val = userInputs.get(row).getValue();
 
                 if (val instanceof ConstValue) {
-                    return userInputs.get(row).getValue();
+                    return userInputs.get(row).getValue().getValue();
                 } //Sensorvalue
                 else {
                     return ((SensorValue) val).getSensorChannel();
@@ -181,7 +179,7 @@ public class PropertyPanel extends JPanel {
 //                System.out.println("Setting value at " + row + "," + col + " to " + value + " (an instance of " + value.getClass() + ")");
 //            }
 
-            Value val = userInputs.get(row);
+            Value val = userInputs.get(row).getValue();
 
             if (val instanceof ConstValue) {
                 ((ConstValue) val).setValue(value);
@@ -206,7 +204,7 @@ public class PropertyPanel extends JPanel {
         @Override
         public TableCellEditor getCellEditor(int row, int column) {
 
-            Value val = userInputs.get(row);
+            Value val = userInputs.get(row).getValue();
 
             //in case of sensorvalue list all available sensorattributes
             if (val instanceof SensorValue) {
@@ -280,11 +278,12 @@ public class PropertyPanel extends JPanel {
                 boolean isSelected, boolean hasFocus,
                 int row, int column) {
 
-            Value val = userInputs.get(row);
+            UserInput ui = userInputs.get(row);
+            Value val = ui.getValue();
 
             if (column == 0) {
 
-                return super.getTableCellRendererComponent(table, val.getVarName(), isSelected, hasFocus, row, column);
+                return super.getTableCellRendererComponent(table, ui.getName(), isSelected, hasFocus, row, column);
 
             } else {
                 if (val instanceof SensorValue) {

@@ -113,7 +113,12 @@ public class SensorChannel implements Serializable {
     }
 
     public String toString() {
-        return sensor.getName() + metadata.get("shortname");
+        if (metadata.get("shortname") != null) {
+            return metadata.get("shortname");
+        }
+        else {
+            return this.fullname;
+        }
     }
 
     @Override

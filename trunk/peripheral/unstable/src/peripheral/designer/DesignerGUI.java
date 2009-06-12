@@ -24,10 +24,9 @@ import peripheral.designer.preview.PreviewDialog;
 import peripheral.designer.property.PropertyPanel;
 import peripheral.designer.wizard.AddAnimationDialog;
 import peripheral.logic.DisplayConfiguration;
-import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.positioningtool.PositioningTool;
 import peripheral.logic.symboladapter.SymbolAdapter;
-import peripheral.logic.value.Value;
+import peripheral.logic.value.UserInput;
 
 /**
  *
@@ -152,15 +151,15 @@ public class DesignerGUI extends javax.swing.JFrame {
 
         for (SymbolAdapter adapter : adapters) {
 
-            ArrayList<Value> invalid = adapter.getInvalidUserInputValues();
+            ArrayList<UserInput> invalid = adapter.getInvalidUserInputs();
 
             if (!invalid.isEmpty()) {
 
                 //pick first one out of list and display it in message
-                Value invalidValue = invalid.get(0);
+                UserInput invalidValue = invalid.get(0);
 
                 JOptionPane.showMessageDialog(this,
-                        invalidValue.getVarName() + " property of adapter " + adapter.getName() + "\n" +
+                        invalidValue.getName() + " property of adapter " + adapter.getName() + "\n" +
                         "has an invalid state.\n" +
                         "Set an valid value to proceed",
                         "Invalid property found", JOptionPane.ERROR_MESSAGE);
@@ -206,6 +205,7 @@ public class DesignerGUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PDC - Peripheral Display Creator");
+        setResizable(false);
 
         nextButton.setText("next");
         nextButton.addActionListener(new java.awt.event.ActionListener() {
@@ -227,7 +227,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         buttonPanelLayout.setHorizontalGroup(
             buttonPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, buttonPanelLayout.createSequentialGroup()
-                .addContainerGap(584, Short.MAX_VALUE)
+                .addContainerGap(545, Short.MAX_VALUE)
                 .add(prevButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(nextButton)
@@ -252,7 +252,6 @@ public class DesignerGUI extends javax.swing.JFrame {
         BackgroundPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 2 : Select Background Image of the Scene"));
 
         jFileChooser1.setControlButtonsAreShown(false);
-        jFileChooser1.setFileFilter(new ImageFilter());
 
         org.jdesktop.layout.GroupLayout BackgroundPanelLayout = new org.jdesktop.layout.GroupLayout(BackgroundPanel);
         BackgroundPanel.setLayout(BackgroundPanelLayout);
@@ -261,14 +260,14 @@ public class DesignerGUI extends javax.swing.JFrame {
             .add(BackgroundPanelLayout.createSequentialGroup()
                 .add(85, 85, 85)
                 .add(jFileChooser1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 541, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(91, Short.MAX_VALUE))
+                .addContainerGap(86, Short.MAX_VALUE))
         );
         BackgroundPanelLayout.setVerticalGroup(
             BackgroundPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(BackgroundPanelLayout.createSequentialGroup()
                 .add(63, 63, 63)
                 .add(jFileChooser1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 304, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(79, Short.MAX_VALUE))
+                .addContainerGap(68, Short.MAX_VALUE))
         );
 
         cardPanel.add(BackgroundPanel, "card3");
@@ -306,7 +305,7 @@ public class DesignerGUI extends javax.swing.JFrame {
                 .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        AnimationPropertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("AnimationProperties"));
+        AnimationPropertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Animation Properties"));
         AnimationPropertiesPanel.setLayout(new java.awt.BorderLayout());
 
         addAnimationButton.setText("+");
@@ -365,7 +364,7 @@ public class DesignerGUI extends javax.swing.JFrame {
                         .add(32, 32, 32)
                         .add(AnimationPropertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 299, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jLabel1))
-                .addContainerGap(74, Short.MAX_VALUE))
+                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         AnimationsPanelLayout.setVerticalGroup(
             AnimationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -385,9 +384,9 @@ public class DesignerGUI extends javax.swing.JFrame {
                     .add(AnimationsPanelLayout.createSequentialGroup()
                         .add(28, 28, 28)
                         .add(AnimationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(org.jdesktop.layout.GroupLayout.LEADING, AnimationPropertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, AnimationPropertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
                             .add(org.jdesktop.layout.GroupLayout.LEADING, DefAnimationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 383, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 14, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(jLabel1))
         );
 
