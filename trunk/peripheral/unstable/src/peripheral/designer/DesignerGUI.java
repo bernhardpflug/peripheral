@@ -247,7 +247,6 @@ public class DesignerGUI extends javax.swing.JFrame {
         cardPanel.setLayout(new java.awt.CardLayout());
 
         SensorPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 1 : Select Sensorserver"));
-        SensorPanel.setLayout(null);
         cardPanel.add(SensorPanel, "card2");
 
         BackgroundPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 2 : Select Background Image of the Scene"));
