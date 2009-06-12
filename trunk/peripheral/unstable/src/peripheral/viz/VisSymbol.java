@@ -30,8 +30,13 @@ public class VisSymbol extends Observable {
     private boolean fadeIn,  fadeOut,  isVisible;
     private boolean newPositionSet = false;
     private float iplX,  iplY;
+    private float contrast = 1;
+    private float brightnessIpl = 0;
+    private float contrastIpl = 1;
+    private PImage imgOriginal = null;
+    private PApplet applet;
 
-    public VisSymbol(Symbol s, Region r) {
+    public VisSymbol(Symbol s, Region r, PApplet applet) {
         this.symbol = s;
         this.alpha = alphaSwap = 0.f;
         this.angleIpl = s.getAngle();
@@ -44,7 +49,8 @@ public class VisSymbol extends Observable {
         this.fadeIn = this.fadeOut = false;
         this.isVisible = true;
         this.region = r;
-        this.brightness = 1.f;
+        this.brightness = 0.f;
+        this.applet = applet;
     }
 
     private void setFadeInCompleted() {
@@ -165,6 +171,23 @@ public class VisSymbol extends Observable {
             }
         }
 
+        float diff = brightness - brightnessIpl;
+        if (Math.abs(diff) > 0.01f) {
+            if (brightness > brightnessIpl) {
+                brightnessIpl += 0.01f;
+            } else {
+                brightnessIpl -= 0.01f;
+            }
+        }
+
+        diff = contrast - contrastIpl;
+        if (Math.abs(diff) > 0.02f) {
+            if (contrast > contrastIpl) {
+                contrastIpl += 0.02f;
+            } else {
+                contrastIpl -= 0.02f;
+            }
+        }
     }
 
     public float getAlpha() {
@@ -278,14 +301,35 @@ public class VisSymbol extends Observable {
 
     public void setBrightness(float brightness) {
         this.brightness = brightness;
+        if (this.imgOriginal == null) {
+            this.imgOriginal = createCopy(img);
+        }
     }
 
-    public void setVisible(boolean visible) {
-        this.isVisible = visible;
+    private PImage createCopy(PImage toCopy) {
+        PImage img = applet.createImage(toCopy.width, toCopy.height, applet.RGB);
+        img.loadPixels();
+        for (int i = 0; i < img.pixels.length; i++) {
+            img.pixels[i] = toCopy.pixels[i];
+        }
+        img.updatePixels();
+        return img;
+    }
+
+    public float getBrightnessIpl() {
+        return brightnessIpl;
+    }
+
+    public PImage getImgOriginal() {
+        return imgOriginal;
     }
 
     public boolean isVisible() {
         return this.isVisible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.isVisible = visible;
     }
 
     private void checkVisibility() {
@@ -319,6 +363,21 @@ public class VisSymbol extends Observable {
 
     public float getAlphaSwap() {
         return alphaSwap;
+    }
+
+    public float getContrast() {
+        return contrast;
+    }
+
+    public float getContrastIpl() {
+        return contrastIpl;
+    }
+
+    public void setContrast(float contrast) {
+        this.contrast = contrast;
+        if (this.imgOriginal == null) {
+            this.imgOriginal = createCopy(img);
+        }
     }
 
     public float getScaledWidth() {

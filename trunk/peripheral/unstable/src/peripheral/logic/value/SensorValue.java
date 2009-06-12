@@ -59,5 +59,11 @@ public class SensorValue extends Value {
             return true;
         }
     }
+
+    public void rename(String newVarName){
+        this.adapter.getVarpool().remove(varName);
+        this.varName = newVarName;
+        this.adapter.getVarpool().put(varName, this);
+    }
 }
 

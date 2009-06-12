@@ -53,7 +53,7 @@ public class Mover extends SymbolAnimator {
         ui = new ArrayList<UserInput>();
 
         valDirection = new ConstValue(adapter, "Mover.direction", direction, direction.getClass());
-        valSpeed = new ConstValue(adapter, "Mover.speed", 1.0, Double.class);
+        //valSpeed = new ConstValue(adapter, "Mover.speed", 1.0, Double.class);
         valBounds = new ConstValue(adapter, "Mover.bounds", true, Boolean.class);
         //valRepeat = new ConstValue(adapter, "Mover.repeat", false, Boolean.class);
         valFadeIn = new ConstValue(adapter, "Mover.fadeIn", fadeIn, fadeIn.getClass());
@@ -101,9 +101,9 @@ public class Mover extends SymbolAnimator {
     /*public void setRepeat(boolean repeat) {
     this.repeat = repeat;
     }*/
-    public double getSpeed() {
+    /*public double getSpeed() {
         return (Double) valSpeed.getValue();
-    }
+    }*/
 
     /*public void setSpeed(double speed) {
     this.speed = speed;

@@ -1,7 +1,6 @@
 package peripheral.logic.action;
 
-import java.util.ArrayList;
-import java.util.List;
+import peripheral.logic.datatype.Percentage;
 import peripheral.logic.symboladapter.Symbol;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.ConstValue;
@@ -25,14 +24,25 @@ public class SymbolBrightnessAction extends SymbolAction {
 
     public float getAmount() {
         //extract concrete value from Value-Object
-        return Float.parseFloat(amount.getValue().toString());
+        if (amount.getValueType().equals(Percentage.class)) {
+            //subtract -0.5 because value of Percentage is between 0.0 and 1.0 and value for
+            //brightness should be between -0.5 and 0.5
+            return Double.valueOf(((Percentage)amount.getValue()).getVal()).floatValue() - 0.5f;
+        }
+        else{
+            try{
+                return Float.parseFloat(amount.getValue().toString());
+            }catch(NumberFormatException e){
+                return 0.0f;
+            }
+        }
     }
 
     @Override
     public java.util.List<UserInput> getUserInput() {
         if (this.needAmountUserInput) {
             if (amount == null) {
-                amount = new ConstValue(adapter, "amount", 1.0f, Float.class);
+                amount = new ConstValue(adapter, "amount", 0.0f, Float.class);
                 userInput.add(new UserInput("Amount", "Amount of brightness ...?", amount));
             }
         }
