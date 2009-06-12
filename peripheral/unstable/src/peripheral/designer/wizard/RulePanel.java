@@ -367,8 +367,8 @@ public class RulePanel extends javax.swing.JPanel {
             }
         } else {
             operation.setSelectedItem(selection);
-            ConditionOperation test = (ConditionOperation) operation.getSelectedItem();
-            test.getRightSideComponent().repaint();
+            //ConditionOperation test = (ConditionOperation) operation.getSelectedItem();
+            //test.getRightSideComponent().repaint();
         }
 
 
