@@ -1,7 +1,6 @@
 package peripheral.logic.action;
 
-import java.util.ArrayList;
-import java.util.List;
+import peripheral.logic.datatype.Percentage;
 import peripheral.logic.symboladapter.Symbol;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.ConstValue;
@@ -25,7 +24,18 @@ public class SymbolContrastAction extends SymbolAction {
 
     public float getAmount() {
         //extract concrete value from Value-Object
-        return Float.parseFloat(amount.getValue().toString());
+        if (amount.getValueType().equals(Percentage.class)) {
+            //multiply with 2 and add 0.5 because value of Percentage is between 0.0 and 1.0 and value for
+            //contrast should be between 0.5 and 2.5
+            return Double.valueOf(((Percentage)amount.getValue()).getVal()).floatValue()*2 + 0.5f;
+        }
+        else{
+            try{
+                return Float.parseFloat(amount.getValue().toString());
+            }catch(NumberFormatException e){
+                return 1.0f;
+            }
+        }
     }
 
     @Override

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import peripheral.logic.action.ActionToolAction;
 import peripheral.logic.filter.Filter;
+import peripheral.logic.filter.SensorValueFilter;
 import peripheral.logic.positioningtool.ActionTool;
 import peripheral.logic.rule.Condition;
 import peripheral.logic.rule.DefaultRule;
@@ -33,6 +34,7 @@ public class SymbolAdapter implements Serializable {
     private ActionTool tool;
     private java.util.List<Filter> beforeFilter;
     private java.util.List<Filter> afterFilter;
+    private java.util.List<SensorValueFilter> sensorValueFilter;
     private java.util.List<Rule> rules;
     private java.util.Map<String, Value> varpool;
     private java.util.List<UserInput> neededUserInput;
@@ -58,6 +60,7 @@ public class SymbolAdapter implements Serializable {
 
         beforeFilter = new ArrayList<Filter>();
         afterFilter = new ArrayList<Filter>();
+        sensorValueFilter = new ArrayList<SensorValueFilter>();
 
         rules = new ArrayList<Rule>();
 
@@ -102,6 +105,10 @@ public class SymbolAdapter implements Serializable {
 
     public java.util.List<Filter> getBeforeFilter() {
         return beforeFilter;
+    }
+
+    public List<SensorValueFilter> getSensorValueFilter() {
+        return sensorValueFilter;
     }
 
     public String getDescription() {
@@ -423,6 +430,10 @@ public class SymbolAdapter implements Serializable {
 
         if (sensorFailure) {
             executeInitActions();
+        }
+
+        for (SensorValueFilter svf : getSensorValueFilter()){
+            svf.doFilter();
         }
 
         for (Filter bf : getBeforeFilter()) {

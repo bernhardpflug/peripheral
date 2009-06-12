@@ -8,6 +8,8 @@ import peripheral.logic.action.ListShowAction;
 import peripheral.logic.action.PointWrapperAction;
 import peripheral.logic.action.RegionAddNewAction;
 import peripheral.logic.action.SymbolAction;
+import peripheral.logic.action.SymbolBrightnessAction;
+import peripheral.logic.action.SymbolContrastAction;
 import peripheral.logic.action.SymbolRotateAction;
 import peripheral.logic.action.SymbolScaleAction;
 import peripheral.logic.action.SymbolShowAction;
@@ -24,6 +26,8 @@ import peripheral.logic.filter.PositionFilter;
 import peripheral.logic.filter.RandomPositioningToolPickerFilter;
 import peripheral.logic.filter.RandomSymbolPickerFilter;
 import peripheral.logic.filter.RandomValuePickerFilter;
+import peripheral.logic.filter.SensorValueFilter;
+import peripheral.logic.filter.SensorValueThresholdFilter;
 import peripheral.logic.filter.StringTemplateFilter;
 import peripheral.logic.positioningtool.Line;
 import peripheral.logic.positioningtool.Point;
@@ -83,6 +87,7 @@ public class AdapterTemplateFactory {
     private void createTemplates() {
         createStaticSymbolAdapter();
         createSwappers();
+        createColorizers();
         createSliders();
         createScalers();
         createRotors();
@@ -187,6 +192,79 @@ public class AdapterTemplateFactory {
      */
     }
 
+    private void createColorizers() {
+        /**
+         * colorizer adapter 1
+         */
+        SymbolAdapter adapter = new SymbolAdapter();
+
+        adapter.setName("Colorizer (Brightness&Contrast) based on Sensorvalues");
+        adapter.setDescription("");
+
+        adapter.setTool(new Point());
+        adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
+
+        Value val = new SensorValue(adapter, "sensorValueBrightness", Integer.class);
+        UserInput input = new UserInput("Brightness", "Value of sensor, from which brightness will be calculated.", val);
+        adapter.getNeededUserInput().add(input);
+
+        IntervalValueToPercentageFilter ipf = new IntervalValueToPercentageFilter(adapter, "percentageBrightness");
+        ipf.putFilterInputValue("inputValue", new VarValue(adapter, "sensorValueBrightness"));
+        ipf.putFilterInputValue("interval", new SensorIntervalVarValue(adapter, "sensorValueBrightness"));
+        adapter.getBeforeFilter().add(ipf);
+
+        val = new SensorValue(adapter, "sensorValueContrast", Integer.class);
+        input = new UserInput("Contrast", "Value of sensor, from which contrast will be calculated.", val);
+        adapter.getNeededUserInput().add(input);
+
+        ipf = new IntervalValueToPercentageFilter(adapter, "percentageContrast");
+        ipf.putFilterInputValue("inputValue", new VarValue(adapter, "sensorValueContrast"));
+        ipf.putFilterInputValue("interval", new SensorIntervalVarValue(adapter, "sensorValueContrast"));
+        adapter.getBeforeFilter().add(ipf);
+
+        Rule rule = new Rule(adapter);
+        SymbolAction symbolAction = new SymbolBrightnessAction(adapter, new VarValue(adapter, "percentageBrightness"));
+        PointWrapperAction wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        rule.getActions().add(wrapperAction);
+        symbolAction = new SymbolContrastAction(adapter, new VarValue(adapter, "percentageContrast"));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        rule.getActions().add(wrapperAction);
+        adapter.getRules().add(rule);
+
+        symbolAction = new SymbolBrightnessAction(adapter, new ConstValue(adapter, "sensorFailureBrightness", 0.0f, Float.class));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        adapter.getSensorFailureActions().add(wrapperAction);
+        symbolAction = new SymbolContrastAction(adapter, new ConstValue(adapter, "sensorFailureContrast", 1.0f, Float.class));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        adapter.getSensorFailureActions().add(wrapperAction);
+
+        templates.add(adapter);
+
+        SymbolAdapter adapterBrightness = adapter.createCopy();
+
+        adapterBrightness.setName("Colorizer (Brightness only) based on Sensorvalue");
+        adapterBrightness.setDescription("");
+
+        adapterBrightness.getNeededUserInput().remove(1);
+        adapterBrightness.getBeforeFilter().remove(1);
+        adapterBrightness.getRules().get(0).getActions().remove(1);
+        adapterBrightness.getSensorFailureActions().remove(1);
+
+        templates.add(adapterBrightness);
+
+        SymbolAdapter adapterContrast = adapter.createCopy();
+
+        adapterContrast.setName("Colorizer (Contrast only) based on Sensorvalue");
+        adapterContrast.setDescription("");
+
+        adapterContrast.getNeededUserInput().remove(0);
+        adapterContrast.getBeforeFilter().remove(0);
+        adapterContrast.getRules().get(0).getActions().remove(0);
+        adapterContrast.getSensorFailureActions().remove(0);
+
+        templates.add(adapterContrast);
+    }
+
     private void createSliders() {
         /**
          * slider 1
@@ -243,6 +321,8 @@ public class AdapterTemplateFactory {
         symbolAction = new SymbolTranslateAction(adapter, new ConstValue(adapter, "startPos", ((Line) adapter.getTool()).getStartPoint(), java.awt.Point.class));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.getSensorFailureActions().add(wrapperAction);
+
+        this.addDefaultSensorValueFilters(adapter);
 
         templates.add(adapter);
 
@@ -561,6 +641,30 @@ public class AdapterTemplateFactory {
         adapter.setAllowOrientedSymbols(true);
 
         templates.add(adapter);
+    }
+
+    private void addDefaultSensorValueFilters(SymbolAdapter adapter) {
+        Value val = new ConstValue(adapter, "applyThresholdFilter", true, Boolean.class);
+        UserInput input = new UserInput("Use threshold", "", val);
+        adapter.getNeededUserInput().add(input);
+
+        val = new ConstValue(adapter, "threshold", 0.0, Float.class);
+        input = new UserInput("Threshold", "Amount of change, which has to occur, before the change is propagated to the visualization.", val);
+        adapter.getNeededUserInput().add(input);
+
+        SensorValueFilter sensorValueFilter;
+        for (Value value : (new ArrayList<Value>(adapter.getVarpool().values()))) {
+            if (value instanceof SensorValue) {
+                try {
+                    sensorValueFilter = new SensorValueThresholdFilter(adapter, (SensorValue) value);
+                    sensorValueFilter.putFilterInputValue("applyFilter", new VarValue(adapter, "applyThresholdFilter"));
+                    sensorValueFilter.putFilterInputValue("threshold", new VarValue(adapter, "threshold"));
+                    adapter.getSensorValueFilter().add(sensorValueFilter);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public static AdapterTemplateFactory getInstance() {

@@ -1,6 +1,7 @@
 package peripheral.viz;
 
 import java.awt.Dimension;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -19,6 +20,7 @@ import peripheral.logic.value.SensorValue;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
+import processing.opengl.*;
 
 public class VisApplet extends PApplet implements Visualization, Observer {
 
@@ -32,50 +34,33 @@ public class VisApplet extends PApplet implements Visualization, Observer {
     private String noSensorChanges = "";
     private ProcessingThread pt;
     private MyTestThread t;
-    private static final String UNZIP_DIR = "unzip/";
-    private final Object symbolsSynObj = new Object();
     private Map<String, PImage> imageCache = new HashMap<String, PImage>();
-    private float globalFactor;
+    private float globalFactorX,  globalFactorY;
+    private ImageAdjuster imageAdjuster;
+    private static final boolean DEBUG = true;
 
     public VisApplet() {
         symbols = new Vector<VisSymbol>();
+        imageAdjuster = new ImageAdjuster(this);
     }
 
     @Override
     public void setup() {
-        //size(800, 600, OPENGL);
         size(screen.width, screen.height, OPENGL);
+        hint(ENABLE_OPENGL_4X_SMOOTH);
 
-        //size(1680, 1050, P2D);
-        //size(screen.width, screen.height, P2D);
-        //size(200, 200, OPENGL);
-        //size(1920, 1080, OPENGL);
-        //SwingUtilities.invokeLater(
-        //      new Runnable() {
-
-        //        public void run() {
-        //if (!setup){
         peripheral.logic.Runtime.getInstance().startup(VisApplet.this, "g:\\rotor1.zip");
-        t = new MyTestThread(DisplayConfiguration.getInstance(), (Visualization) this);
         pt = new ProcessingThread(symbols, 50);
         pt.start();
-        //t.setPriority(Thread.MIN_PRIORITY);
-        t.start();
-        //System.out.println("startup called");
-        //setup = true;
-        //}
-        //      }
-        //});*/
 
-        //size((int) screen.getWidth(), (int) screen.getHeight(), P3D);
-        //background(100);
-        //background(bgImage);
-        //frameRate(600);
         noStroke();
 
-        PFont font = createFont("Arial", 20);
-        textFont(font);
-    //Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+        if (DEBUG) {
+            t = new MyTestThread(DisplayConfiguration.getInstance(), (Visualization) this);
+            t.start();
+            PFont font = createFont("Arial", 20);
+            textFont(font);
+        }
     }
 
     @Override
@@ -83,63 +68,76 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         if (!initialized) {
             return;
         }
-        //TODO: interpolate coords to actual screen resolution
-        //background(bgImage);
-        //background(100);
-        //background(bgImage);
+
         imageMode(CORNER);
         image(bgImage, 0, 0, screen.width, screen.height);
-        //camera(width/2.0f, height/2.0f, (height/2.0f) / (float)Math.tan(PI*60.0 / 360.0), width/2.0f, height/2.0f, 1, 0, 1, 1);
         VisSymbol ptr;
 
         for (int i = symbols.size() - 1; i >= 0; i--) {
             //for (int i=0; i< symbols.size(); i++){
             ptr = symbols.get(i);
 
-            /*if (ptr.getSymbol().getAdapter().getTool() instanceof Region) {
-            Rectangle bounds = ((Region) ptr.getSymbol().getAdapter().getTool()).getBounds();
-            this.line(bounds.x, bounds.y, bounds.x, bounds.y + bounds.height);
-            this.line(bounds.x + bounds.width, bounds.y, bounds.x + bounds.width, bounds.y + bounds.height);
-            }*/
-            if (ptr.getSymbol().getAdapter().getTool() instanceof Line) {
-                Line l = (Line) ptr.getSymbol().getAdapter().getTool();
-                stroke(126);
-                line(l.getStartPoint().x * globalFactor, l.getStartPoint().y * globalFactor, l.getEndPoint().x * globalFactor, l.getEndPoint().y * globalFactor);
+            if (DEBUG) {
+                if (ptr.getSymbol().getAdapter().getTool() instanceof Line) {
+                    Line l = (Line) ptr.getSymbol().getAdapter().getTool();
+                    stroke(126);
+                    line(l.getStartPoint().x * globalFactorX, l.getStartPoint().y * globalFactorY, l.getEndPoint().x * globalFactorX, l.getEndPoint().y * globalFactorY);
+                }
             }
-
-            //ptr.calcStep();
-            //draw the image in all its aspects
-            //tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlpha()));
 
             pushMatrix();
             tint(255, 255 * ptr.getAlpha());
-            //translate((float) (ptr.getPositionIpl().getX() + ptr.getScaledWidth() / 2) * globalFactor, (float) (ptr.getPositionIpl().getY() + ptr.getScaledHeight() / 2) * globalFactor);
-            translate((float) (ptr.getIplX() + ptr.getScaledWidth() / 2) * globalFactor, (float) ((ptr.getIplY() + ptr.getScaledHeight() / 2) - (ptr.getScaledHeight() - ptr.getImg().height)) * globalFactor);
-            scale(ptr.getScaleXIpl() * globalFactor, ptr.getScaleYIpl() * globalFactor);
+            translate((float) (ptr.getIplX() + ptr.getScaledWidth() / 2) * globalFactorX, (float) ((ptr.getIplY() + ptr.getScaledHeight() / 2) - (ptr.getScaledHeight() - ptr.getImg().height)) * globalFactorY);
+            scale(ptr.getScaleXIpl() * globalFactorX, ptr.getScaleYIpl() * globalFactorY);
             imageMode(CENTER);
-            rotate(radians(ptr.getAngleIpl()));//, (float)ptr.getPositionIpl().getX(), (float) ptr.getPositionIpl().getY(), 0);
-            image(ptr.getImg(), 0, 0);
+            rotate(radians(ptr.getAngleIpl()));
+
+            if (ptr.getImgOriginal() != null) {
+                imageAdjuster.reset();
+                imageAdjuster.brightness(ptr.getBrightnessIpl());
+                imageAdjuster.contrast(ptr.getContrastIpl());
+                imageAdjuster.apply(ptr.getImg(), ptr.getImgOriginal());
+                image(ptr.getImg(), 0, 0);
+            } else {
+                image(ptr.getImg(), 0, 0);
+            }
             if (ptr.getImgSwap() != null) {
-                //tint((255.f * ptr.getBrightness()), (255.f * ptr.getAlphaSwap()));
                 tint(255, 255 * ptr.getAlphaSwap());
                 imageMode(CENTER);
-                translate((float) (ptr.getIplX() + ptr.getScaledWidth() / 2) * -globalFactor, (float) ((ptr.getIplY() + ptr.getScaledHeight() / 2) - (ptr.getScaledHeight() - ptr.getImg().height)) * -globalFactor);
-                translate((float) (ptr.getIplX() + ptr.getSwapScaledWidth() / 2) * globalFactor, (float) ((ptr.getIplY() + ptr.getSwapScaledHeight() / 2) - (ptr.getSwapScaledHeight() - ptr.getImgSwap().height)) * globalFactor);
+                translate((float) (ptr.getIplX() + ptr.getScaledWidth() / 2) * -globalFactorX, (float) ((ptr.getIplY() + ptr.getScaledHeight() / 2) - (ptr.getScaledHeight() - ptr.getImg().height)) * -globalFactorY);
+                translate((float) (ptr.getIplX() + ptr.getSwapScaledWidth() / 2) * globalFactorX, (float) ((ptr.getIplY() + ptr.getSwapScaledHeight() / 2) - (ptr.getSwapScaledHeight() - ptr.getImgSwap().height)) * globalFactorY);
                 image(ptr.getImgSwap(), 0, 0);
             }
             popMatrix();
         }
 
-
-        //Logging.getLogger().finest("" + frameRate);
-        noTint();
-        text(frameRate + " fps", 0, 40);
-        int y = 60;
-        for (String s : this.logStrings.values()) {
-            text(s, 0, y);
-            y += 20;
+        if (DEBUG) {
+            noTint();
+            text(frameRate + " fps", 0, 40);
+            int y = 60;
+            for (String s : this.logStrings.values()) {
+                text(s, 0, y);
+                y += 20;
+            }
+            text(noSensorChanges, 0, y);
+            updateMemoryUsage();
+            text(memoryUsage, 0, y + 900);
         }
-        text(noSensorChanges, 0, y);
+    }
+    private String memoryUsage = "";
+
+    private void updateMemoryUsage() {
+        long allocated = Runtime.getRuntime().totalMemory() / 1024 / 1024;
+
+// Free memory out of the amount allocated (value above minus used)
+        long free = Runtime.getRuntime().freeMemory() / 1024 / 1024;
+
+// The maximum amount of memory that can eventually be consumed
+// by this application. This is the value set by the Preferences
+// dialog box to increase the memory settings for an application.
+        long maximum = Runtime.getRuntime().maxMemory() / 1024 / 1024;
+
+        memoryUsage = "memory: allocated/free/max = " + allocated + "/" + free + "/" + maximum;
     }
 
     public void addSymbol(Symbol s, Region region) {
@@ -147,9 +145,9 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
 
         if (vs == null) {
-            vs = new VisSymbol(s, region);
+            vs = new VisSymbol(s, region, this);
             vs.setImg(loadImage(s.getFile().getPath()));
-            if (s.getSecondFile() != null){
+            if (s.getSecondFile() != null) {
                 vs.setSecondImage(loadImage(s.getSecondFile().getPath()));
             }
 
@@ -188,12 +186,19 @@ public class VisApplet extends PApplet implements Visualization, Observer {
     public void brightness(Symbol s, float amount) {
         VisSymbol vs = findVSforS(s);
         synchronized (vs) {
+            //imageAdjuster.brightness(vs.getImg(), -vs.getBrightness());
+            //imageAdjuster.brightness(vs.getImg(), amount);
             vs.setBrightness(amount);
+            Logging.getLogger().finer("set brightness of img '" + vs.getSymbol().getFile().getName() + "' to " + amount);
         }
     }
 
     public void contrast(Symbol s, float amount) {
-        // TODO Auto-generated method stub
+        VisSymbol vs = findVSforS(s);
+        synchronized (vs) {
+            vs.setContrast(amount);
+            Logging.getLogger().finer("set contrast of img '" + vs.getSymbol().getFile().getName() + "' to " + amount);
+        }
     }
 
     public void hideSymbol(Symbol s) {
@@ -245,7 +250,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
         if (vs == null && filename != null) {
             newSymbol = true;
-            vs = new VisSymbol(s, null);
+            vs = new VisSymbol(s, null, this);
             vs.setVisible(false);
         }
 
@@ -298,7 +303,8 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         bgImage = loadImage(backgroundImageFilename);
         visDim = resolution;
 
-        globalFactor = (float) screen.width / bgImage.width;
+        globalFactorX = (float) screen.width / bgImage.width;
+        globalFactorY = (float) screen.height / bgImage.height;
 
         bgImage.resize(screen.width, screen.height);
 
@@ -357,9 +363,14 @@ public class VisApplet extends PApplet implements Visualization, Observer {
      */
     public static void main(String[] args) {
         //@todo: read configuration-filename from args
+        try{
         System.out.println(System.getProperty("java.library.path"));
         //Runtime.getInstance().startup("displayConfig.ser");
         PApplet.main(new String[]{"--present", "peripheral.viz.VisApplet", "test"});
+
+        }catch(Exception e){
+            javax.swing.JOptionPane.showMessageDialog(null, e.toString());
+        }
 
     /*try {
     System.out.println("Press <Enter> to terminate visualization.");
@@ -370,6 +381,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
     //Runtime.getInstance().shutdown();
     }
+
 
     class ProcessingThread extends Thread {
 
@@ -502,8 +514,8 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                     }
                 }
                 try {
-                    sleep(50000);
-                    if (cnt==0){
+                    sleep(5000);
+                    if (cnt == 0) {
                         //sleep(15000);
                     }
                 } catch (Exception e) {
