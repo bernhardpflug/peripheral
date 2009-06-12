@@ -164,7 +164,7 @@ public class AdapterTemplateFactory {
         adapter.getNeededUserInput().add(input);
 
         val = new ConstValue(adapter, "fileFolder", null, Directory.class);
-        input = new UserInput("Folder, which contains swap-images", "", val);
+        input = new UserInput("Image folder", "", val);
         adapter.getNeededUserInput().add(input);
 
         StringTemplateFilter stf = new StringTemplateFilter(adapter, "filename");
@@ -367,6 +367,8 @@ public class AdapterTemplateFactory {
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.getSensorFailureActions().add(wrapperAction);
 
+        addDefaultSensorValueFilters(adapter);
+
         templates.add(adapter);
 
         /**
@@ -431,6 +433,8 @@ public class AdapterTemplateFactory {
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.getSensorFailureActions().add(wrapperAction);
 
+        addDefaultSensorValueFilters(adapter);
+
         templates.add(adapter);
 
         /**
@@ -452,6 +456,8 @@ public class AdapterTemplateFactory {
         symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "failureFactorX", 1.0, Float.class), new ConstValue(adapter, "failureFactorY", 1.0, Float.class));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.getSensorFailureActions().add(wrapperAction);
+
+        addDefaultSensorValueFilters(adapter);
 
         templates.add(adapter);
     }
@@ -482,6 +488,8 @@ public class AdapterTemplateFactory {
         symbolAction = new SymbolRotateAction(adapter, new ConstValue(adapter, "failureAngle", 0.0, Float.class));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.getSensorFailureActions().add(wrapperAction);
+
+        addDefaultSensorValueFilters(adapter);
 
         templates.add(adapter);
 
@@ -526,6 +534,8 @@ public class AdapterTemplateFactory {
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.getSensorFailureActions().add(wrapperAction);
 
+        addDefaultSensorValueFilters(adapter);
+
         templates.add(adapter);
 
         /**
@@ -547,6 +557,8 @@ public class AdapterTemplateFactory {
         symbolAction = new SymbolRotateAction(adapter, new ConstValue(adapter, "failureAngle", 0.0, Float.class));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.getSensorFailureActions().add(wrapperAction);
+
+        addDefaultSensorValueFilters(adapter);
 
         templates.add(adapter);
     }

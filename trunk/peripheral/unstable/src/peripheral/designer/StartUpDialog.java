@@ -8,7 +8,6 @@
  *
  * Created on 02.06.2009, 15:20:49
  */
-
 package peripheral.designer;
 
 import java.io.File;
@@ -22,22 +21,25 @@ import javax.swing.filechooser.FileFilter;
 public class StartUpDialog extends javax.swing.JDialog {
 
     public enum StartOption {
+
         NEW,
         EXISTING
     }
-
-    private static String [] allowedExtentions = new String [] {"zip"};
-
+    private static String[] allowedExtentions = new String[]{"zip"};
     JFileChooser fileChooser;
-
     File configurationFile;
-
     StartOption option;
 
     /** Creates new form StartUpDialog */
-    public StartUpDialog(java.awt.Frame parent) {
-        super(parent, true);
+    public StartUpDialog() {
+        super((java.awt.Frame)null, "PDC - Peripheral Display Creator", true);
         initComponents();
+
+        this.setSize(550, 370);
+        this.setLocation(
+                getToolkit().getScreenSize().width / 2 - this.getWidth() / 2,
+                getToolkit().getScreenSize().height / 2 - this.getHeight() / 2 - 50);
+        this.setResizable(false);
     }
 
     /** This method is called from within the constructor to
@@ -49,34 +51,14 @@ public class StartUpDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        headerLabel = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
         createNewButton = new javax.swing.JButton();
         loadExistingButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        headerLabel.setFont(new java.awt.Font("Bank Gothic", 1, 18)); // NOI18N
-        headerLabel.setText("Peripheral Display Designer");
-
-        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .add(35, 35, 35)
-                .add(headerLabel)
-                .addContainerGap(42, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(20, Short.MAX_VALUE)
-                .add(headerLabel)
-                .addContainerGap())
-        );
+        jPanel2.setPreferredSize(new java.awt.Dimension(463, 60));
 
         createNewButton.setText("Create new...");
         createNewButton.addActionListener(new java.awt.event.ActionListener() {
@@ -84,6 +66,7 @@ public class StartUpDialog extends javax.swing.JDialog {
                 createNewButtonActionPerformed(evt);
             }
         });
+        jPanel2.add(createNewButton);
 
         loadExistingButton.setText("Load existing...");
         loadExistingButton.addActionListener(new java.awt.event.ActionListener() {
@@ -91,33 +74,13 @@ public class StartUpDialog extends javax.swing.JDialog {
                 loadExistingButtonActionPerformed(evt);
             }
         });
+        jPanel2.add(loadExistingButton);
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .add(layout.createSequentialGroup()
-                .add(31, 31, 31)
-                .add(createNewButton)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 79, Short.MAX_VALUE)
-                .add(loadExistingButton)
-                .add(36, 36, 36))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .addContainerGap()
-                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(42, 42, 42)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(createNewButton)
-                    .add(loadExistingButton))
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        getContentPane().add(jPanel2, java.awt.BorderLayout.SOUTH);
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/peripheral/resources/pdc300x300.png"))); // NOI18N
+        getContentPane().add(jLabel1, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -148,7 +111,6 @@ public class StartUpDialog extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_createNewButtonActionPerformed
 
-
     public StartOption showStartUpDialog() {
         this.setVisible(true);
 
@@ -160,31 +122,31 @@ public class StartUpDialog extends javax.swing.JDialog {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton createNewButton;
-    private javax.swing.JLabel headerLabel;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JButton loadExistingButton;
     // End of variables declaration//GEN-END:variables
 
     class ConfigFileFilter extends FileFilter {
 
-    //Accept all directories and all gif, jpg, tiff, or png files.
-    public boolean accept(java.io.File f) {
-        if (f.isDirectory()) {
-            return true;
-        }
-
-        for (String support : allowedExtentions) {
-            if (f.getName().toLowerCase().endsWith(support)) {
+        //Accept all directories and all gif, jpg, tiff, or png files.
+        public boolean accept(java.io.File f) {
+            if (f.isDirectory()) {
                 return true;
             }
+
+            for (String support : allowedExtentions) {
+                if (f.getName().toLowerCase().endsWith(support)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
-        return false;
+        //The description of this filter
+        public String getDescription() {
+            return "Configurationfiles";
+        }
     }
-
-    //The description of this filter
-    public String getDescription() {
-        return "Configurationfiles";
-    }
-}
 }

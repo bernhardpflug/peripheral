@@ -205,6 +205,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         previewItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("PDC - Peripheral Display Creator");
 
         nextButton.setText("next");
         nextButton.addActionListener(new java.awt.event.ActionListener() {
@@ -226,7 +227,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         buttonPanelLayout.setHorizontalGroup(
             buttonPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, buttonPanelLayout.createSequentialGroup()
-                .addContainerGap(554, Short.MAX_VALUE)
+                .addContainerGap(584, Short.MAX_VALUE)
                 .add(prevButton)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
                 .add(nextButton)
@@ -246,7 +247,8 @@ public class DesignerGUI extends javax.swing.JFrame {
         cardPanel.setLayout(new java.awt.CardLayout());
 
         SensorPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 1 : Select Sensorserver"));
-		cardPanel.add(SensorPanel, "card2");
+        SensorPanel.setLayout(null);
+        cardPanel.add(SensorPanel, "card2");
 
         BackgroundPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Step 2 : Select Background Image of the Scene"));
 
@@ -260,14 +262,14 @@ public class DesignerGUI extends javax.swing.JFrame {
             .add(BackgroundPanelLayout.createSequentialGroup()
                 .add(85, 85, 85)
                 .add(jFileChooser1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 541, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(95, Short.MAX_VALUE))
+                .addContainerGap(91, Short.MAX_VALUE))
         );
         BackgroundPanelLayout.setVerticalGroup(
             BackgroundPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(BackgroundPanelLayout.createSequentialGroup()
                 .add(63, 63, 63)
                 .add(jFileChooser1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 304, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(68, Short.MAX_VALUE))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
 
         cardPanel.add(BackgroundPanel, "card3");
@@ -364,7 +366,7 @@ public class DesignerGUI extends javax.swing.JFrame {
                         .add(32, 32, 32)
                         .add(AnimationPropertiesPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 299, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                     .add(jLabel1))
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addContainerGap(74, Short.MAX_VALUE))
         );
         AnimationsPanelLayout.setVerticalGroup(
             AnimationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -384,9 +386,9 @@ public class DesignerGUI extends javax.swing.JFrame {
                     .add(AnimationsPanelLayout.createSequentialGroup()
                         .add(28, 28, 28)
                         .add(AnimationsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                            .add(org.jdesktop.layout.GroupLayout.LEADING, AnimationPropertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
+                            .add(org.jdesktop.layout.GroupLayout.LEADING, AnimationPropertiesPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
                             .add(org.jdesktop.layout.GroupLayout.LEADING, DefAnimationsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 383, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 14, Short.MAX_VALUE)
                 .add(jLabel1))
         );
 
@@ -706,7 +708,7 @@ public class DesignerGUI extends javax.swing.JFrame {
                 }
 
                 //display startup dialog
-                StartUpDialog dialog = new StartUpDialog(null);
+                StartUpDialog dialog = new StartUpDialog();
                 dialog.setLocationRelativeTo(null);
                 StartUpDialog.StartOption option = dialog.showStartUpDialog();
 
