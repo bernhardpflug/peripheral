@@ -340,14 +340,14 @@ public class SymbolAdapter implements Serializable {
      * GUI checks whether returned list is empty to allow user to proceed
      * @return list with all invalid values of userinputs
      */
-    public ArrayList<Value> getInvalidUserInputValues() {
+    public ArrayList<UserInput> getInvalidUserInputs() {
 
-        ArrayList<Value> result = new ArrayList<Value>();
+        ArrayList<UserInput> result = new ArrayList<UserInput>();
 
         for (UserInput userInput : this.neededUserInput) {
 
             if (!userInput.isValueValid()) {
-                result.add(userInput.getValue());
+                result.add(userInput);
             }
         }
 
