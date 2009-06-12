@@ -8,7 +8,6 @@
  *
  * Created on 08.06.2009, 17:07:08
  */
-
 package peripheral.viz;
 
 import javax.swing.JFileChooser;
@@ -28,9 +27,15 @@ public class VizStartupFrame extends javax.swing.JFrame {
     public VizStartupFrame() {
         initComponents();
 
+        this.setSize(550, 400);
+        this.setLocation(
+                getToolkit().getScreenSize().width / 2 - this.getWidth() / 2,
+                getToolkit().getScreenSize().height / 2 - this.getHeight() / 2 - 50);
+        this.setResizable(false);
+
         configChooser = new JFileChooser();
         configChooser.setFileFilter(new ZipFilter());
-        //this.logoLabel.setIcon(new javax.swing.ImageIcon(System.getProperty("user.dir") + "/res/pdc.png"));
+    //this.logoLabel.setIcon(new javax.swing.ImageIcon(System.getProperty("user.dir") + "/res/pdc.png"));
     }
 
     /** This method is called from within the constructor to
@@ -42,23 +47,16 @@ public class VizStartupFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         fileLabel = new javax.swing.JLabel();
         selectFileButton = new javax.swing.JButton();
         runButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(null);
+        setTitle("Peripheral - Visualization");
 
-        jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 36));
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("VISUALIZATION");
-        getContentPane().add(jLabel1);
-        jLabel1.setBounds(120, 10, 290, 43);
-
-        fileLabel.setText("<no file>");
+        fileLabel.setText("<select a file>");
 
         selectFileButton.setText("Choose...");
         selectFileButton.addActionListener(new java.awt.event.ActionListener() {
@@ -68,6 +66,7 @@ public class VizStartupFrame extends javax.swing.JFrame {
         });
 
         runButton.setText("Run");
+        runButton.setEnabled(false);
         runButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 runButtonActionPerformed(evt);
@@ -79,30 +78,30 @@ public class VizStartupFrame extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .add(27, 27, 27)
                 .add(fileLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 182, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(18, 18, 18)
+                .add(154, 154, 154)
                 .add(selectFileButton)
-                .addContainerGap())
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(368, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(runButton)
-                .addContainerGap())
+                .add(35, 35, 35))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(fileLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(selectFileButton))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 8, Short.MAX_VALUE)
-                .add(runButton)
-                .addContainerGap())
+                    .add(selectFileButton)
+                    .add(runButton)
+                    .add(fileLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 20, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel1);
-        jPanel1.setBounds(40, 70, 460, 100);
+        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/peripheral/resources/PDCVis300x300.png"))); // NOI18N
+        getContentPane().add(jLabel1, java.awt.BorderLayout.PAGE_START);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -112,6 +111,7 @@ public class VizStartupFrame extends javax.swing.JFrame {
         if (configChooser.showOpenDialog(null) == configChooser.APPROVE_OPTION) {
             configFile = configChooser.getSelectedFile();
             fileLabel.setText(configFile.getName());
+            this.runButton.setEnabled(true);
         }
     }//GEN-LAST:event_selectFileButtonActionPerformed
 
@@ -126,10 +126,12 @@ public class VizStartupFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_runButtonActionPerformed
 
     /**
-    * @param args the command line arguments
-    */
+     * @param args the command line arguments
+     */
     public static void main(String args[]) {
+        System.out.println(System.getProperty("java.library.path"));
         java.awt.EventQueue.invokeLater(new Runnable() {
+
             public void run() {
                 new VizStartupFrame().setVisible(true);
             }
@@ -146,22 +148,22 @@ public class VizStartupFrame extends javax.swing.JFrame {
 
     private class ZipFilter extends FileFilter {
 
-    //Accept all directories and all gif, jpg, tiff, or png files.
-    public boolean accept(java.io.File f) {
-        if (f.isDirectory()) {
-            return true;
+        //Accept all directories and all gif, jpg, tiff, or png files.
+        public boolean accept(java.io.File f) {
+            if (f.isDirectory()) {
+                return true;
+            }
+
+            if (f.getName().toLowerCase().endsWith(".zip")) {
+                return true;
+            }
+
+            return false;
         }
 
-        if (f.getName().toLowerCase().endsWith(".zip")) {
-            return true;
+        //The description of this filter
+        public String getDescription() {
+            return "ConfigurationFiles";
         }
-
-        return false;
     }
-
-    //The description of this filter
-    public String getDescription() {
-        return "ConfigurationFiles";
-    }
-}
 }
