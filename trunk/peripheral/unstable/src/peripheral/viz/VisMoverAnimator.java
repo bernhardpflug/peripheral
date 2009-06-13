@@ -61,8 +61,8 @@ public class VisMoverAnimator implements VisAnimator, Observer {
 
             //fadeIn = Mover.FadeIn.Left;
             //mover.setDirection(Direction.Horizontal);
-            int fadeInStartPositionRandX = (new Random()).nextInt() % symbol.getImg().width;
-            int fadeInStartPositionRandY = (new Random()).nextInt() % symbol.getImg().height;
+            int fadeInStartPositionRandX = Math.abs((new Random()).nextInt()) % 100;
+            int fadeInStartPositionRandY = Math.abs((new Random()).nextInt()) % 100;
             switch (fadeIn) {
                 case LeftOrTop:
                     if (mover.getDirection() == Direction.Horizontal) {

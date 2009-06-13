@@ -41,61 +41,8 @@ public class Runtime {
     }
 
     public Visualization getVisualization() {
-        if (viz != null) {
-            return viz;
-        }
+        return viz;
 
-        //@todo: comment out and return real viz-instance
-        return new Visualization() {
-
-            public void addSymbol(Symbol s, Region region) {
-                Logging.getLogger().finer("Visualization: added symbol");
-            }
-
-            public void brightness(Symbol s, float amount) {
-                Logging.getLogger().finer("Visualization: changed brightness to " + amount);
-            }
-
-            public void contrast(Symbol s, float amount) {
-                Logging.getLogger().finer("Visualization: changed contrast to " + amount);
-            }
-
-            public void hideSymbol(Symbol s) {
-                Logging.getLogger().finer("Visualization: hid symbol");
-            }
-
-            public void init(String backgroundImageFilename, Dimension resolution) {
-                Logging.getLogger().finer("Visualization-init: background-image: " + backgroundImageFilename + "; resolution: " + resolution);
-            }
-
-            public void removeSymbol(Symbol s) {
-                Logging.getLogger().finer("Visualization: removed symbol");
-            }
-
-            public void rotateSymbol(Symbol s, float angle) {
-                Logging.getLogger().finer("Visualization: rotated symbol at angle " + angle);
-            }
-
-            public void scaleSymbol(Symbol s, float factorX, float factorY) {
-                Logging.getLogger().finer("Visualization: scaled symbol at factor(x,y) (" + factorX + "," + factorY + ")");
-            }
-
-            public void showSymbol(Symbol s) {
-                Logging.getLogger().finer("Visualization: showed symbol");
-            }
-
-            public void swapSymbol(Symbol s, String filename) {
-                Logging.getLogger().finer("Visualization: swapped image of symbol. new image: " + filename);
-            }
-
-            public void translateSymbol(Symbol s, java.awt.Point targetPosition) {
-                Logging.getLogger().finer("Visualization: translated symbol to position " + targetPosition);
-            }
-
-            public void addVisSymbol(VisSymbol s) {
-                throw new UnsupportedOperationException("Not supported yet.");
-            }
-        };
     }
 
     public Map<Sensor, java.util.List<SymbolAdapter>> getSensorAdapterMapping() {
@@ -108,43 +55,14 @@ public class Runtime {
         DisplayConfiguration.load(configFile);
         displayConfig = DisplayConfiguration.getInstance();
 
-        //@todo: uncomment when visualization is ready
         initVisualization();
 
         executeAdapterInitActions();
-
-        //@todo: delete: only for testing purpose
-        //executeAdapters();
-        ////@todo: delete: only for testing purpose
-        //startSensorServer();
 
         createSensorAdapterMapping();
     //screateSensorUpdateThreads();
 
     //startSensorCheckout();
-    }
-
-    private void startSensorServer() {
-        // Create Server
-        SensorServer server = new SensorServer("http://dyn167048.wlan.jku.at", "8080", "admin");
-        server.connect();
-
-        // Check count of sensors
-        System.out.println("Server has " + server.getSensorList().size() + " Sensors.\n");
-
-        for (SymbolAdapter s : DisplayConfiguration.getInstance().getAdapter()) {
-            for (Sensor sensor : server.getSensorList()) {
-                if (sensor.getPid() == 12) {
-                    s.getPreselectedSensors().add(sensor);
-                }
-            }
-        }
-
-        for (Sensor sensor : server.getSensorList()) {
-//			if(sensor.getPid() == 12){
-            sensor.startCheckout();
-//			}
-        }
     }
 
     public void shutdown() {
