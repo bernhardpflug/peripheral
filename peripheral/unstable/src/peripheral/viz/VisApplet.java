@@ -37,7 +37,8 @@ public class VisApplet extends PApplet implements Visualization, Observer {
     private Map<String, PImage> imageCache = new HashMap<String, PImage>();
     private float globalFactorX,  globalFactorY;
     private ImageAdjuster imageAdjuster;
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
+    private static final boolean SIMULATE_SENSORS = true;
 
     public VisApplet() {
         symbols = new Vector<VisSymbol>();
@@ -49,15 +50,19 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         size(screen.width, screen.height, OPENGL);
         hint(ENABLE_OPENGL_4X_SMOOTH);
 
-        peripheral.logic.Runtime.getInstance().startup(VisApplet.this, "g:\\rotor1.zip");
+        Logging.getLogger().fine("load configuration: " + args[1]);
+        peripheral.logic.Runtime.getInstance().startup(VisApplet.this, args[1]);
         pt = new ProcessingThread(symbols, 50);
         pt.start();
 
         noStroke();
 
-        if (DEBUG) {
+        if (SIMULATE_SENSORS) {
             t = new MyTestThread(DisplayConfiguration.getInstance(), (Visualization) this);
             t.start();
+        }
+
+        if (DEBUG) {
             PFont font = createFont("Arial", 20);
             textFont(font);
         }
@@ -340,7 +345,9 @@ public class VisApplet extends PApplet implements Visualization, Observer {
     @Override
     public void stop() {
         pt.interrupt();
-        t.interrupt();
+        if (SIMULATE_SENSORS) {
+            t.interrupt();
+        }
         super.stop();
     }
 
@@ -363,12 +370,12 @@ public class VisApplet extends PApplet implements Visualization, Observer {
      */
     public static void main(String[] args) {
         //@todo: read configuration-filename from args
-        try{
-        System.out.println(System.getProperty("java.library.path"));
-        //Runtime.getInstance().startup("displayConfig.ser");
-        PApplet.main(new String[]{"--present", "peripheral.viz.VisApplet", "test"});
+        try {
+            System.out.println(System.getProperty("java.library.path"));
+            //Runtime.getInstance().startup("displayConfig.ser");
+            PApplet.main(new String[]{"--present", "peripheral.viz.VisApplet", "test"});
 
-        }catch(Exception e){
+        } catch (Exception e) {
             javax.swing.JOptionPane.showMessageDialog(null, e.toString());
         }
 
@@ -381,7 +388,6 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
     //Runtime.getInstance().shutdown();
     }
-
 
     class ProcessingThread extends Thread {
 
@@ -504,6 +510,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                         }
                     }
 
+                    cnt = 0;
                     if (cnt <= 3) {
                         noSensorChanges = "";
                         peripheral.logic.Runtime.getInstance().setSensorChanged(s);
@@ -514,7 +521,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                     }
                 }
                 try {
-                    sleep(5000);
+                    sleep(10000);
                     if (cnt == 0) {
                         //sleep(15000);
                     }

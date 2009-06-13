@@ -59,7 +59,7 @@ public class Mover extends SymbolAnimator {
         valFadeIn = new ConstValue(adapter, "Mover.fadeIn", fadeIn, fadeIn.getClass());
 
         ui.add(new UserInput("Direction", "", valDirection));
-        ui.add(new UserInput("Speed", "", valSpeed));
+        //ui.add(new UserInput("Speed", "", valSpeed));
         ui.add(new UserInput("Bounds", "", valBounds));
         //ui.add(new UserInput("Repeat", "", valRepeat));
         ui.add(new UserInput("FadeIn", "", valFadeIn));
