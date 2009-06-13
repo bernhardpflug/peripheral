@@ -660,7 +660,7 @@ public class AdapterTemplateFactory {
         UserInput input = new UserInput("Use threshold", "", val);
         adapter.getNeededUserInput().add(input);
 
-        val = new ConstValue(adapter, "threshold", 0.0, Float.class);
+        val = new ConstValue(adapter, "threshold", 0.0f, Float.class);
         input = new UserInput("Threshold", "Amount of change, which has to occur, before the change is propagated to the visualization.", val);
         adapter.getNeededUserInput().add(input);
 
