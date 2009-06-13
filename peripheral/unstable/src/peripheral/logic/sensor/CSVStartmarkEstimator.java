@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import peripheral.logic.Logging;
 import peripheral.logic.sensor.exception.SensorChannelException;
 import peripheral.logic.sensor.exception.SensorServerAddressException;
 
@@ -20,6 +21,8 @@ public class CSVStartmarkEstimator {
 	}
 	
 	public String getLatestmark() throws SensorServerAddressException, SensorChannelException {
+		
+		Logging.getLogger().finest("Parsing startmark in CSV File for " + sensor.getName());
 		
     	// Setup URL
     	URL url;
@@ -63,14 +66,13 @@ public class CSVStartmarkEstimator {
     		
     		result = resultLine[5];
     		
+    		Logging.getLogger().finest("Startmark for sensor " + sensor.getName() + ": " + result);
+    		
     	} catch (MalformedURLException e){
-//    		checkout.setStartmark("-1");
     		throw new SensorServerAddressException("Please enter a valid URL: " + e.getMessage());
     	} catch (IOException e) {
-//    		checkout.setStartmark("-2");
     		throw new SensorServerAddressException("Error retrieving data from URLConnection: " + e.getMessage());
 		} catch (IndexOutOfBoundsException e){
-//			checkout.setStartmark("-3");
 			throw new SensorChannelException("No SensorChannels available: " + e.getMessage());
 		}
 		

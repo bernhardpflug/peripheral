@@ -9,7 +9,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.Stack;
-import java.util.logging.Logger;
 
 import peripheral.logic.Logging;
 
@@ -18,7 +17,7 @@ public class CSVSamplerateEstimator extends Thread {
 	private Sensor sensor;
 	
 	// Number of measurements N over which mean samplerate is calculated
-	private static final int elements = 20;
+	private static final int elements = 5;
 	
 	public CSVSamplerateEstimator(Sensor sensor){
 		this.sensor = sensor;
@@ -26,9 +25,19 @@ public class CSVSamplerateEstimator extends Thread {
 	
 	public void run(){
 		
+			Logging.getLogger().finest("Calculating samplerate for " + sensor.getName());
+		
 			String startmark = sensor.getStartmark();
 			calculateFromCSVFile(startmark);
-			sensor.setPollingrate(sensor.getSamplerate() * Sensor.getSr_polling_ratio());
+			
+			// Activate buffering if samplerate is below 1.0f
+			if(sensor.getSamplerate()<1.0f){
+				sensor.setPollingrate(sensor.getSamplerate()*10);
+			}else{
+				sensor.setPollingrate(sensor.getSamplerate());
+			}
+			
+			// Notify observers to start sampling
 			sensor.samplingStarted();
 			
 	}
@@ -36,9 +45,6 @@ public class CSVSamplerateEstimator extends Thread {
 	private void calculateFromCSVFile(String startmark){
 		
 		Stack<Long> timestamps = new Stack<Long>();
-		
-		Logging.getLogger().fine("Startmark: " + startmark);
-//		System.err.println("Startmark" + startmark);
 		
 		do {
 			timestamps = getNewMeasStack(startmark);
@@ -51,8 +57,6 @@ public class CSVSamplerateEstimator extends Thread {
 			
 		} while (timestamps.size()<elements+1);
 		
-		System.out.println("Size: " + timestamps.size());
-		
 		// sample rate mean
 		long mean = 0;
 		long tmp = 0;
@@ -62,14 +66,13 @@ public class CSVSamplerateEstimator extends Thread {
 			long peek = timestamps.peek();
 			long diff = pop - peek;
 			tmp = tmp + diff;
-			System.out.println("Run: " + i + " Temp: " + tmp + "Size: " + timestamps.size());
-			
 		}
 		
 		mean  = tmp/(elements);
 		
 		sensor.setSamplerate((float)mean/1000);
-		System.err.println("[SAMPLERATE] - " + "Newly Calculated Samplerate: " + sensor.getSamplerate() + "\n");
+		
+		Logging.getLogger().finest("Calculated samplerate for " + sensor.getName() + ": " + sensor.getSamplerate());
 		
 		// 2009-05-02 10:06:17.436
 		// 2009-05-02 10:06:17.436
@@ -140,11 +143,8 @@ public class CSVSamplerateEstimator extends Thread {
 			reader.close();
 			
 		} catch (MalformedURLException e) {
-//			e.printStackTrace();
 		} catch (IOException e) {
-//			e.printStackTrace();
 		} catch (IndexOutOfBoundsException e) {
-//			e.printStackTrace();
 		}
 		
 		return resultstack;
