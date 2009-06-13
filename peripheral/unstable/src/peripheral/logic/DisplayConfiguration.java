@@ -190,7 +190,7 @@ public class DisplayConfiguration implements Serializable {
         SensorServer dummyserver = new SensorServer("http://dummyserver", "8080", "admin");
 
         // Create Sensor
-        Sensor dummyserversensor = new Sensor(0, "admin:00999*99999*99999*99999", dummyserver);
+        Sensor dummyserversensor = new Sensor(0, "admin:emptysensor", dummyserver);
         Sensor dummysensor = new Sensor(1, "admin:dummysensor", dummyserver);
 
         // Create SensorChannel channel1 for dummysensor
@@ -209,7 +209,7 @@ public class DisplayConfiguration implements Serializable {
         metadata1.put("description", "Air Temperature");
         metadata1.put("datatype", "Integer8");
         metadata1.put("units", "Degree Celcius");
-        metadata1.put("location", "In your face bitch");
+        metadata1.put("location", "somewhere outside");
         metadata1.put("upperlimit", "500");
         metadata1.put("lowerlimit", "0");
 
@@ -219,7 +219,7 @@ public class DisplayConfiguration implements Serializable {
         metadata2.put("description", "Percentage of Sky Cover");
         metadata2.put("datatype", "Integer8");
         metadata2.put("units", "Percent");
-        metadata2.put("location", "In your face bitch");
+        metadata2.put("location", "unknown");
         metadata2.put("upperlimit", "10");
         metadata2.put("lowerlimit", "0");
 
@@ -228,7 +228,7 @@ public class DisplayConfiguration implements Serializable {
         metadata2.put("description", "Percentage of Sky Cover");
         metadata2.put("datatype", "Float32");
         metadata2.put("units", "Percent");
-        metadata2.put("location", "In your face bitch");
+        metadata2.put("location", "unknown");
         metadata2.put("upperlimit", "30");
         metadata2.put("lowerlimit", "-20");
 
