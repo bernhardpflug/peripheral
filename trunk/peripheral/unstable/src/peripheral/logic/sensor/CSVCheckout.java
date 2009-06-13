@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import peripheral.logic.Logging;
 import peripheral.logic.sensor.exception.CSVDataException;
 import peripheral.logic.sensor.exception.SensorChannelException;
 import peripheral.logic.sensor.exception.SensorServerAddressException;
@@ -43,20 +44,22 @@ public class CSVCheckout extends Thread {
     
     public void run(){
     	
+    	Logging.getLogger().finest("Checkout started for " + sensor.getName());
+    	
     	while(true){
     		
     		if(isInterrupted())
     			break;
-    		
-    		// Convert Sensor's current samplerate from float/s to long/ms 
+        		
+			// Convert Sensor's current samplerate from float/s to long/ms 
         	// Needs to be done in here each while iteration to support variable sampling rate
     		float pollingrate = sensor.getPollingrate()*1000;
     		long millisec = (long) pollingrate;
     		
-//    		// Get startmark string
+//        		// Get startmark string
         	startmark = sensor.getStartmark();
-//        	prev_stopmark = startmark;
-//    		
+//            	prev_stopmark = startmark;
+//        		
     		try{
     			
             	// Find a startmark if startmark of sensor == ""
@@ -67,22 +70,26 @@ public class CSVCheckout extends Thread {
 
             	}
         
-    			// Get new Measurements for each Channel and set new sensor startmark to mark of last reveived measurement,
-        		// which is done in parseMeasToQueue Method
-        		
-        		for(SensorChannel channel : sensor.getSensorChannels()){
-        			
-        			BufferedReader reader = checkout(channel);
-        			parseMeasToQueue(channel, reader);
-        			
-            	}
+            	// Reset MEAS_ADD flag which is needed for dynamic sampling rate adjusting
+            	sensor.setQueueUpdated(false);
+            	
+    			if(sensor.isSampling()){
+    				// Get new Measurements for each Channel and set new sensor startmark to mark of last reveived measurement,
+            		// which is done in parseMeasToQueue Method
+            		for(SensorChannel channel : sensor.getSensorChannels()){
+            			
+            			BufferedReader reader = checkout(channel);
+            			parseMeasToQueue(channel, reader);
+            			
+                	}
+    			}
         		
     		} catch (SensorServerAddressException e){
-    			System.err.println("[" + sensor.getName() + "] - " + e.getMessage());
+//        			System.err.println("[" + sensor.getName() + "] - " + e.getMessage());
     		} catch (SensorChannelException e) {
-    			System.err.println("[" + sensor.getName() + "] - " + e.getMessage());
+//        			System.err.println("[" + sensor.getName() + "] - " + e.getMessage());
 			} catch (CSVDataException e) {
-				System.err.println("[" + sensor.getName() + "] - " + e.getMessage());
+//    				System.err.println("[" + sensor.getName() + "] - " + e.getMessage());
 			} finally{
     		
     			// Set Markers with mark of last acquired measurement and marker for stopmark of 
@@ -99,13 +106,15 @@ public class CSVCheckout extends Thread {
     			}
     			
         		try{
-        			System.out.println("[" + sensor.getName() + "] - " + "New Startmark: " + sensor.getStartmark());
 
-        			System.out.println("[" + sensor.getSensorChannels().get(0).getFullname() + " - MID: " + sensor.getSensorChannels().get(0).getMid() + "] - " 
+        			System.out.println("[" + sensor.getSensorChannels().get(0).getFullname() + " - MID: " 
+        					+ sensor.getSensorChannels().get(0).getMid() + "] - " 
         					+ "Number of Measurements:" + sensor.getSensorChannels().get(0).getMeasQueue().size());
-            		System.out.println("[" + sensor.getSensorChannels().get(1).getFullname() + " - MID: " + sensor.getSensorChannels().get(1).getMid() + "] - "
+            		System.out.println("[" + sensor.getSensorChannels().get(1).getFullname() + " - MID: " 
+            				+ sensor.getSensorChannels().get(1).getMid() + "] - "
             				+ "Number of Measurements:" + sensor.getSensorChannels().get(1).getMeasQueue().size());
-            		System.out.println("[" + sensor.getSensorChannels().get(2).getFullname() + " - MID: " + sensor.getSensorChannels().get(2).getMid() + "] - "
+            		System.out.println("[" + sensor.getSensorChannels().get(2).getFullname() + " - MID: " 
+            				+ sensor.getSensorChannels().get(2).getMid() + "] - "
             				+ "Number of Measurements:" + sensor.getSensorChannels().get(2).getMeasQueue().size());
             		System.out.println();
             		
@@ -187,6 +196,7 @@ public class CSVCheckout extends Thread {
 				// Add new Measurement to MeasQueue if mark is not equal to last runs startmark
 				if(stop<current){
 					channel.getMeasQueue().add(newmeas);
+					sensor.setQueueUpdated(true);
 				}
 			}
 			
