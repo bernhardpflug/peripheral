@@ -1,13 +1,10 @@
 #summary Tutorial on how to implement your own sensors (probes) and run them on a JddacClient
 
-= Introduction =
+= Prerequisites =
 
-Add your content here.
+  # Download [http://jddac.labs.agilent.com/jddac/downloads/jddac-1.3-src.zip JDDAC Framework]
+  # Compile the JddacClient by invoking `ant` in the clients root dir: `/apps/JddacClient/` or by compiling the whole JDDAC Framework at once by invoking `ant` in the framworks root directory
+  # Read through the documentation provided with JDDAC to get familiar with the IEEE 1451.0 standard
 
-
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+= Writing your own transducer block =
+To write your own basic sensor, a new class needs to be added to the package `net.java.jddac.jmdi.transducers`, where you can already find the demo transducers provided by JDDAC. By taking a look on the existing transducers, one can see that writing your own transducers is a pretty simple task.
