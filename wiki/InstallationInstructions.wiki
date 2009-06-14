@@ -20,7 +20,7 @@ As already outlined in the JDDAC installation instructions, after compiling the 
 
 When your server is up and running, compile the JddacClient application provided with the JDDAC Framework to run sensors and connect them to the server. Each JddacClient can be seen as a stand alone sensor. If you would like to run multiple sensors simultaneously on the same VM you need to copy the JddacClient folder and run the copied client again via `java -jar JddacClient.jar`, as configuration file conflicts would occur if more than one instance is executed from one JddacClient.jar. If you would like to run the JddacClient with another configuration file, you could do that by invoking `java -jar JddacClient.jar -f config.xml`.
 
-A tutorial on how to implement your own sensors (probes) and run them on a JddacClient can be found here.
+A tutorial on how to implement your own sensors (probes) and run them on a JddacClient can be found in the wiki: SensorImplementationTutorial.
 
 ==Peripheral Display Creator & Visualization==
 The designer and visualization components of our framework which are used to design peripheral displays, create configuration files and visualize those configuration files, are executable, so there is no need to install anything.
