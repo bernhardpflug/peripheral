@@ -1,7 +1,5 @@
 #summary Instructions to set up all PDC components correctly
 
-= Installation =
-
 Allthough all PDC components such as the Peripheral Display Creator and Visualization are executable with setting any prior modifcations of your runtime environment. The only prerequisite is an installed Java VM running JRE 1.5, which can be considered as "standard configuration" nowadays. 
 
 As PDC uses the JDDAC Framework for sensor management, access to a running JDDAC Server is needed. If you do not have this access you might want to download and setup your own server installation, as well as implement own probes and attach them to your own server. To do so, read through the following steps.
@@ -17,6 +15,8 @@ If you are eager to set up your own sensorserver or do not have access to an exs
 
 ==Peripheral Display Creator==
 ==Peripheral Display Visualization==
+
+= Downloading the components =
 
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
