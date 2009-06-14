@@ -7,8 +7,76 @@
   # Read through the documentation provided with JDDAC to get familiar with the IEEE 1451.0 standard
 
 = Writing your own transducer block =
-To write your own basic sensor, a new class needs to be added to the package `net.java.jddac.jmdi.transducers`, where you can already find the demo transducers provided by JDDAC. By taking a look on the existing transducers, one can see that writing your own transducers is a pretty simple task. 
+To write your own basic sensor, a new class needs to be added to the package `net.java.jddac.jmdi.transducers`, where you can already find the demo transducers provided by JDDAC. By taking a look on the existing transducers, one can see that writing your own transducers is a pretty simple task:
 
-Your newly created class needs to extend the BasicTIM class:
+  * Your newly created class needs to extend the BasicTIM class: `public class YourSensor extends BasicTIM {...}`
+  * You need three methods:
 
-'public class YourSensor extends BasicTIM {...}'
+{{{
+public class MotionSensor extends BasicTIM{
+
+	private final Object teds[][][] = {
+			
+			// chan0
+			{{MeasAttr.NAME, "MotionSensor"},
+				{MeasAttr.DESCRIPTION, "Apple Sudden Motion Sensor"},
+				{MeasAttr.VERSION, "0.1"},
+				{MeasAttr.MANUFACTURER, "Tobias Noiges & Apple Inc."}},
+			// chan1
+			{{MeasAttr.NAME, "AccX"},
+				{MeasAttr.DESCRIPTION, "Acceleration along X-Axis"},
+				{MeasAttr.UNITS, "G-Force in Percent"},
+				{MeasAttr.DATA_TYPE, TypeAttr.INTEGER8},
+				{MeasAttr.LOWER_LIMIT, -200},
+				{MeasAttr.UPPER_LIMIT, 200}},
+			// chan2
+			{{MeasAttr.NAME, "AccY"},
+				{MeasAttr.DESCRIPTION, "Acceleration along Y-Axis"},
+				{MeasAttr.UNITS, "G-Force in Percent"},
+				{MeasAttr.DATA_TYPE, TypeAttr.INTEGER8},
+				{MeasAttr.LOWER_LIMIT, -200},
+				{MeasAttr.UPPER_LIMIT, 200}},
+			// chan3
+			{{MeasAttr.NAME, "AccZ"},
+				{MeasAttr.DESCRIPTION, "Acceleration along Z-Axis"},
+				{MeasAttr.UNITS, "G-Force in Percent"},
+				{MeasAttr.DATA_TYPE, TypeAttr.INTEGER8},
+				{MeasAttr.LOWER_LIMIT, -200},
+				{MeasAttr.UPPER_LIMIT, 200}}
+	};
+	
+	public MotionSensor(){
+		setChannelTeds(teds);
+	}
+	
+	@Override
+	public String getMetaID() {
+		return "QkqlDBlQ3hGcYD2kVtiVkw:2";
+	}
+	
+	protected Measurement readChannel(int chanNum){
+		Measurement newMeas = genEmptyMeasurement(chanNum);
+		Object result = null;
+		
+		switch(chanNum){
+		case 1:
+			int x = Unimotion.getSMSX();
+			result = (int)(x/2.55);
+			
+			break;
+		case 2:
+			int y = Unimotion.getSMSY();
+			result = (int)(y/2.55);
+			break;
+		case 3:
+			int z = Unimotion.getSMSZ();
+			result = (int)(z/2.55);
+			break;
+		}
+		
+		newMeas.put(MeasAttr.VALUE, result);
+		return newMeas;
+	}
+
+}
+}}}
