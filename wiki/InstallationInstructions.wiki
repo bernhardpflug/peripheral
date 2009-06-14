@@ -17,6 +17,7 @@ If you are eager to set up your own sensorserver or do not have access to an exs
 ==Peripheral Display Visualization==
 
 =Installation=
+`java -jar JddacClient.jar`
 
 Add your content here.  Format your content with:
   * Text in *bold* or _italic_
