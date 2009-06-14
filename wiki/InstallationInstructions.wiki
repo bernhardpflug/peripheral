@@ -8,7 +8,12 @@ As PDC uses the JDDAC Framework for sensor management, access to a running JDDAC
 
 = Downloading the components =
 
-  * JDDAC Framework
+  * JDDAC (Java Distributed Data Acquisition and Control):
+
+JDDAC is a platform for building sensor networks and data acquisition systems. JDDAC enables Java applications to interact with the physical world by providing the means to manage transducers and to access measurement data streams. JDDAC is based on the IEEE 1451 standards for smart transducers, and it is available for the J2ME, J2SE, and J2EE environments.
+
+[https://jddac.dev.java.net JDDAC Project Hosting and Download]
+
   * Peripheral Display Creator
   * Peripheral Display Visualization
 
