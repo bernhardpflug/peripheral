@@ -24,6 +24,9 @@ public class SensorValue extends Value {
     }
 
     public void setSensorChannel(SensorChannel val) {
+        if (sensorChannel != null){
+            sensorChannel.getSensorValues().remove(this);
+        }
         this.sensorChannel = val;
         if (val != null) {
             this.sensorChannel.getSensorValues().add(this);
