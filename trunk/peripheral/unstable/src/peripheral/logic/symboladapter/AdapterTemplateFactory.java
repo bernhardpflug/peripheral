@@ -26,6 +26,7 @@ import peripheral.logic.filter.PositionFilter;
 import peripheral.logic.filter.RandomPositioningToolPickerFilter;
 import peripheral.logic.filter.RandomSymbolPickerFilter;
 import peripheral.logic.filter.RandomValuePickerFilter;
+import peripheral.logic.filter.SensorValueDurationFilter;
 import peripheral.logic.filter.SensorValueFilter;
 import peripheral.logic.filter.SensorValueThresholdFilter;
 import peripheral.logic.filter.StringTemplateFilter;
@@ -664,6 +665,18 @@ public class AdapterTemplateFactory {
         input = new UserInput("Threshold", "Amount of change, which has to occur, before the change is propagated to the visualization.", val);
         adapter.getNeededUserInput().add(input);
 
+        val = new ConstValue(adapter, "applyDurationFilter", true, Boolean.class);
+        input = new UserInput("Use duration filter", "", val);
+        adapter.getNeededUserInput().add(input);
+
+        val = new ConstValue(adapter, "duration", 0.0f, Float.class);
+        input = new UserInput("Duration", "Time in seconds, for which a sensor value has to stay within the threshold specified below, before the change is propagated to the visualization.", val);
+        adapter.getNeededUserInput().add(input);
+
+        val = new ConstValue(adapter, "thresholdDuration", 0.001f, Float.class);
+        input = new UserInput("Threshold", "Amount of change, which is allowed, so that the sensor value is treated as if no change would had occured.", val);
+        adapter.getNeededUserInput().add(input);
+
         SensorValueFilter sensorValueFilter;
         for (Value value : (new ArrayList<Value>(adapter.getVarpool().values()))) {
             if (value instanceof SensorValue) {
@@ -671,6 +684,12 @@ public class AdapterTemplateFactory {
                     sensorValueFilter = new SensorValueThresholdFilter(adapter, (SensorValue) value);
                     sensorValueFilter.putFilterInputValue("applyFilter", new VarValue(adapter, "applyThresholdFilter"));
                     sensorValueFilter.putFilterInputValue("threshold", new VarValue(adapter, "threshold"));
+                    adapter.getSensorValueFilter().add(sensorValueFilter);
+
+                    sensorValueFilter = new SensorValueDurationFilter(adapter, (SensorValue) value);
+                    sensorValueFilter.putFilterInputValue("applyFilter", new VarValue(adapter, "applyDurationFilter"));
+                    sensorValueFilter.putFilterInputValue("duration", new VarValue(adapter, "duration"));
+                    sensorValueFilter.putFilterInputValue("threshold", new VarValue(adapter, "thresholdDuration"));
                     adapter.getSensorValueFilter().add(sensorValueFilter);
                 } catch (Exception e) {
                     e.printStackTrace();

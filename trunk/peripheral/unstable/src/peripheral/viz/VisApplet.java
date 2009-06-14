@@ -37,7 +37,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
     private Map<String, PImage> imageCache = new HashMap<String, PImage>();
     private float globalFactorX,  globalFactorY;
     private ImageAdjuster imageAdjuster;
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private static final boolean SIMULATE_SENSORS = true;
 
     public VisApplet() {
@@ -471,14 +471,14 @@ public class VisApplet extends PApplet implements Visualization, Observer {
             }catch (Exception e){e.printStackTrace();}
             scaleSymbol(symbol2, 0.2f, 0.8f);
             //}*/
-
+            int lastVal = 0;
             int cnt = 0;
             while (true) {
                 if (isInterrupted()) {
                     break;
                 }
 
-                cnt++;
+                //cnt++;
                 for (Sensor s : peripheral.logic.Runtime.getInstance().getSensors()) {
                     for (SensorChannel c : s.getSensorChannels()) {
                         Object actValue = null;
@@ -491,6 +491,15 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                                 if (bounds != null) {
                                     iVal = (int) bounds.getLowerBound() + (int) (iVal % (bounds.getUpperBound()));
                                 }
+                                if (bounds.getUpperBound() <= 20) {
+                                    System.out.println("lastVal==iVal??: " + lastVal + "==" + iVal);
+                                    if (lastVal == iVal) {
+                                        cnt++;
+                                    } else {
+                                        lastVal = iVal;
+                                        cnt = 1;
+                                    }
+                                }
                                 actValue = iVal;
                             } else {
                                 dVal = Math.abs(r.nextFloat());
@@ -501,7 +510,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                             }
 
                             //actValue = 1;
-                            String logString = "simulated value for channel " + c.getFullname() + ": " + actValue;
+                            String logString = "simulated value for channel " + c.getFullname() + ": " + actValue + ", " + cnt + "x";
                             Logging.getLogger().finer(logString);
                             logStrings.put(c, logString);
                         }
@@ -510,18 +519,18 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                         }
                     }
 
-                    cnt = 0;
-                    if (cnt <= 3) {
-                        noSensorChanges = "";
-                        peripheral.logic.Runtime.getInstance().setSensorChanged(s);
-                    } else {
-                        cnt = 0;
-                        noSensorChanges = "set no sensor changes";
-                        peripheral.logic.Runtime.getInstance().setSensorNoChanges(s);
-                    }
+                    //cnt = 0;
+                    //if (cnt <= 3) {
+                    //    noSensorChanges = "";
+                    peripheral.logic.Runtime.getInstance().setSensorChanged(s);
+                //} else {
+                //    cnt = 0;
+                //    noSensorChanges = "set no sensor changes";
+                //    peripheral.logic.Runtime.getInstance().setSensorNoChanges(s);
+                //}
                 }
                 try {
-                    sleep(10000);
+                    sleep(300);
                     if (cnt == 0) {
                         //sleep(15000);
                     }
