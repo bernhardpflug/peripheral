@@ -4,8 +4,13 @@ Allthough all PDC components such as the Peripheral Display Creator and Visualiz
 
 As PDC uses the JDDAC Framework for sensor management, access to a running JDDAC Server is needed. If you do not have this access you might want to download and setup your own server installation, as well as implement own probes and attach them to your own server. To do so, read through the following steps.
 
-= Downloading the components =
+=Required downloads=
+  # [http://jddac.labs.agilent.com/jddac/downloads/jddac-1.3-src.zip JDDAC Framework]
+  # [http://peripheral.googlecode.com/files/jddac.war Modified jddac.War webarchive]
+  # PDC Designer for [http://code.google.com/p/peripheral/downloads/list downloads Windows], [http://code.google.com/p/peripheral/downloads/list downloads Mac OS X] or [http://code.google.com/p/peripheral/downloads/list downloads Linux]
+  # PDC Visualization for [http://code.google.com/p/peripheral/downloads/list downloads Windows], [http://code.google.com/p/peripheral/downloads/list downloads Mac OS X] or [http://code.google.com/p/peripheral/downloads/list downloads Linux]
 
+=Installation=
 ==JDDAC Framework==
 JDDAC (Java Distributed Data Acquisition and Control) is a platform for building sensor networks and data acquisition systems. JDDAC enables Java applications to interact with the physical world by providing the means to manage transducers and to access measurement data streams. JDDAC is based on the IEEE 1451 standards for smart transducers, and it is available for the J2ME, J2SE, and J2EE environments.
 
@@ -19,11 +24,3 @@ The designer component of our framework which is used to actually design a perip
 
 ==Peripheral Display Visualization==
 The visualization component of our framework, which enables the user to load a peripheral display configration and run the actual visualization can also be found in the [http://code.google.com/p/peripheral/downloads/list downloads] section as binary for Windows, Linux and Mac OS X.
-
-=Installation=
-`java -jar JddacClient.jar`
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
