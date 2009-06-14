@@ -7,4 +7,8 @@
   # Read through the documentation provided with JDDAC to get familiar with the IEEE 1451.0 standard
 
 = Writing your own transducer block =
-To write your own basic sensor, a new class needs to be added to the package `net.java.jddac.jmdi.transducers`, where you can already find the demo transducers provided by JDDAC. By taking a look on the existing transducers, one can see that writing your own transducers is a pretty simple task.
+To write your own basic sensor, a new class needs to be added to the package `net.java.jddac.jmdi.transducers`, where you can already find the demo transducers provided by JDDAC. By taking a look on the existing transducers, one can see that writing your own transducers is a pretty simple task. 
+
+Your newly created class needs to extend the BasicTIM class:
+
+'public class YourSensor extends BasicTIM {...}'
