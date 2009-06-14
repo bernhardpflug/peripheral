@@ -1,4 +1,4 @@
-#summary Tutorial teaching how to implement your own probes
+#summary Tutorial on how to implement your own probes
 
 = Introduction =
 
