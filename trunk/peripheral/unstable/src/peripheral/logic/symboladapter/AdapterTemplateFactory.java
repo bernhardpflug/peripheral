@@ -102,7 +102,7 @@ public class AdapterTemplateFactory {
         SymbolAdapter adapter = new SymbolAdapter();
 
         adapter.setName("Static Symbol");
-        adapter.setDescription("Adapter, mit dessen Hilfe ein statisches Symbol in die Szene eingefügt werden kann.");
+        adapter.setDescription("Adapter, which allows you to add a static symbol to the theme.");
 
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
@@ -124,7 +124,7 @@ public class AdapterTemplateFactory {
         SymbolAdapter adapter = new SymbolAdapter();
 
         adapter.setName("Swapper based on Conditions");
-        adapter.setDescription("Swapper, bei dem mehrere Bedingungen angegeben werden. Dabei wird pro Bedingung festgelegt, welches Bild angezeigt werden soll.");
+        adapter.setDescription("Swapper, for which you have to specify several conditions. For each condition a swapping image has to be specified.");
 
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, true);
@@ -147,8 +147,8 @@ public class AdapterTemplateFactory {
          */
         adapter = new SymbolAdapter();
 
-        adapter.setName("Swapper based on Sensorvalue and String-Template");
-        adapter.setDescription("Swapper, bei dem ein StringTemplate verwendet wird. Als Eingabe für das Template dient ein Sensorwert.");
+        adapter.setName("Swapper based on Sensorvalue and Filename-Template");
+        adapter.setDescription("Swapper, for which a 'Filename-Template' is used. Input for the template is a sensor value.");
 
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
@@ -157,11 +157,11 @@ public class AdapterTemplateFactory {
         adapter.setMaxAllowedNumberOfSymbols(0);
 
         Value val = new SensorValue(adapter, "sensorValue", Integer.class);
-        UserInput input = new UserInput("Sensorwert", "Wert vom Sensor", val);
+        UserInput input = new UserInput("Sensor value", "", val);
         adapter.getNeededUserInput().add(input);
 
         val = new ConstValue(adapter, "filenameTemplate", "file_###VAL###.png", String.class);
-        input = new UserInput("Dateinamen-Template", "", val);
+        input = new UserInput("Filename-Template", "", val);
         adapter.getNeededUserInput().add(input);
 
         val = new ConstValue(adapter, "fileFolder", null, Directory.class);
@@ -199,14 +199,14 @@ public class AdapterTemplateFactory {
          */
         SymbolAdapter adapter = new SymbolAdapter();
 
-        adapter.setName("Colorizer (Brightness&Contrast) based on Sensorvalues");
-        adapter.setDescription("");
+        adapter.setName("Colorizer (Brightness&Contrast) based on sensor values");
+        adapter.setDescription("A colorizer, which lets you specify brightness and contrast of an image based on sensor values.");
 
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
         Value val = new SensorValue(adapter, "sensorValueBrightness", Integer.class);
-        UserInput input = new UserInput("Brightness", "Value of sensor, from which brightness will be calculated.", val);
+        UserInput input = new UserInput("Brightness", "Value of sensor, which is used to calculate brightness.", val);
         adapter.getNeededUserInput().add(input);
 
         IntervalValueToPercentageFilter ipf = new IntervalValueToPercentageFilter(adapter, "percentageBrightness");
@@ -215,7 +215,7 @@ public class AdapterTemplateFactory {
         adapter.getBeforeFilter().add(ipf);
 
         val = new SensorValue(adapter, "sensorValueContrast", Integer.class);
-        input = new UserInput("Contrast", "Value of sensor, from which contrast will be calculated.", val);
+        input = new UserInput("Contrast", "Value of sensor, which is used to calculate contrast.", val);
         adapter.getNeededUserInput().add(input);
 
         ipf = new IntervalValueToPercentageFilter(adapter, "percentageContrast");
@@ -243,8 +243,8 @@ public class AdapterTemplateFactory {
 
         SymbolAdapter adapterBrightness = adapter.createCopy();
 
-        adapterBrightness.setName("Colorizer (Brightness only) based on Sensorvalue");
-        adapterBrightness.setDescription("");
+        adapterBrightness.setName("Colorizer (Brightness only) based on sensor value");
+        adapterBrightness.setDescription("A colorizer, which lets you specify brightness of an image based on a sensor value.");
 
         adapterBrightness.getNeededUserInput().remove(1);
         adapterBrightness.getBeforeFilter().remove(1);
@@ -255,8 +255,8 @@ public class AdapterTemplateFactory {
 
         SymbolAdapter adapterContrast = adapter.createCopy();
 
-        adapterContrast.setName("Colorizer (Contrast only) based on Sensorvalue");
-        adapterContrast.setDescription("");
+        adapterContrast.setName("Colorizer (Contrast only) based on sensor value");
+        adapterContrast.setDescription("A colorizer, which lets you specify contrast of an image based on a sensor value.");
 
         adapterContrast.getNeededUserInput().remove(0);
         adapterContrast.getBeforeFilter().remove(0);
@@ -291,14 +291,15 @@ public class AdapterTemplateFactory {
          */
         SymbolAdapter adapter = new SymbolAdapter();
 
-        adapter.setName("Slider based on SensorValue");
+        adapter.setName("Slider based on sensor value");
         adapter.setDescription("Slider, bei dem ein Sensorwert, dessen Wert innerhalb eines bestimmten Intervalls liegt, auf eine Strecke gemappt wird.");
+        adapter.setDescription("Slider, for which a sensor value, whose value lies within a certain interval, is mapped on a specified line.");
 
         adapter.setTool(new Line());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
         Value val = new SensorValue(adapter, "sensorValue", Float.class);
-        UserInput input = new UserInput("Sensorwert", "Wert vom Sensor", val);
+        UserInput input = new UserInput("Sensor value", "Value from sensor", val);
         adapter.getNeededUserInput().add(input);
 
         IntervalValueToPercentageFilter pf = new IntervalValueToPercentageFilter(adapter, "percentage");
@@ -339,13 +340,13 @@ public class AdapterTemplateFactory {
         SymbolAdapter adapter = new SymbolAdapter();
 
         adapter.setName("Vertical scaler based on sensor value");
-        adapter.setDescription("Scaler, bei dem der vertikale Skalierungsfaktor durch einen Sensorwert festgelegt wird.");
+        adapter.setDescription("Scaler, for which the vertical scaling factor is given by a specified sensor value.");
 
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
         Value val = new SensorValue(adapter, "sensorValue", Float.class);
-        UserInput input = new UserInput("Sensorwert", "Wert vom Sensor", val);
+        UserInput input = new UserInput("Sensor value", "Wert vom Sensor", val);
         adapter.getNeededUserInput().add(input);
 
         val = new ConstValue(adapter, "multiplyFactor", 1.0f, Float.class);
@@ -378,7 +379,7 @@ public class AdapterTemplateFactory {
         adapter = adapter.createCopy();
 
         adapter.setName("Horizontal scaler based on sensor value");
-        adapter.setDescription("Scaler, bei dem der horizontale Skalierungsfaktor durch einen Sensorwert festgelegt wird.");
+        adapter.setDescription("Scaler, for which the horizontal scaling factor is given by a specified sensor value.");
 
         symbolAction = new SymbolScaleAction(adapter, new VarValue(adapter, "factor"), new ConstValue(adapter, "factorY", 1.0, Float.class));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
@@ -392,13 +393,13 @@ public class AdapterTemplateFactory {
         adapter = new SymbolAdapter();
 
         adapter.setName("Horiztontal and vertical scaler based on sensor values");
-        adapter.setDescription("Scaler, bei dem der Skalierungsfaktor für beide Richtungen durch einen Sensorwert festgelegt wird.");
+        adapter.setDescription("Scaler, for which the scaling factors for both directions is given by specified sensor values.");
 
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
         val = new SensorValue(adapter, "sensorValueX", Float.class);
-        input = new UserInput("Sensorwert horizontal", "Wert vom Sensor, der für den horizontalen Skalierungsfaktor herangezogen wird.", val);
+        input = new UserInput("Sensor value horizontal", "Wert vom Sensor, der für den horizontalen Skalierungsfaktor herangezogen wird.", val);
         adapter.getNeededUserInput().add(input);
 
         val = new ConstValue(adapter, "multiplyFactorX", 1.0, Float.class);
@@ -406,11 +407,11 @@ public class AdapterTemplateFactory {
         adapter.getNeededUserInput().add(input);
 
         val = new SensorValue(adapter, "sensorValueY", Float.class);
-        input = new UserInput("Sensorwert vertikal", "Wert vom Sensor, der für den vertikalen Skalierungsfaktor herangezogen wird.", val);
+        input = new UserInput("Sensor value vertical", "Wert vom Sensor, der für den vertikalen Skalierungsfaktor herangezogen wird.", val);
         adapter.getNeededUserInput().add(input);
 
         val = new ConstValue(adapter, "multiplyFactorY", 1.0, Float.class);
-        input = new UserInput("MultiplyFactor vertikal", "Faktor, mit dem der eingehende Sensorwert multipliziert wird. Skalierungsfaktor ergibt sich aus (Sensorwert vertikal)*(MultiplyFactor vertikal)", val);
+        input = new UserInput("MultiplyFactor vertical", "Faktor, mit dem der eingehende Sensorwert multipliziert wird. Skalierungsfaktor ergibt sich aus (Sensorwert vertikal)*(MultiplyFactor vertikal)", val);
         adapter.getNeededUserInput().add(input);
 
         mf = new MultiplyFilter(adapter, "factorX");
@@ -444,7 +445,7 @@ public class AdapterTemplateFactory {
         adapter = new SymbolAdapter();
 
         adapter.setName("Rule-based scaler");
-        adapter.setDescription("Scaler, bei dem die Skalierungsfaktoren pro Regel explizit festgelegt werden.");
+        adapter.setDescription("Scaler, for which the scaling factors are specified explicitly, per rule.");
 
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, true);
@@ -469,14 +470,14 @@ public class AdapterTemplateFactory {
          */
         SymbolAdapter adapter = new SymbolAdapter();
 
-        adapter.setName("Rotor based on SensorValue");
-        adapter.setDescription("Rotor, bei dem ein Sensorwert als Rotationswinkel verwendet wird.");
+        adapter.setName("Rotor based on sensor value");
+        adapter.setDescription("Rotor, for which a sensor value is used as rotation angle.");
 
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
         Value val = new SensorValue(adapter, "sensorValue", Float.class);
-        UserInput input = new UserInput("Sensorwert", "Wert vom Sensor", val);
+        UserInput input = new UserInput("Sensor value", "Wert vom Sensor", val);
         adapter.getNeededUserInput().add(input);
 
         Rule rule = new Rule(adapter);
@@ -500,13 +501,13 @@ public class AdapterTemplateFactory {
         adapter = new SymbolAdapter();
 
         adapter.setName("Rotor based on SensorValue");
-        adapter.setDescription("Rotor, bei dem ein Sensorwert innerhalb eines Intervals auf Prozent umgerechnet wird. Aus dem Prozentwert wird dann der Rotatationswinkel abgeleitet. z.B.: 25% --> 90°, 50% --> 180°, ...");
+        adapter.setDescription("Rotor, for which a sensor value, which is within a certain interval, is converted into percentage. From the percentage value the rotation angle is derivated, e.g.: 25% --> 90°, 50% --> 180°, ...");
 
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
         val = new SensorValue(adapter, "sensorValue", Double.class);
-        input = new UserInput("Sensorwert", "Wert vom Sensor", val);
+        input = new UserInput("Sensor value", "Wert vom Sensor", val);
         adapter.getNeededUserInput().add(input);
 
         IntervalValueToPercentageFilter ipf = new IntervalValueToPercentageFilter(adapter, "percentage");
@@ -545,7 +546,7 @@ public class AdapterTemplateFactory {
         adapter = new SymbolAdapter();
 
         adapter.setName("Rule-based rotor");
-        adapter.setDescription("Rotor, bei dem der Rotationswinkel pro Regel explizit festgelegt wird.");
+        adapter.setDescription("Rotor, for which the rotation angle is specified explicitly, per rule.");
 
         adapter.setTool(new Point());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, true);
@@ -570,14 +571,14 @@ public class AdapterTemplateFactory {
          */
         SymbolAdapter adapter = new SymbolAdapter();
 
-        adapter.setName("OverlayPositionPopulator");
-        adapter.setDescription("1st Populator...");
+        adapter.setName("Position-Populator");
+        adapter.setDescription("Populator, for which a number of points and a sensor value have to be specified. The value of the sensor specifies, how many points are shown at a time.");
 
         adapter.setTool(new ToolList(Point.class));
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
 
         Value val = new SensorValue(adapter, "sensorValue", Integer.class);
-        UserInput input = new UserInput("Sensorwert", "Wert vom Sensor, der die Anzahl der anzuzeigenden Punkte angibt.", val);
+        UserInput input = new UserInput("Sensor value", "Wert vom Sensor, der die Anzahl der anzuzeigenden Punkte angibt.", val);
         adapter.getNeededUserInput().add(input);
 
         RandomValuePickerFilter rpf = new RandomPositioningToolPickerFilter(adapter, "pickedValues");
@@ -607,19 +608,19 @@ public class AdapterTemplateFactory {
          */
         adapter = new SymbolAdapter();
 
-        adapter.setName("StaticAreaPopulator");
-        adapter.setDescription("2nd Populator...");
+        adapter.setName("Static area-populator");
+        adapter.setDescription("Populator, for which a region and a sensor value have to be specified. The value of the sensor specifies, how many symbols are shown at a time.");
 
         adapter.setTool(new Region());
         adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
         adapter.setMaxAllowedNumberOfSymbols(-1);
 
         val = new SensorValue(adapter, "sensorValue", Integer.class);
-        input = new UserInput("Sensorwert", "Wert vom Sensor, der die Anzahl der anzuzeigenden Symbole angibt.", val);
+        input = new UserInput("Sensor value", "Wert vom Sensor, der die Anzahl der anzuzeigenden Symbole angibt.", val);
         adapter.getNeededUserInput().add(input);
 
         val = new ConstValue(adapter, "repeat", true, Boolean.class);
-        input = new UserInput("Repeat", "True: Ein Symbol kann mehrmals angzeigt werden, False: Ein Symbol kann nur höchstens einmal angezeigt werden.", val);
+        input = new UserInput("Symbol-Repeat", "True: Ein Symbol kann mehrmals angzeigt werden, False: Ein Symbol kann nur höchstens einmal angezeigt werden.", val);
         adapter.getNeededUserInput().add(input);
 
         rpf = new RandomSymbolPickerFilter(adapter, "pickedSymbols");
@@ -647,8 +648,8 @@ public class AdapterTemplateFactory {
          */
         adapter = adapter.createCopy();
 
-        adapter.setName("DynamicAreaPopulator");
-        adapter.setDescription("3rd Populator...");
+        adapter.setName("Dynamic area-populator");
+        adapter.setDescription("Populator, for which a region and a sensor value have to be specified. The value of the sensor specifies, how many symbols are shown at a time. Additionally the dynamic animation behavior of the symbols can be specified.");
 
         adapter.setAnimator(new Mover(adapter));
         adapter.setAllowOrientedSymbols(true);
@@ -674,7 +675,7 @@ public class AdapterTemplateFactory {
         adapter.getNeededUserInput().add(input);
 
         val = new ConstValue(adapter, "thresholdDuration", 0.001f, Float.class);
-        input = new UserInput("Threshold", "Amount of change, which is allowed, so that the sensor value is treated as if no change would had occured.", val);
+        input = new UserInput("Duration-Threshold", "Amount of change, which is allowed, so that the sensor value is treated as if no change would had occured.", val);
         adapter.getNeededUserInput().add(input);
 
         SensorValueFilter sensorValueFilter;
