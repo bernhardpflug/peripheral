@@ -25,6 +25,7 @@ import peripheral.designer.property.PropertyPanel;
 import peripheral.designer.wizard.AddAnimationDialog;
 import peripheral.logic.DisplayConfiguration;
 import peripheral.logic.positioningtool.PositioningTool;
+import peripheral.logic.sensor.SensorServer;
 import peripheral.logic.symboladapter.SymbolAdapter;
 import peripheral.logic.value.UserInput;
 
@@ -136,6 +137,11 @@ public class DesignerGUI extends javax.swing.JFrame {
         }
 
         PreviewDialog.getInstance().setPositioningtoolsToPaint(tools);
+        PreviewDialog.getInstance().updatePreview();
+    }
+
+    private void previewNoSymbolAdapters() {
+        PreviewDialog.getInstance().setPositioningtoolsToPaint(null);
         PreviewDialog.getInstance().updatePreview();
     }
 
@@ -430,8 +436,7 @@ public class DesignerGUI extends javax.swing.JFrame {
         aaD.setVisible(true);
 
         //remove all positioningtools from preview
-        PreviewDialog.getInstance().setPositioningtoolsToPaint(null);
-        PreviewDialog.getInstance().updatePreview();
+        this.previewNoSymbolAdapters();
     }//GEN-LAST:event_addAnimationButtonActionPerformed
 
     private void exitMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuActionPerformed
@@ -448,16 +453,42 @@ public class DesignerGUI extends javax.swing.JFrame {
         if (currentIndex == 0) {
             prevButton.setEnabled(true);
 
-            //if file is already set display it
-            File alreadyExisting = DisplayConfiguration.getInstance().getBackgroundImageFile();
+            //check for invalid servers
+            ArrayList<SensorServer> invalidServer = ((SensorPanel)this.SensorPanel).getInvalidServers();
 
-            if (alreadyExisting != null) {
-                this.jFileChooser1.setCurrentDirectory(alreadyExisting);
-                this.jFileChooser1.setSelectedFile(alreadyExisting);
+            if (invalidServer.size() > 0) {
+
+                String title, text;
+
+                if (invalidServer.get(0).getConnectionStatus().equals(SensorServer.status.connecting)) {
+                    title = "Connecting server found";
+                    text = "Server "+invalidServer.get(0).getAddress()+"\n" +
+                            "is currently connecting. Either wait for this server\n" +
+                            "to be connected or remove it from list.";
+                }
+                else {
+                    title = "Invalid server found";
+                    text = "Server "+invalidServer.get(0).getAddress()+"\n" +
+                            "is not available. Try to reconnect or remove it from list.";
+                }
+                
+                JOptionPane.showMessageDialog(this, text, title, JOptionPane.ERROR_MESSAGE);
+            }
+            //proceed
+            else {
+                //if file is already set display it
+                File alreadyExisting = DisplayConfiguration.getInstance().getBackgroundImageFile();
+
+                if (alreadyExisting != null) {
+                    this.jFileChooser1.setCurrentDirectory(alreadyExisting);
+                    this.jFileChooser1.setSelectedFile(alreadyExisting);
+                }
+
+                currentIndex++;
+                cl.next(cardPanel);
             }
 
-            currentIndex++;
-            cl.next(cardPanel);
+            
         } //background panel
         else if (currentIndex == 1) {
 
@@ -468,6 +499,9 @@ public class DesignerGUI extends javax.swing.JFrame {
 
                 DisplayConfiguration.getInstance().setBackgroundImage(PreviewDialog.getInstance().getBackgroundImage());
                 DisplayConfiguration.getInstance().setBackgroundImageFile(selectedFile);
+
+                //load all already existing tools of symboladapter into preview
+                previewAllSymbolAdapters();
 
                 nextButton.setText("Save");
                 currentIndex++;
@@ -528,6 +562,7 @@ public class DesignerGUI extends javax.swing.JFrame {
             prevButton.setEnabled(false);
         } //animation panel
         else if (currentIndex == 2) {
+            this.previewNoSymbolAdapters();
             nextButton.setText("next");
         }
 

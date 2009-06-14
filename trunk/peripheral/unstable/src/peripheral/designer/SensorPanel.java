@@ -21,6 +21,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.AbstractTableModel;
 
+import javax.swing.table.DefaultTableCellRenderer;
 import peripheral.logic.DisplayConfiguration;
 import peripheral.logic.sensor.Sensor;
 import peripheral.logic.sensor.SensorChannel;
@@ -67,6 +68,9 @@ public class SensorPanel extends JPanel implements Observer{
     	
     	serverList = DisplayConfiguration.getInstance().getSensorServer();
     	
+        //reconnect to all already existing sensor server
+        this.reconnectAll();
+        
     	addressTextFieldText = "raab-heim.uni-linz.ac.at";
     	portTextFieldText = "8080";
     	usernameTextFieldText = "admin";
@@ -245,6 +249,7 @@ public class SensorPanel extends JPanel implements Observer{
         leadingLabel.setText("Select a server to edit properties:");
 
         serverTable.setModel(tableModel);
+        serverTable.setDefaultRenderer(Object.class, new SensorTableCellRenderer());
         serverTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         serverTable.setColumnSelectionAllowed(false);
         serverTable.setRowSelectionAllowed(true);
@@ -590,6 +595,31 @@ public class SensorPanel extends JPanel implements Observer{
 			serverTable.repaint();
 		}
 	}
+
+    /**
+     * Reconnects to all server in list
+     */
+    public void reconnectAll() {
+
+        for (SensorServer server : serverList) {
+            if (!server.getAddress().equals("http://dummyserver")) {
+                server.reconnect();
+            }
+        }
+    }
+
+    public ArrayList<SensorServer> getInvalidServers() {
+
+        ArrayList<SensorServer> invalid = new ArrayList<SensorServer>();
+
+        for (SensorServer server : serverList) {
+            if (!server.getConnectionStatus().equals(SensorServer.status.online)) {
+                invalid.add(server);
+            }
+        }
+
+        return invalid;
+    }
     
     class SensorTableModel extends AbstractTableModel{
 
@@ -618,6 +648,34 @@ public class SensorPanel extends JPanel implements Observer{
        @Override
         public String getColumnName(int col) {
             return columnNames[col];
+        }
+    }
+
+    /**
+     * Renderer for sensor table to color rows depending on connection state
+     */
+    class SensorTableCellRenderer extends DefaultTableCellRenderer {
+
+        public java.awt.Component getTableCellRendererComponent
+                (JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+
+            java.awt.Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            status state = serverList.get(row).getConnectionStatus();
+            
+            if (state.equals(SensorServer.status.connecting)) {
+                cell.setForeground(new java.awt.Color(255,140,0));
+            }
+            else if (state.equals(SensorServer.status.online)) {
+                cell.setForeground(java.awt.Color.BLACK);
+            }
+            else if (state.equals(SensorServer.status.error) || state.equals(SensorServer.status.offline)) {
+                //cell.setForeground(new java.awt.Color(255,50,50));
+                cell.setForeground(java.awt.Color.RED);
+                
+            }
+
+            return cell;
         }
     }
     
