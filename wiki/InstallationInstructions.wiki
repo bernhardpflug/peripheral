@@ -11,15 +11,12 @@ As PDC uses the JDDAC Framework for sensor management, access to a running JDDAC
   # PDC Visualization for [http://code.google.com/p/peripheral/downloads/list Windows], [http://code.google.com/p/peripheral/downloads/list Mac OS X] or [http://code.google.com/p/peripheral/downloads/list Linux]
 
 =Installation=
-==JDDAC Framework and the modified jddac.war==
+==JDDAC Framework & modified jddac.war==
 JDDAC (Java Distributed Data Acquisition and Control) is a platform for building sensor networks and data acquisition systems. JDDAC enables Java applications to interact with the physical world by providing the means to manage transducers and to access measurement data streams. JDDAC is based on the IEEE 1451 standards for smart transducers, and it is available for the J2ME, J2SE, and J2EE environments.
 
 For more information about the JDDAC platform visit http://jddac.dev.java.net. If your objective is to set up your own installation of a JDDAC Sensor server, follow the installation instructions provided with the download.
 
-As already outlined in the JDDAC installation instructions, after compiling the jddacServer source by invoking `ant` in the servers root dir `/apps/jddacServer/`, the server is started by executing run.sh (Windows), run_linux.sh or [http://peripheral.googlecode.com/files/run_mac.sh run_mac.sh] in the servers `/apps/jddacServer/bin/` directory.  To enable the PDC Framework to communicate with existing JDDAC sensor servers, the jddac.war webarchive in your servers webapp folder needs to be replaced with the previously downloaded [http://peripheral.googlecode.com/files/jddac.war jddac.war].
+As already outlined in the JDDAC installation instructions, after compiling the jddacServer source by invoking `ant` in the servers root dir `/apps/jddacServer/`, the server is started by executing run.sh (Windows), run_linux.sh or [http://peripheral.googlecode.com/files/run_mac.sh run_mac.sh] (needs to be downloaded first) in the servers `/apps/jddacServer/bin/` directory.  To enable the PDC Framework to communicate with existing JDDAC sensor servers, the jddac.war webarchive in your servers webapp folder needs to be replaced with the previously downloaded [http://peripheral.googlecode.com/files/jddac.war jddac.war].
 
-==Peripheral Display Creator==
-The designer component of our framework which is used to actually design a peripheral display and create a configuration file can be acquired in the [http://code.google.com/p/peripheral/downloads/list downloads] section in binary format for Windows, Linux and Mac OS X.
-
-==Peripheral Display Visualization==
-The visualization component of our framework, which enables the user to load a peripheral display configration and run the actual visualization can also be found in the [http://code.google.com/p/peripheral/downloads/list downloads] section as binary for Windows, Linux and Mac OS X.
+==Peripheral Display Creator & Visualization==
+The designer and visualization components of our framework which are used to design peripheral displays, create configuration files and visualize those configuration files, are executable, so there is no need to install anything.
