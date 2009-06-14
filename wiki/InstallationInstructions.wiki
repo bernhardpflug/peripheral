@@ -12,7 +12,7 @@ JDDAC (Java Distributed Data Acquisition and Control) is a platform for building
 If you are eager to set up your own sensorserver or do not have access to an exsiting one, download the framework from the project website: [https://jddac.dev.java.net JDDAC Project Hosting and Download]
 
 ==Modified jddac.war==
-In order to enable PDC to communicate with existing JDDAC servers, a modified jddac.war needs to be dowloaded and copied into the "webapps" folder of a JDDAC Server
+In order to enable PDC to communicate with existing JDDAC servers, a modified jddac.war needs to be dowloaded and copied into the "webapps" folder of a JDDAC Server. The modified [http://peripheral.googlecode.com/files/jddac.war jddac.war] file is provided in the [http://code.google.com/p/peripheral/downloads/list downloads] section.
 
 ==Peripheral Display Creator==
 The designer component of our framework which is used to actually design a peripheral display and create a configuration file can be acquired in the [http://code.google.com/p/peripheral/downloads/list downloads] section in binary format for Windows, Linux and Mac OS X.
