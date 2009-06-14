@@ -1,3 +1,5 @@
+#summary Instructions to set up all PDC components correctly
+
 = Installation =
 
 Allthough all PDC components such as the Peripheral Display Creator and Visualization are executable with setting any prior modifcations of your runtime environment. The only prerequisite is an installed Java VM running JRE 1.5, which can be considered as "standard configuration" nowadays. 
