@@ -7,8 +7,8 @@ As PDC uses the JDDAC Framework for sensor management, access to a running JDDAC
 =Required downloads=
   # [http://jddac.labs.agilent.com/jddac/downloads/jddac-1.3-src.zip JDDAC Framework]
   # [http://peripheral.googlecode.com/files/jddac.war Modified jddac.War webarchive]
-  # PDC Designer for [http://code.google.com/p/peripheral/downloads/list downloads Windows], [http://code.google.com/p/peripheral/downloads/list downloads Mac OS X] or [http://code.google.com/p/peripheral/downloads/list downloads Linux]
-  # PDC Visualization for [http://code.google.com/p/peripheral/downloads/list downloads Windows], [http://code.google.com/p/peripheral/downloads/list downloads Mac OS X] or [http://code.google.com/p/peripheral/downloads/list downloads Linux]
+  # PDC Designer for [http://code.google.com/p/peripheral/downloads/list Windows], [http://code.google.com/p/peripheral/downloads/list Mac OS X] or [http://code.google.com/p/peripheral/downloads/list Linux]
+  # PDC Visualization for [http://code.google.com/p/peripheral/downloads/list Windows], [http://code.google.com/p/peripheral/downloads/list Mac OS X] or [http://code.google.com/p/peripheral/downloads/list Linux]
 
 =Installation=
 ==JDDAC Framework==
