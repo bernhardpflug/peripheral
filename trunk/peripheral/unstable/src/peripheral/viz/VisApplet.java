@@ -149,7 +149,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         image(bg, 0, 0);
         PFont font = createFont("Arial", 80);
         textFont(font);
-        text("Buuummmmm!!!!", screen.width / 2 - 300, 150);
+        text("Booommmmm Baby!!!!", screen.width / 2 - 400, 150);
         this.noLoop();
         error = true;
     //this.stop();
