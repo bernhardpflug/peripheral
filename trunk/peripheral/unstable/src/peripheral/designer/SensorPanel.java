@@ -310,18 +310,13 @@ public class SensorPanel extends JPanel implements Observer{
 
                     SensorServer toDel = serverList.get(serverTable.getSelectedRow());
 
-                    //check if some sensors of the sensorserver are currently used by
-                    //at least one adapter
+                    //search for all sensors that are from this server (may be in props even though
+                    //this sensorserver does not list them (as with reconnect they are removed)
                     ArrayList<Sensor> usedSensors = new ArrayList<Sensor>();
 
                     for (SymbolAdapter adapter : DisplayConfiguration.getInstance().getAdapter()) {
-                        for (Sensor sensor : toDel.getSensorList()) {
-                            if (adapter.isUsed(sensor)) {
-                                if (!usedSensors.contains(sensor)) {
-                                    usedSensors.add(sensor);
-                                }
-                            }
-                        }
+
+                        usedSensors.addAll(adapter.getUsedSensors(toDel));
                     }
 
                     if (usedSensors.size() > 0) {
@@ -576,6 +571,7 @@ public class SensorPanel extends JPanel implements Observer{
         if (serverTable.getSelectedRow() != -1) {
             serverList.get(serverTable.getSelectedRow()).reconnect();
         }
+        serverTable.updateUI();
     }
 	
     private void serverTableMouseDoubleClickPerformed(JTable source) {
