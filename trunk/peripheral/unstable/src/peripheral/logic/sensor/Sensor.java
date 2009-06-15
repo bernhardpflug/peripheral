@@ -115,8 +115,12 @@ public class Sensor extends Observable implements Serializable {
         		
         		if(diff_current >= diff_previous){
                     // Faster queue polling through decreasing sleeptime
-                    samplerate = samplerate/factor;
-                    Logging.getLogger().finest("Adjusted samplerate of sensor " + this.getName() + "to: " + samplerate);
+                    if(samplerate > 0.01f){
+                    	samplerate = samplerate/factor;
+                        Logging.getLogger().finest("Adjusted samplerate of sensor " + this.getName() + "to: " + samplerate);
+                    }else if(samplerate<0.01f){
+                    	Logging.getLogger().finest("Samplerate of sensor " + this.getName() + " reached minimum of 0.01");
+                    }
                     
                     // Set values for next iteration
             		diff_previous = diff_current;
