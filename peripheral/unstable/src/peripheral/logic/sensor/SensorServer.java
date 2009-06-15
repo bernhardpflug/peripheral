@@ -46,7 +46,7 @@ public class SensorServer extends Observable implements Serializable {
         if (obj instanceof SensorServer) {
             SensorServer server = (SensorServer)obj;
 
-            if (this.address.equals(server.address)) {
+            if (this.address.equals(server.address) && this.port.equals(server.port)) {
                 return true;
             }
             else {

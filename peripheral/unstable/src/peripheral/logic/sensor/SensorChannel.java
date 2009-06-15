@@ -127,7 +127,7 @@ public class SensorChannel implements Serializable {
         if (obj instanceof SensorChannel) {
             SensorChannel sc = (SensorChannel) obj;
 
-            if (this.mid == sc.getMid()) {
+            if (this.mid == sc.getMid() && this.sensor.equals(sc.getSensor())) {
                 return true;
             } else {
                 return false;
@@ -144,10 +144,18 @@ public class SensorChannel implements Serializable {
         return hash;
     }
 
+    /**
+     * returns dummy sensor that is used to represent no valid selected sensor
+     * there must not be a server named similar to the dummyserver as this might
+     * cause conflicts when deleting similar named server from server list
+     * @return
+     */
     public static SensorChannel getDummy() {
 
         if (DUMMY == null) {
-            DUMMY = new SensorChannel(-1, "DUMMY", null) {
+            SensorServer dummyserver = new SensorServer("dummyserver","8080","dummy");
+            Sensor dummysensor = new Sensor(-2,"dummysensor",dummyserver);
+            DUMMY = new SensorChannel(-1, "DUMMY", dummysensor) {
 
                 public String toString() {
                     return "<none>";
