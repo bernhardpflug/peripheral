@@ -27,8 +27,8 @@ public class PositionRandomizer {
     public static Point getRandomPosition(Rectangle bounds, Dimension itemSize) {
         Rectangle newBounds = new Rectangle(bounds);
 
-        newBounds.x -= itemSize.width;
-        newBounds.y -= itemSize.height;
+        //newBounds.x -= itemSize.width;
+        //newBounds.y -= itemSize.height;
 
         return getRandomPosition(newBounds);
     }
