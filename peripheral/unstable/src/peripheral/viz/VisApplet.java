@@ -38,8 +38,8 @@ public class VisApplet extends PApplet implements Visualization, Observer {
     private Map<String, PImage> imageCache = new HashMap<String, PImage>();
     private float globalFactorX,  globalFactorY;
     private ImageAdjuster imageAdjuster;
-    private static final boolean DEBUG = true;
-    private static final boolean SIMULATE_SENSORS = true;
+    private static final boolean DEBUG = false;
+    private static final boolean SIMULATE_SENSORS = false;
     private boolean error = false;
 
     public VisApplet() {

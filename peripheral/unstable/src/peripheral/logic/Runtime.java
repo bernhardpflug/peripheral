@@ -60,9 +60,10 @@ public class Runtime {
         executeAdapterInitActions();
 
         createSensorAdapterMapping();
-    //screateSensorUpdateThreads();
 
-    //startSensorCheckout();
+        createSensorUpdateThreads();
+
+        startSensorCheckout();
     }
 
     public void shutdown() {
