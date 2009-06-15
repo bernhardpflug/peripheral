@@ -209,7 +209,7 @@ public class SymbolAdapter implements Serializable {
     }
 
     /**
-     * Determines whether given sensor has dependencies in UserInputs
+     * Determines whether given sensor has dependencies in UserInputs and rules
      * @param sensor
      * @return
      */
@@ -250,6 +250,44 @@ public class SymbolAdapter implements Serializable {
         }
 
         return false;
+    }
+
+    /**
+     * Checks userinputs and conditions whether one of the used sensors
+     * is from the given server. This may help finding used sensors
+     * that are no longer linked in a server.
+     * @param server
+     * @return
+     */
+    public ArrayList<Sensor> getUsedSensors(SensorServer server) {
+        ArrayList<Sensor> result = new ArrayList<Sensor>();
+
+        for (UserInput userInput : neededUserInput) {
+
+            //iterate through all user inputs with sensorvalues
+            if (userInput.getValue() instanceof SensorValue) {
+                SensorValue sensorValue = (SensorValue) userInput.getValue();
+
+                if (sensorValue.getSensorChannel().getSensor().getServer().equals(server)) {
+
+                    result.add(sensorValue.getSensorChannel().getSensor());
+                }
+            }
+        }
+
+        //iterate through rules and check for sensor uage
+        for (Rule rule : rules) {
+
+            for (Condition condition : rule.getConditions()) {
+
+                if (condition.getLeftSideOp().getSensorChannel().getSensor().getServer().equals(server)) {
+
+                    result.add(condition.getLeftSideOp().getSensorChannel().getSensor());
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
