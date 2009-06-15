@@ -1,7 +1,6 @@
 package peripheral.viz;
 
 import java.awt.Dimension;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -10,6 +9,8 @@ import java.util.Random;
 import java.util.Vector;
 import peripheral.logic.DisplayConfiguration;
 import peripheral.logic.Logging;
+import peripheral.logic.action.SymbolScaleAction.ScaleExtentHorizontal;
+import peripheral.logic.action.SymbolScaleAction.ScaleExtentVertical;
 import peripheral.logic.datatype.Interval;
 import peripheral.logic.positioningtool.Line;
 import peripheral.logic.positioningtool.Region;
@@ -20,7 +21,6 @@ import peripheral.logic.value.SensorValue;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
-import processing.opengl.*;
 
 public class VisApplet extends PApplet implements Visualization, Observer {
 
@@ -92,7 +92,8 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
             pushMatrix();
             tint(255, 255 * ptr.getAlpha());
-            translate((float) (ptr.getIplX() + ptr.getScaledWidth() / 2) * globalFactorX, (float) ((ptr.getIplY() + ptr.getScaledHeight() / 2) - (ptr.getScaledHeight() - ptr.getImg().height)) * globalFactorY);
+            //translate((float) (ptr.getIplX() + ptr.getScaledWidth() / 2) * globalFactorX, (float) ((ptr.getIplY() + ptr.getScaledHeight() / 2) - (ptr.getScaledHeight() - ptr.getImg().height)) * globalFactorY);
+            translate((float) (ptr.getIplX() + ptr.getScaledWidth() / 2 + ptr.getScalePositionOffsetX()) * globalFactorX, (float) ((ptr.getIplY() + ptr.getScaledHeight() / 2) + (ptr.getScalePositionOffsetY())) * globalFactorY);
             scale(ptr.getScaleXIpl() * globalFactorX, ptr.getScaleYIpl() * globalFactorY);
             imageMode(CENTER);
             rotate(radians(ptr.getAngleIpl()));
@@ -234,10 +235,13 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         }
     }
 
-    public void scaleSymbol(Symbol s, float factorX, float factorY) {
+    public void scaleSymbol(Symbol s, float factorX, float factorY, ScaleExtentHorizontal extentX, ScaleExtentVertical extentY) {
+        VisSymbol vs = findVSforS(s);
         synchronized (s) {
             s.setScaleX(factorX);
             s.setScaleY(factorY);
+            vs.setScaleExtentX(extentX);
+            vs.setScaleExtentY(extentY);
         }
     }
 
@@ -253,7 +257,10 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         VisSymbol vs = findVSforS(s);
         boolean newSymbol = false;
 
-        if (vs == null && filename != null) {
+        if (vs == null && filename == null){
+            return;
+        }
+        else if (vs == null && filename != null) {
             newSymbol = true;
             vs = new VisSymbol(s, null, this);
             vs.setVisible(false);
@@ -491,7 +498,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                                 if (bounds != null) {
                                     iVal = (int) bounds.getLowerBound() + (int) (iVal % (bounds.getUpperBound()));
                                 }
-                                if (bounds.getUpperBound() <= 20) {
+                                /*if (bounds.getUpperBound() <= 20) {
                                     System.out.println("lastVal==iVal??: " + lastVal + "==" + iVal);
                                     if (lastVal == iVal) {
                                         cnt++;
@@ -500,6 +507,9 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                                         cnt = 1;
                                     }
                                 }
+                                
+                                actValue = lastVal == 0 ? 1 : 200;
+                                lastVal = 1;*/
                                 actValue = iVal;
                             } else {
                                 dVal = Math.abs(r.nextFloat());
@@ -520,7 +530,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                     }
 
                     //cnt = 0;
-                    //if (cnt <= 3) {
+                   //if (cnt <= 3) {
                     //    noSensorChanges = "";
                     peripheral.logic.Runtime.getInstance().setSensorChanged(s);
                 //} else {
@@ -530,7 +540,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                 //}
                 }
                 try {
-                    sleep(300);
+                    sleep(10000);
                     if (cnt == 0) {
                         //sleep(15000);
                     }

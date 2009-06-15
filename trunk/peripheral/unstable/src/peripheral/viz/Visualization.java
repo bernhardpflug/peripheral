@@ -2,7 +2,8 @@ package peripheral.viz;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.util.Vector;
+import peripheral.logic.action.SymbolScaleAction.ScaleExtentHorizontal;
+import peripheral.logic.action.SymbolScaleAction.ScaleExtentVertical;
 import peripheral.logic.positioningtool.Region; 
 import peripheral.logic.symboladapter.Symbol;
 
@@ -29,7 +30,7 @@ public interface Visualization {
      *    the bounds have to be checked.
      *      </p>
      */
-    public void scaleSymbol (Symbol s, float factorX, float factorY);
+    public void scaleSymbol (Symbol s, float factorX, float factorY, ScaleExtentHorizontal extentX, ScaleExtentVertical extentY);
 
     /**
      *  <p style="margin-top: 0">
