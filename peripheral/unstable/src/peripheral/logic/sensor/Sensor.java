@@ -33,7 +33,7 @@ public class Sensor extends Observable implements Serializable {
     private static final float init_pollingrate = 1.0f;
     
     // Queue values
-    private static final int queuesize_max = 20;
+    private static final int queuesize_max = 10;
     private static final int queuesize_min = 1;
     private int queuesize_current;
     private int queuesize_previous;
