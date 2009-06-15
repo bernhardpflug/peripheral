@@ -209,7 +209,7 @@ public class Sensor extends Observable implements Serializable {
         if (obj instanceof Sensor) {
             Sensor s = (Sensor) obj;
 
-            if (this.pid == s.getPid()) {
+            if (this.pid == s.getPid() && this.server.equals(s.getServer())) {
                 return true;
             } else {
                 return false;
