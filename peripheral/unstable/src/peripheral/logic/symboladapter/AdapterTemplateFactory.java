@@ -12,6 +12,8 @@ import peripheral.logic.action.SymbolBrightnessAction;
 import peripheral.logic.action.SymbolContrastAction;
 import peripheral.logic.action.SymbolRotateAction;
 import peripheral.logic.action.SymbolScaleAction;
+import peripheral.logic.action.SymbolScaleAction.ScaleExtentHorizontal;
+import peripheral.logic.action.SymbolScaleAction.ScaleExtentVertical;
 import peripheral.logic.action.SymbolShowAction;
 import peripheral.logic.action.SymbolSwapAction;
 import peripheral.logic.action.SymbolTranslateAction;
@@ -353,6 +355,12 @@ public class AdapterTemplateFactory {
         input = new UserInput("MultiplyFactor", "Faktor, mit dem der eingehende Sensorwert multipliziert wird. Skalierungsfaktor ergibt sich aus Sensorwert*MultiplyFactor", val);
         adapter.getNeededUserInput().add(input);
 
+        new ConstValue(adapter, "scaleExtentX", ScaleExtentHorizontal.Both, ScaleExtentHorizontal.class);
+
+        val = new ConstValue(adapter, "scaleExtentY", ScaleExtentVertical.Both, ScaleExtentVertical.class);
+        input = new UserInput("Extent Y", "Faktor, mit dem der eingehende Sensorwert multipliziert wird. Skalierungsfaktor ergibt sich aus Sensorwert*MultiplyFactor", val);
+        adapter.getNeededUserInput().add(input);
+
         MultiplyFilter mf = new MultiplyFilter(adapter, "factor");
         mf.putFilterInputValue("factor1", new VarValue(adapter, "sensorValue"));
         mf.putFilterInputValue("factor2", new VarValue(adapter, "multiplyFactor"));
@@ -360,12 +368,12 @@ public class AdapterTemplateFactory {
 
         Rule rule = new Rule(adapter);
         //rule.getConditions().add(new TrueCondition());
-        SymbolAction symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "factorX", 1.0, Float.class), new VarValue(adapter, "factor"));
+        SymbolAction symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "factorX", 1.0, Float.class), new VarValue(adapter, "factor"), new VarValue(adapter, "scaleExtentX"), new VarValue(adapter, "scaleExtentY"));
         PointWrapperAction wrapperAction = new PointWrapperAction(adapter, symbolAction);
         rule.getActions().add(wrapperAction);
         adapter.getRules().add(rule);
 
-        symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "failureFactorX", 1.0, Float.class), new ConstValue(adapter, "failureFactorY", 1.0, Float.class));
+        symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "failureFactorX", 1.0, Float.class), new ConstValue(adapter, "failureFactorY", 1.0, Float.class), new VarValue(adapter, "scaleExtentX"), new VarValue(adapter, "scaleExtentY"));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.getSensorFailureActions().add(wrapperAction);
 
@@ -376,14 +384,44 @@ public class AdapterTemplateFactory {
         /**
          * scaler 2: horizontal scaler
          */
-        adapter = adapter.createCopy();
+        adapter = new SymbolAdapter();
 
         adapter.setName("Horizontal scaler based on sensor value");
         adapter.setDescription("Scaler, for which the horizontal scaling factor is given by a specified sensor value.");
 
-        symbolAction = new SymbolScaleAction(adapter, new VarValue(adapter, "factor"), new ConstValue(adapter, "factorY", 1.0, Float.class));
+        adapter.setTool(new Point());
+        adapter.getRequiredSteps().put(SymbolAdapter.RequiredStep.Rules, false);
+
+        val = new SensorValue(adapter, "sensorValue", Float.class);
+        input = new UserInput("Sensor value", "Wert vom Sensor", val);
+        adapter.getNeededUserInput().add(input);
+
+        val = new ConstValue(adapter, "multiplyFactor", 1.0f, Float.class);
+        input = new UserInput("MultiplyFactor", "Faktor, mit dem der eingehende Sensorwert multipliziert wird. Skalierungsfaktor ergibt sich aus Sensorwert*MultiplyFactor", val);
+        adapter.getNeededUserInput().add(input);
+
+        new ConstValue(adapter, "scaleExtentY", ScaleExtentVertical.Both, ScaleExtentVertical.class);
+
+        val = new ConstValue(adapter, "scaleExtentX", ScaleExtentHorizontal.Both, ScaleExtentHorizontal.class);
+        input = new UserInput("Extent X", "Faktor, mit dem der eingehende Sensorwert multipliziert wird. Skalierungsfaktor ergibt sich aus Sensorwert*MultiplyFactor", val);
+        adapter.getNeededUserInput().add(input);
+
+        mf = new MultiplyFilter(adapter, "factor");
+        mf.putFilterInputValue("factor1", new VarValue(adapter, "sensorValue"));
+        mf.putFilterInputValue("factor2", new VarValue(adapter, "multiplyFactor"));
+        adapter.getBeforeFilter().add(mf);
+
+        rule = new Rule(adapter);
+        symbolAction = new SymbolScaleAction(adapter, new VarValue(adapter, "factor"), new ConstValue(adapter, "factorY", 1.0, Float.class), new VarValue(adapter, "scaleExtentX"), new VarValue(adapter, "scaleExtentY"));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
-        adapter.getRules().get(0).getActions().set(0, wrapperAction);
+        rule.getActions().add(wrapperAction);
+        adapter.getRules().add(rule);
+
+        symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "failureFactorX", 1.0, Float.class), new ConstValue(adapter, "failureFactorY", 1.0, Float.class), new VarValue(adapter, "scaleExtentX"), new VarValue(adapter, "scaleExtentY"));
+        wrapperAction = new PointWrapperAction(adapter, symbolAction);
+        adapter.getSensorFailureActions().add(wrapperAction);
+
+        addDefaultSensorValueFilters(adapter);
 
         templates.add(adapter);
 
@@ -406,12 +444,20 @@ public class AdapterTemplateFactory {
         input = new UserInput("MultiplyFactor horizontal", "Faktor, mit dem der eingehende Sensorwert multipliziert wird. Skalierungsfaktor ergibt sich aus (Sensorwert horizontal)*(MultiplyFactor horizontal)", val);
         adapter.getNeededUserInput().add(input);
 
+        val = new ConstValue(adapter, "scaleExtentX", ScaleExtentHorizontal.Both, ScaleExtentHorizontal.class);
+        input = new UserInput("Extent X", "Faktor, mit dem der eingehende Sensorwert multipliziert wird. Skalierungsfaktor ergibt sich aus Sensorwert*MultiplyFactor", val);
+        adapter.getNeededUserInput().add(input);
+
         val = new SensorValue(adapter, "sensorValueY", Float.class);
         input = new UserInput("Sensor value vertical", "Wert vom Sensor, der für den vertikalen Skalierungsfaktor herangezogen wird.", val);
         adapter.getNeededUserInput().add(input);
 
         val = new ConstValue(adapter, "multiplyFactorY", 1.0, Float.class);
         input = new UserInput("MultiplyFactor vertical", "Faktor, mit dem der eingehende Sensorwert multipliziert wird. Skalierungsfaktor ergibt sich aus (Sensorwert vertikal)*(MultiplyFactor vertikal)", val);
+        adapter.getNeededUserInput().add(input);
+
+        val = new ConstValue(adapter, "scaleExtentY", ScaleExtentVertical.Both, ScaleExtentVertical.class);
+        input = new UserInput("Extent Y", "Faktor, mit dem der eingehende Sensorwert multipliziert wird. Skalierungsfaktor ergibt sich aus Sensorwert*MultiplyFactor", val);
         adapter.getNeededUserInput().add(input);
 
         mf = new MultiplyFilter(adapter, "factorX");
@@ -426,12 +472,12 @@ public class AdapterTemplateFactory {
 
         rule = new Rule(adapter);
         //rule.getConditions().add(new TrueCondition());
-        symbolAction = new SymbolScaleAction(adapter, new VarValue(adapter, "factorX"), new VarValue(adapter, "factorY"));
+        symbolAction = new SymbolScaleAction(adapter, new VarValue(adapter, "factorX"), new VarValue(adapter, "factorY"), new VarValue(adapter, "scaleExtentX"), new VarValue(adapter, "scaleExtentY"));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         rule.getActions().add(wrapperAction);
         adapter.getRules().add(rule);
 
-        symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "failureFactorX", 1.0, Float.class), new ConstValue(adapter, "failureFactorY", 1.0, Float.class));
+        symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "failureFactorX", 1.0, Float.class), new ConstValue(adapter, "failureFactorY", 1.0, Float.class), new VarValue(adapter, "scaleExtentX"), new VarValue(adapter, "scaleExtentY"));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.getSensorFailureActions().add(wrapperAction);
 
@@ -455,7 +501,7 @@ public class AdapterTemplateFactory {
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.setDefaultAction(wrapperAction);
 
-        symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "failureFactorX", 1.0, Float.class), new ConstValue(adapter, "failureFactorY", 1.0, Float.class));
+        symbolAction = new SymbolScaleAction(adapter, new ConstValue(adapter, "failureFactorX", 1.0, Float.class), new ConstValue(adapter, "failureFactorY", 1.0, Float.class), new ConstValue(adapter, "scaleExtentX", ScaleExtentHorizontal.Both, ScaleExtentHorizontal.class), new ConstValue(adapter, "scaleExtentY", ScaleExtentVertical.Both, ScaleExtentVertical.class));
         wrapperAction = new PointWrapperAction(adapter, symbolAction);
         adapter.getSensorFailureActions().add(wrapperAction);
 

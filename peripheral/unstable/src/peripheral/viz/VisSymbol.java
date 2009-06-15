@@ -6,7 +6,8 @@ import java.awt.Rectangle;
 
 
 import java.util.Observable;
-import peripheral.logic.Logging;
+import peripheral.logic.action.SymbolScaleAction.ScaleExtentHorizontal;
+import peripheral.logic.action.SymbolScaleAction.ScaleExtentVertical;
 import peripheral.logic.symboladapter.*;
 import peripheral.logic.positioningtool.Region;
 
@@ -21,6 +22,8 @@ public class VisSymbol extends Observable {
     private float angleIpl;
     private float scaleXIpl;
     private float scaleYIpl;
+    private ScaleExtentHorizontal scaleExtentX = ScaleExtentHorizontal.Both;
+    private ScaleExtentVertical scaleExtentY = ScaleExtentVertical.Both;
     //private Point positionIpl;
     private Symbol symbol;
     private PImage img,  imgSwap;
@@ -394,6 +397,38 @@ public class VisSymbol extends Observable {
 
     public float getSwapScaledHeight() {
         return this.imgSwap.height * this.scaleYIpl;
+    }
+
+    public void setScaleExtentX(ScaleExtentHorizontal scaleExtentX) {
+        this.scaleExtentX = scaleExtentX;
+    }
+
+    public void setScaleExtentY(ScaleExtentVertical scaleExtentY) {
+        this.scaleExtentY = scaleExtentY;
+    }
+
+    public float getScalePositionOffsetX() {
+        switch (scaleExtentX) {
+            case Left:
+                return - (getScaledWidth() - getImg().width);
+            case Both:
+                return - ((getScaledWidth() - getImg().width) / 2);
+            case Right:
+                return 0;
+        }
+        return 0;
+    }
+
+    public float getScalePositionOffsetY() {
+        switch (scaleExtentY) {
+            case Up:
+                return - (getScaledHeight() - getImg().height);
+            case Both:
+                return - ((getScaledHeight() - getImg().height) / 2);
+            case Down:
+                return 0;
+        }
+        return 0;
     }
 
     public void toogleImage() {

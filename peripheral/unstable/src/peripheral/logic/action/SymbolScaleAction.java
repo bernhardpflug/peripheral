@@ -12,17 +12,32 @@ public class SymbolScaleAction extends SymbolAction {
 
     private Value factorX;
     private Value factorY;
+
+    private Value scaleExtentHorizontal;
+    private Value scaleExtentVertical;
+
     private boolean needFactorXUserInput = true;
     private boolean needFactorYUserInput = true;
+
+    public enum ScaleExtentHorizontal {
+        Left, Right, Both
+    }
+
+    public enum ScaleExtentVertical {
+        Up, Down, Both
+    }
 
     public SymbolScaleAction(SymbolAdapter adapter) {
         super(adapter);
     }
 
-    public SymbolScaleAction(SymbolAdapter adapter, Value factorX, Value factorY) {
+    public SymbolScaleAction(SymbolAdapter adapter, Value factorX, Value factorY, Value extentX, Value extentY) {
         this(adapter);
         this.factorX = factorX;
         this.factorY = factorY;
+
+        this.scaleExtentHorizontal = extentX;
+        this.scaleExtentVertical = extentY;
 
         needFactorXUserInput = false;
         needFactorYUserInput = false;
@@ -36,6 +51,14 @@ public class SymbolScaleAction extends SymbolAction {
     public float getFactorY() {
         //extract concrete value from Value-Object
         return Float.parseFloat(factorY.getValue().toString());
+    }
+
+    public ScaleExtentHorizontal getScaleExtentHorizontal() {
+        return (ScaleExtentHorizontal)scaleExtentHorizontal.getValue();
+    }
+
+    public ScaleExtentVertical getScaleExtentVertical() {
+        return (ScaleExtentVertical)scaleExtentVertical.getValue();
     }
 
     @Override
@@ -66,7 +89,7 @@ public class SymbolScaleAction extends SymbolAction {
      * @param s
      */
     public void execute(Symbol s) {
-        peripheral.logic.Runtime.getInstance().getVisualization().scaleSymbol(s, getFactorX(), getFactorY());
+        peripheral.logic.Runtime.getInstance().getVisualization().scaleSymbol(s, getFactorX(), getFactorY(), getScaleExtentHorizontal(), getScaleExtentVertical());
     }
 }
 
