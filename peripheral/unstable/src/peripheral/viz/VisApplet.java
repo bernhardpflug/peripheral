@@ -1,6 +1,7 @@
 package peripheral.viz;
 
 import java.awt.Dimension;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
@@ -39,6 +40,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
     private ImageAdjuster imageAdjuster;
     private static final boolean DEBUG = true;
     private static final boolean SIMULATE_SENSORS = true;
+    private boolean error = false;
 
     public VisApplet() {
         symbols = new Vector<VisSymbol>();
@@ -50,85 +52,107 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         size(screen.width, screen.height, OPENGL);
         hint(ENABLE_OPENGL_4X_SMOOTH);
 
-        Logging.getLogger().fine("load configuration: " + args[1]);
-        peripheral.logic.Runtime.getInstance().startup(VisApplet.this, args[1]);
-        pt = new ProcessingThread(symbols, 50);
-        pt.start();
+        try {
+            Logging.getLogger().fine("load configuration: " + args[1]);
+            peripheral.logic.Runtime.getInstance().startup(VisApplet.this, args[1]);
+            pt = new ProcessingThread(symbols, 50);
+            pt.start();
 
-        noStroke();
+            noStroke();
 
-        if (SIMULATE_SENSORS) {
-            t = new MyTestThread(DisplayConfiguration.getInstance(), (Visualization) this);
-            t.start();
-        }
+            if (SIMULATE_SENSORS) {
+                t = new MyTestThread(DisplayConfiguration.getInstance(), (Visualization) this);
+                t.start();
+            }
 
-        if (DEBUG) {
-            PFont font = createFont("Arial", 20);
-            textFont(font);
+            if (DEBUG) {
+                PFont font = createFont("Arial", 20);
+                textFont(font);
+            }
+        } catch (Exception e) {
+            exceptionExit();
         }
     }
 
     @Override
     public void draw() {
-        if (!initialized) {
+        if (!initialized || error) {
             return;
         }
 
-        imageMode(CORNER);
-        image(bgImage, 0, 0, screen.width, screen.height);
-        VisSymbol ptr;
+        try {
+            imageMode(CORNER);
+            image(bgImage, 0, 0, screen.width, screen.height);
+            VisSymbol ptr;
 
-        for (int i = symbols.size() - 1; i >= 0; i--) {
-            //for (int i=0; i< symbols.size(); i++){
-            ptr = symbols.get(i);
+            for (int i = symbols.size() - 1; i >= 0; i--) {
+                //for (int i=0; i< symbols.size(); i++){
+                ptr = symbols.get(i);
+
+                if (DEBUG) {
+                    if (ptr.getSymbol().getAdapter().getTool() instanceof Line) {
+                        Line l = (Line) ptr.getSymbol().getAdapter().getTool();
+                        stroke(126);
+                        line(l.getStartPoint().x * globalFactorX, l.getStartPoint().y * globalFactorY, l.getEndPoint().x * globalFactorX, l.getEndPoint().y * globalFactorY);
+                    }
+                }
+
+                pushMatrix();
+                tint(255, 255 * ptr.getAlpha());
+                //translate((float) (ptr.getIplX() + ptr.getScaledWidth() / 2) * globalFactorX, (float) ((ptr.getIplY() + ptr.getScaledHeight() / 2) - (ptr.getScaledHeight() - ptr.getImg().height)) * globalFactorY);
+                translate((float) (ptr.getIplX() + ptr.getScaledWidth() / 2 + ptr.getScalePositionOffsetX()) * globalFactorX, (float) ((ptr.getIplY() + ptr.getScaledHeight() / 2) + (ptr.getScalePositionOffsetY())) * globalFactorY);
+                scale(ptr.getScaleXIpl() * globalFactorX, ptr.getScaleYIpl() * globalFactorY);
+                imageMode(CENTER);
+                rotate(radians(ptr.getAngleIpl()));
+
+                if (ptr.getImgOriginal() != null) {
+                    imageAdjuster.reset();
+                    imageAdjuster.brightness(ptr.getBrightnessIpl());
+                    imageAdjuster.contrast(ptr.getContrastIpl());
+                    imageAdjuster.apply(ptr.getImg(), ptr.getImgOriginal());
+                    image(ptr.getImg(), 0, 0);
+                } else {
+                    image(ptr.getImg(), 0, 0);
+                }
+                if (ptr.getImgSwap() != null) {
+                    tint(255, 255 * ptr.getAlphaSwap());
+                    imageMode(CENTER);
+                    translate((float) (ptr.getIplX() + ptr.getScaledWidth() / 2) * -globalFactorX, (float) ((ptr.getIplY() + ptr.getScaledHeight() / 2) - (ptr.getScaledHeight() - ptr.getImg().height)) * -globalFactorY);
+                    translate((float) (ptr.getIplX() + ptr.getSwapScaledWidth() / 2) * globalFactorX, (float) ((ptr.getIplY() + ptr.getSwapScaledHeight() / 2) - (ptr.getSwapScaledHeight() - ptr.getImgSwap().height)) * globalFactorY);
+                    image(ptr.getImgSwap(), 0, 0);
+                }
+                popMatrix();
+            }
 
             if (DEBUG) {
-                if (ptr.getSymbol().getAdapter().getTool() instanceof Line) {
-                    Line l = (Line) ptr.getSymbol().getAdapter().getTool();
-                    stroke(126);
-                    line(l.getStartPoint().x * globalFactorX, l.getStartPoint().y * globalFactorY, l.getEndPoint().x * globalFactorX, l.getEndPoint().y * globalFactorY);
+                noTint();
+                text(frameRate + " fps", 0, 40);
+                int y = 60;
+                for (String s : this.logStrings.values()) {
+                    text(s, 0, y);
+                    y += 20;
                 }
+                text(noSensorChanges, 0, y);
+                updateMemoryUsage();
+                text(memoryUsage, 0, y + 900);
             }
-
-            pushMatrix();
-            tint(255, 255 * ptr.getAlpha());
-            //translate((float) (ptr.getIplX() + ptr.getScaledWidth() / 2) * globalFactorX, (float) ((ptr.getIplY() + ptr.getScaledHeight() / 2) - (ptr.getScaledHeight() - ptr.getImg().height)) * globalFactorY);
-            translate((float) (ptr.getIplX() + ptr.getScaledWidth() / 2 + ptr.getScalePositionOffsetX()) * globalFactorX, (float) ((ptr.getIplY() + ptr.getScaledHeight() / 2) + (ptr.getScalePositionOffsetY())) * globalFactorY);
-            scale(ptr.getScaleXIpl() * globalFactorX, ptr.getScaleYIpl() * globalFactorY);
-            imageMode(CENTER);
-            rotate(radians(ptr.getAngleIpl()));
-
-            if (ptr.getImgOriginal() != null) {
-                imageAdjuster.reset();
-                imageAdjuster.brightness(ptr.getBrightnessIpl());
-                imageAdjuster.contrast(ptr.getContrastIpl());
-                imageAdjuster.apply(ptr.getImg(), ptr.getImgOriginal());
-                image(ptr.getImg(), 0, 0);
-            } else {
-                image(ptr.getImg(), 0, 0);
-            }
-            if (ptr.getImgSwap() != null) {
-                tint(255, 255 * ptr.getAlphaSwap());
-                imageMode(CENTER);
-                translate((float) (ptr.getIplX() + ptr.getScaledWidth() / 2) * -globalFactorX, (float) ((ptr.getIplY() + ptr.getScaledHeight() / 2) - (ptr.getScaledHeight() - ptr.getImg().height)) * -globalFactorY);
-                translate((float) (ptr.getIplX() + ptr.getSwapScaledWidth() / 2) * globalFactorX, (float) ((ptr.getIplY() + ptr.getSwapScaledHeight() / 2) - (ptr.getSwapScaledHeight() - ptr.getImgSwap().height)) * globalFactorY);
-                image(ptr.getImgSwap(), 0, 0);
-            }
-            popMatrix();
+        //throw new Exception();
+        } catch (Exception e) {
+            exceptionExit();
         }
+    }
 
-        if (DEBUG) {
-            noTint();
-            text(frameRate + " fps", 0, 40);
-            int y = 60;
-            for (String s : this.logStrings.values()) {
-                text(s, 0, y);
-                y += 20;
-            }
-            text(noSensorChanges, 0, y);
-            updateMemoryUsage();
-            text(memoryUsage, 0, y + 900);
-        }
+    private void exceptionExit() {
+        background(0);
+        PImage bg = loadImage("res/atomic-blast.jpg");
+        bg.resize(screen.width, screen.height);
+        image(bg, 0, 0);
+        PFont font = createFont("Arial", 80);
+        textFont(font);
+        text("Buuummmmm!!!!", screen.width / 2 - 300, 150);
+        this.noLoop();
+        error = true;
+    //this.stop();
     }
     private String memoryUsage = "";
 
@@ -257,10 +281,9 @@ public class VisApplet extends PApplet implements Visualization, Observer {
         VisSymbol vs = findVSforS(s);
         boolean newSymbol = false;
 
-        if (vs == null && filename == null){
+        if (vs == null && filename == null) {
             return;
-        }
-        else if (vs == null && filename != null) {
+        } else if (vs == null && filename != null) {
             newSymbol = true;
             vs = new VisSymbol(s, null, this);
             vs.setVisible(false);
@@ -351,9 +374,13 @@ public class VisApplet extends PApplet implements Visualization, Observer {
 
     @Override
     public void stop() {
-        pt.interrupt();
+        if (pt != null) {
+            pt.interrupt();
+        }
         if (SIMULATE_SENSORS) {
-            t.interrupt();
+            if (t != null) {
+                t.interrupt();
+            }
         }
         super.stop();
     }
@@ -383,7 +410,8 @@ public class VisApplet extends PApplet implements Visualization, Observer {
             PApplet.main(new String[]{"--present", "peripheral.viz.VisApplet", "test"});
 
         } catch (Exception e) {
-            javax.swing.JOptionPane.showMessageDialog(null, e.toString());
+            //javax.swing.JOptionPane.showMessageDialog(null, e.toString());
+            Logging.getLogger().fine("exception");
         }
 
     /*try {
@@ -499,13 +527,13 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                                     iVal = (int) bounds.getLowerBound() + (int) (iVal % (bounds.getUpperBound()));
                                 }
                                 /*if (bounds.getUpperBound() <= 20) {
-                                    System.out.println("lastVal==iVal??: " + lastVal + "==" + iVal);
-                                    if (lastVal == iVal) {
-                                        cnt++;
-                                    } else {
-                                        lastVal = iVal;
-                                        cnt = 1;
-                                    }
+                                System.out.println("lastVal==iVal??: " + lastVal + "==" + iVal);
+                                if (lastVal == iVal) {
+                                cnt++;
+                                } else {
+                                lastVal = iVal;
+                                cnt = 1;
+                                }
                                 }
                                 
                                 actValue = lastVal == 0 ? 1 : 200;
@@ -530,7 +558,7 @@ public class VisApplet extends PApplet implements Visualization, Observer {
                     }
 
                     //cnt = 0;
-                   //if (cnt <= 3) {
+                    //if (cnt <= 3) {
                     //    noSensorChanges = "";
                     peripheral.logic.Runtime.getInstance().setSensorChanged(s);
                 //} else {
