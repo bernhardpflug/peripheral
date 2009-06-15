@@ -84,6 +84,7 @@ public class VisMoverAnimator implements VisAnimator, Observer {
                             endPosition.y = region.getBounds().y + region.getBounds().height - symbol.getImg().height;
                         }
                     }
+                    symbol.toogleImage();
                     break;
                 case RightOrBottom:
                     if (mover.getDirection() == Direction.Horizontal) {
