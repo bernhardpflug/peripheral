@@ -12,18 +12,20 @@ public class SymbolScaleAction extends SymbolAction {
 
     private Value factorX;
     private Value factorY;
-
     private Value scaleExtentHorizontal;
     private Value scaleExtentVertical;
-
     private boolean needFactorXUserInput = true;
     private boolean needFactorYUserInput = true;
+    private boolean needExtentXUserInput = true;
+    private boolean needExtentYUserInput = true;
 
     public enum ScaleExtentHorizontal {
+
         Left, Right, Both
     }
 
     public enum ScaleExtentVertical {
+
         Up, Down, Both
     }
 
@@ -41,6 +43,9 @@ public class SymbolScaleAction extends SymbolAction {
 
         needFactorXUserInput = false;
         needFactorYUserInput = false;
+
+        this.needExtentXUserInput = false;
+        this.needExtentYUserInput = false;
     }
 
     public float getFactorX() {
@@ -54,11 +59,11 @@ public class SymbolScaleAction extends SymbolAction {
     }
 
     public ScaleExtentHorizontal getScaleExtentHorizontal() {
-        return (ScaleExtentHorizontal)scaleExtentHorizontal.getValue();
+        return (ScaleExtentHorizontal) scaleExtentHorizontal.getValue();
     }
 
     public ScaleExtentVertical getScaleExtentVertical() {
-        return (ScaleExtentVertical)scaleExtentVertical.getValue();
+        return (ScaleExtentVertical) scaleExtentVertical.getValue();
     }
 
     @Override
@@ -73,6 +78,18 @@ public class SymbolScaleAction extends SymbolAction {
             if (factorY == null) {
                 factorY = new ConstValue(adapter, "factorY", 1.0f, Float.class);
                 userInput.add(new UserInput("Factor x-Axis", "Factor to which the symbol should be scaled on the y-axis.", factorY));
+            }
+        }
+        if (this.needExtentXUserInput) {
+            if (this.scaleExtentHorizontal == null) {
+                this.scaleExtentHorizontal = new ConstValue(adapter, "extentX", ScaleExtentHorizontal.Both, ScaleExtentHorizontal.class);
+                userInput.add(new UserInput("Extent X", "Factor to which the symbol should be scaled on the y-axis.", this.scaleExtentHorizontal));
+            }
+        }
+        if (this.needExtentYUserInput) {
+            if (this.scaleExtentVertical == null) {
+                this.scaleExtentVertical = new ConstValue(adapter, "extentY", ScaleExtentVertical.Both, ScaleExtentVertical.class);
+                userInput.add(new UserInput("Extent Y", "Factor to which the symbol should be scaled on the y-axis.", this.scaleExtentVertical));
             }
         }
         return userInput;
