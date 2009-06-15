@@ -246,7 +246,7 @@ public class SensorPanel extends JPanel implements Observer{
 
         serverPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Existing Servers"));
 
-        leadingLabel.setText("Select a server to edit properties:");
+        //leadingLabel.setText("Select a server to edit properties:");
 
         serverTable.setModel(tableModel);
         serverTable.setDefaultRenderer(Object.class, new SensorTableCellRenderer());
