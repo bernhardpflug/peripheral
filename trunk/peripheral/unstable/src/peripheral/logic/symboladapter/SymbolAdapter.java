@@ -214,6 +214,13 @@ public class SymbolAdapter implements Serializable {
      * @return
      */
     public boolean isUsed(Sensor sensor) {
+    	
+    	//iterate through preselected
+    	for (Sensor presensor : preselectedSensors) {
+    		if (sensor.equals(presensor)) {
+    			return true;
+    		}
+    	}
 
         for (UserInput userInput : neededUserInput) {
 
@@ -253,7 +260,7 @@ public class SymbolAdapter implements Serializable {
     }
 
     /**
-     * Checks userinputs and conditions whether one of the used sensors
+     * Checks preselected, userinputs and conditions whether one of the used sensors
      * is from the given server. This may help finding used sensors
      * that are no longer linked in a server.
      * @param server
@@ -261,6 +268,16 @@ public class SymbolAdapter implements Serializable {
      */
     public ArrayList<Sensor> getUsedSensors(SensorServer server) {
         ArrayList<Sensor> result = new ArrayList<Sensor>();
+        
+        //iterate through preselected
+    	for (Sensor presensor : preselectedSensors) {
+    		if (presensor.getServer().equals(server)) {
+    			
+    			if (!result.contains(presensor)) {
+    				result.add(presensor);
+    			}
+    		}
+    	}
 
         for (UserInput userInput : neededUserInput) {
 
@@ -270,7 +287,9 @@ public class SymbolAdapter implements Serializable {
 
                 if (sensorValue.getSensorChannel().getSensor().getServer().equals(server)) {
 
-                    result.add(sensorValue.getSensorChannel().getSensor());
+                	if (!result.contains(sensorValue.getSensorChannel().getSensor())) {
+                		result.add(sensorValue.getSensorChannel().getSensor());
+                	}
                 }
             }
         }
@@ -282,7 +301,9 @@ public class SymbolAdapter implements Serializable {
 
                 if (condition.getLeftSideOp().getSensorChannel().getSensor().getServer().equals(server)) {
 
-                    result.add(condition.getLeftSideOp().getSensorChannel().getSensor());
+                	if (!result.contains(condition.getLeftSideOp().getSensorChannel().getSensor())) {
+                		result.add(condition.getLeftSideOp().getSensorChannel().getSensor());
+                	}
                 }
             }
         }
