@@ -27,6 +27,7 @@ import peripheral.logic.sensor.Sensor;
 import peripheral.logic.sensor.SensorChannel;
 import peripheral.logic.sensor.SensorServer;
 import peripheral.logic.sensor.ServerConnectionStatusChangedEvent;
+import peripheral.logic.sensor.ServerReconnectListener;
 import peripheral.logic.sensor.SensorServer.status;
 import peripheral.logic.symboladapter.SymbolAdapter;
 
@@ -34,7 +35,7 @@ import peripheral.logic.symboladapter.SymbolAdapter;
  *
  * @author tobias
  */
-public class SensorPanel extends JPanel implements Observer{
+public class SensorPanel extends JPanel implements Observer, ServerReconnectListener{
 
 	// Components
 	private javax.swing.JButton addButton;
@@ -569,10 +570,52 @@ public class SensorPanel extends JPanel implements Observer{
     private void reconnectButtonActionPerformed(java.awt.event.ActionEvent evt) {
 
         if (serverTable.getSelectedRow() != -1) {
-            serverList.get(serverTable.getSelectedRow()).reconnect();
+        	SensorServer server = serverList.get(serverTable.getSelectedRow());
+        	
+        	server.addServerReconnectListener(this);
+            server.reconnect();
+            
+            serverTable.updateUI();
         }
-        serverTable.updateUI();
     }
+    
+    /*
+     * reconnect event methods
+     */
+    
+    public void reconnectCompleted() {
+		//do nothing
+	}
+	public void sensorAdded(Sensor sensor) {
+		// do nothing
+		
+	}
+	public void sensorRemoved(Sensor sensor) {
+		ArrayList<Sensor> sensorList = new ArrayList<Sensor>(1);
+		sensorList.add(sensor);
+		
+		boolean informFlag = true;
+		//check if removed sensor was used by adapters
+		for (SymbolAdapter adapter : DisplayConfiguration.getInstance().getAdapter()) {
+			//if so inform user and remove dependencies
+			if (adapter.isUsed(sensor)) {
+				//only inform user once about dependency clearance
+				if (informFlag) {
+					informUser(sensor);
+					informFlag = false;
+				}
+				adapter.removeSensorsWithDependencies(sensorList);
+			}
+		}
+	}
+	
+	private void informUser(Sensor sensor) {
+		String title = "Dependency clearance";
+		String text = "Sensor "+sensor.getName()+"\n" +
+				"is no longer available and therefore all its\n" +
+				"references in animations will be reset";
+		JOptionPane.showMessageDialog(null, text, title, JOptionPane.WARNING_MESSAGE);
+	}
 	
     private void serverTableMouseDoubleClickPerformed(JTable source) {
     	if(serverTable.getRowCount()>0 && serverTable.isEnabled() && serverTable.getSelectedRow() != -1){
