@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -24,13 +25,20 @@ public class XmlMetaParser extends Thread{
 
     private SensorServer server;
     private Sensor tempSensor;
+    private ArrayList<Sensor> tempSensorList;
 
     public XmlMetaParser (SensorServer server) {
     	this.server = server;
     }
     
     public void run(){
+    	tempSensorList = new ArrayList<Sensor>();
     	createInstancesFromXML();
+    	server.updateCompleted(this);
+    }
+    
+    public ArrayList<Sensor> getSensorList() {
+    	return tempSensorList;
     }
     
     public void createInstancesFromXML () {
@@ -190,7 +198,7 @@ public class XmlMetaParser extends Thread{
 				}
 				
 				// Add sensor to server
-				server.getSensorList().add(tempSensor);
+				tempSensorList.add(tempSensor);
 				server.setConnectionStatus(status.online);
 			}
 			
