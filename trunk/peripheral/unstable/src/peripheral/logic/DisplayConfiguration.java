@@ -107,7 +107,7 @@ public class DisplayConfiguration implements Serializable {
         configFile.delete();
     }
 
-    public static void load(String filename) {
+    public static boolean load(String filename) {
         ZipPackager.unzip(filename, UNZIP_DIR);
 
         File configFile = new File(UNZIP_DIR + File.separator + CONFIG_FILE);
@@ -121,10 +121,14 @@ public class DisplayConfiguration implements Serializable {
             updateFilePaths(instance, UNZIP_DIR);
 
             is.close();
+            
+            return true;
         } catch (ClassNotFoundException ce) {
             ce.printStackTrace();
+            return false;
         } catch (IOException ioe) {
             ioe.printStackTrace();
+            return false;
         }
     }
 
