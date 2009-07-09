@@ -740,25 +740,42 @@ public class DesignerGUI extends javax.swing.JFrame {
                     System.setProperty("apple.laf.useScreenMenuBar", "true");
                 }
 
+                boolean success = false;
+                
                 //display startup dialog
                 StartUpDialog dialog = new StartUpDialog();
                 dialog.setLocationRelativeTo(null);
-                StartUpDialog.StartOption option = dialog.showStartUpDialog();
-
-                if (option != null) {
-                    if (option.equals(StartUpDialog.StartOption.NEW)) {
-                        //no preconfigurations in here
-                    } else if (option.equals(StartUpDialog.StartOption.EXISTING)) {
-                        //let displayconfiguration load its settings
-                        DisplayConfiguration.load(dialog.getConfigFile().getAbsolutePath());
-                    }
-
-                    DesignerGUI gui = new DesignerGUI();
-                    gui.setLocationRelativeTo(null);
-                    gui.setVisible(true);
-                } else {
-                    System.exit(0);
+                
+                while (!success) {
+	                
+                	StartUpDialog.StartOption option = dialog.showStartUpDialog();
+	
+	                if (option != null) {
+	                    if (option.equals(StartUpDialog.StartOption.NEW)) {
+	                        //no preconfigurations in here
+	                    	success = true;
+	                    } else if (option.equals(StartUpDialog.StartOption.EXISTING)) {
+	                        //let displayconfiguration load its settings
+	                    	
+	                    	if (DisplayConfiguration.load(dialog.getConfigFile().getAbsolutePath())) {
+	                    		success = true;
+	                    	}
+	                    	else {
+	                    		String title = "Error loading configuration";
+	                    		String message = "File "+dialog.getConfigFile().getName()+"\n" +
+	                    				"could not be loaded!";
+	                    		JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+	                    	}
+	                    }
+	
+	                } else {
+	                    System.exit(0);
+	                }
                 }
+                
+                DesignerGUI gui = new DesignerGUI();
+                gui.setLocationRelativeTo(null);
+                gui.setVisible(true);
             }
         });
     }
