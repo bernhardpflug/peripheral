@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Logger;
 
 import peripheral.logic.Logging;
 import peripheral.logic.sensor.exception.CSVDataException;
@@ -107,15 +108,12 @@ public class CSVCheckout extends Thread {
     			
         		try{
 
-        			System.out.println("[" + sensor.getSensorChannels().get(0).getFullname() + " - MID: " 
-        					+ sensor.getSensorChannels().get(0).getMid() + "] - " 
-        					+ "Number of Measurements:" + sensor.getSensorChannels().get(0).getMeasQueue().size());
-            		System.out.println("[" + sensor.getSensorChannels().get(1).getFullname() + " - MID: " 
-            				+ sensor.getSensorChannels().get(1).getMid() + "] - "
-            				+ "Number of Measurements:" + sensor.getSensorChannels().get(1).getMeasQueue().size());
-            		System.out.println("[" + sensor.getSensorChannels().get(2).getFullname() + " - MID: " 
-            				+ sensor.getSensorChannels().get(2).getMid() + "] - "
-            				+ "Number of Measurements:" + sensor.getSensorChannels().get(2).getMeasQueue().size());
+        			for(SensorChannel channel : sensor.getSensorChannels()){
+        				System.out.println("[" + channel.getFullname() + " - MID: " 
+            					+ channel.getMid() + "] - " 
+            					+ "Number of Measurements:" + channel.getMeasQueue().size());
+        			}
+        			
             		System.out.println();
             		
         		}catch (NullPointerException e){
