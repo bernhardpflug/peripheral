@@ -22,6 +22,7 @@ import peripheral.logic.value.SensorValue;
 import processing.core.PApplet;
 import processing.core.PFont;
 import processing.core.PImage;
+import processing.opengl.*;
 
 public class VisApplet extends PApplet implements Visualization, Observer {
 

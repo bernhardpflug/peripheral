@@ -1,68 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project name="Peripheral" default="default" basedir=".">
-    <description>Builds, tests, and runs the project Peripheral.</description>
-    
-    <property name="base" value="."/>
-    <property name="base-src" value="${base}/src"/>
-    <property name="designer-src" value="${base-src}/peripheral/designer"/>
-    <property name="logic-src" value="${base-src}/peripheral/logic"/>
-    <property name="viz-src" value="${base-src}/peripheral/viz"/>
-    <property name="resources" value="${base-src}/peripheral/resources"/>
-    <property name="tmp" value="${base}/tmp"/>
-    <property name="tmp-src" value="${tmp}/src"/>
-    <property name="base-classes" value="${tmp}/classes"/>
-    
-    <property name="lib" value="${base}/lib"/>
-    
-    <!-- clean the temporal folders -->
-    <target name="clean">
-        <delete dir="${tmp}" quiet="true"/>
-        <delete file="${base}/designer.jar" quiet="true"/>
-    </target>
-    
-    <!-- compile the whole project and its dependencies -->
-    <target name="compile-all" depends="clean">
-        
-        <!-- create temporal folders  -->
-        <mkdir dir="${tmp}"/>
-        
-		<delete dir = "${base-classes}" quiet="true"/>
-		<mkdir dir="${base-classes}"/>
-                
-        <!-- copy required resources directly to class folder -->
-        <copy todir="${base-classes}/peripheral/resources" overwrite="yes">
-			<fileset dir="${resources}"/>
-		</copy>
-        
-        <!-- unpack all required libraries into class folder -->
-        <unzip src="${lib}/core.jar" dest="${base-classes}/"/>
-        <unzip src="${lib}/commons-logging-1.1.1.jar" dest="${base-classes}/"/>
-        <unzip src="${lib}/swing-layout-1.0.3.jar" dest="${base-classes}/"/>
-        <unzip src="${lib}/spring2.5.6.jar" dest="${base-classes}/"/>
-        
-        <!-- compile source files -->
-        <javac srcdir="${base-src}"
-		       destdir="${base-classes}"
-               debug="${debug-build}"
-		       optimize="${optimised-build}"
-		       deprecation="off"/>
-        
-    </target>
-    
-    <!-- create jar file of the designer -->
-    <target name="designer" depends="compile-all">
+  <description>Builds, tests, and runs the project Peripheral.</description>
 
-        <delete file="${base}/designer.jar" quiet="true"/>
-        
-		<jar jarfile="${base}/designer.jar" basedir="${base-classes}">
-            <manifest>
-                <attribute name="Main-Class" value="peripheral.designer.DesignerGUI"/>
-            </manifest>
-        </jar>
-        
-        <!-- after jar creation delete temporal directory -->
-        <delete dir = "${tmp}" quiet="true"/>
-        
-    </target>
+  <property name="base" value="."/>
+  <property name="base-src" value="${base}/src"/>
+  <property name="designer-src" value="${base-src}/peripheral/designer"/>
+  <property name="logic-src" value="${base-src}/peripheral/logic"/>
+  <property name="viz-src" value="${base-src}/peripheral/viz"/>
+  <property name="resources" value="${base-src}/peripheral/resources"/>
+  <property name="tmp" value="${base}/tmp"/>
+  <property name="tmp-src" value="${tmp}/src"/>
+  <property name="base-classes" value="${tmp}/classes"/>
+  <property name="script" value="${base}/script"/>
+
+  <property name="lib" value="${base}/lib"/>
+
+    <!-- clean the temporal folders -->
+  <target name="clean-designer">
+    <delete dir="${tmp}" quiet="true"/>
+    <delete file="${base}/designer.jar" quiet="true"/>
+  </target>
+
+  <target name="clean-visualization">
+    <delete dir="${tmp}" quiet="true"/>
+    <delete file="${base}/visualization.jar" quiet="true"/>
+  </target>
+
+  <target name="clean" depends="clean-designer,clean-visualization"/>
+
+    <!-- compile the whole project and its dependencies -->
+  <target name="compile-all">
+
+        <!-- create temporal folders  -->
+    <mkdir dir="${tmp}"/>
+
+    <delete dir = "${base-classes}" quiet="true"/>
+    <mkdir dir="${base-classes}"/>
+
+        <!-- copy required resources directly to class folder -->
+    <copy todir="${base-classes}/peripheral/resources" overwrite="yes">
+      <fileset dir="${resources}"/>
+    </copy>
+
+        <!-- unpack all required libraries into class folder -->
+   <!-- <unzip src="${lib}/core.jar" dest="${base-classes}/"/>-->
+    <unzip src="${lib}/commons-logging-1.1.1.jar" dest="${base-classes}/"/>
+    <unzip src="${lib}/swing-layout-1.0.3.jar" dest="${base-classes}/"/>
+    <unzip src="${lib}/spring2.5.6.jar" dest="${base-classes}/"/>
+
+        <!-- compile source files -->
+    <javac srcdir="${base-src}"
+                       destdir="${base-classes}" 
+                       classpath="${lib}/processing-1.0.3-essentials/lib/core.jar;${lib}/processing-1.0.3-essentials/libraries/opengl/library/opengl.jar"
+               debug="${debug-build}"
+                       optimize="${optimised-build}"
+                       deprecation="off"/>
+
+  </target>
+
+    <!-- create jar file of the designer -->
+  <target name="designer-single">
+
+    <delete file="${base}/designer.jar" quiet="true"/>
+
+    <jar jarfile="${base}/designer.jar" basedir="${base-classes}">
+      <manifest>
+        <attribute name="Main-Class" value="peripheral.designer.DesignerGUI"/>
+      </manifest>
+    </jar>
+
+  </target>
+
+  <target name="visualization-single">
+    <delete file="${base}/visualization.jar" quiet="true"/>
+
+    <copy todir="${base-classes}/lib/processing-1.0.3-essentials" overwrite="yes">
+      <fileset dir="${lib}/processing-1.0.3-essentials"/>
+    </copy>
+
+    <copy todir="${base-classes}/script" overwrite="yes">
+      <fileset dir="${script}"/>
+    </copy>
+
+    <jar jarfile="${base}/visualization.jar" basedir="${base-classes}">
+      <manifest>
+        <attribute name="Main-Class" value="peripheral.viz.VisualizationStartup"/>
+      </manifest>
+    </jar>
+
+  </target>
+
+  <target name="designer" depends="clean-designer,compile-all,designer-single">
+    <delete dir = "${tmp}" quiet="true"/>
+  </target>
+  <target name="visualization" depends="clean-visualization,compile-all,visualization-single">
+    <delete dir = "${tmp}" quiet="true"/>
+  </target>
+  <target name="all" depends="clean,compile-all,designer-single,visualization-single">
+    <delete dir = "${tmp}" quiet="true"/>
+  </target>
 </project>
+
