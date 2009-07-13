@@ -75,6 +75,13 @@ public class VisualizationStartup {
     }
     is.close();
     os.close();
+
+    if (!isWindowsOS()) {
+      File f = new File(scriptName);
+      String cmd[] = {"chmod", "777", f.getAbsolutePath()};
+      Process p = Runtime.getRuntime().exec(cmd);
+      p.waitFor();
+    }
   }
 
   private String getScriptName() {
@@ -88,7 +95,7 @@ public class VisualizationStartup {
     if (isWindowsOS()) {
       return "cmd /c start run.bat";
     }
-    return "run";
+    return "./run";
   }
 
   private boolean isWindowsOS() {
