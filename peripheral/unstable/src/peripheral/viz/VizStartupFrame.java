@@ -10,6 +10,7 @@
  */
 package peripheral.viz;
 
+import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import processing.core.PApplet;
@@ -129,7 +130,8 @@ public class VizStartupFrame extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        System.out.println(System.getProperty("java.library.path"));
+        System.out.println("working dir=" + (new File(".")).getAbsolutePath());
+        System.out.println("java.library.path=" + System.getProperty("java.library.path"));
         java.awt.EventQueue.invokeLater(new Runnable() {
 
             public void run() {

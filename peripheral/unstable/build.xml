@@ -15,6 +15,7 @@
   <property name="script" value="${base}/script"/>
   <property name="bin" value="${base}/bin"/>
   <property name="processing-lib" value="processing-1.0.3-essentials"/>
+  <property name="viz-wrapper" value="${tmp}/viz-wrapper"/>
 
   <property name="lib" value="${base}/lib"/>
 
@@ -77,15 +78,25 @@
   <target name="visualization-single">
     <delete file="${bin}/visualization.jar" quiet="true"/>
 
-    <copy todir="${base-classes}/lib/${processing-lib}" overwrite="yes">
+    <copy todir="${viz-wrapper}/lib/${processing-lib}" overwrite="yes">
       <fileset dir="${lib}/${processing-lib}"/>
     </copy>
 
-    <copy todir="${base-classes}/script" overwrite="yes">
+    <!--<copy todir="${base-classes}/script" overwrite="yes">
       <fileset dir="${script}"/>
+    </copy>-->
+    <copy todir="${viz-wrapper}/peripheral/viz">
+      <fileset dir="${base-classes}/peripheral/viz"/>
     </copy>
 
-    <jar jarfile="${bin}/visualization.jar" basedir="${base-classes}">
+    <jar jarfile="${viz-wrapper}/vis-runnable.jar" basedir="${base-classes}">
+      <manifest>
+        <attribute name="Main-Class" value="peripheral.viz.VizStartupFrame"/>
+        <attribute name="Class-Path" value=". lib/processing-1.0.3-essentials/lib/core.jar lib/processing-1.0.3-essentials/libraries/opengl/library/opengl.jar lib/processing-1.0.3-essentials/libraries/opengl/library/jogl.jar lib/processing-1.0.3-essentials/libraries/opengl/library/gluegen-rt.jar"/>
+      </manifest>
+    </jar>
+
+    <jar jarfile="${bin}/visualization.jar" basedir="${viz-wrapper}">
       <manifest>
         <attribute name="Main-Class" value="peripheral.viz.VisualizationStartup"/>
       </manifest>
