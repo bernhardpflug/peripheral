@@ -85,9 +85,7 @@
     <!--<copy todir="${base-classes}/script" overwrite="yes">
       <fileset dir="${script}"/>
     </copy>-->
-    <copy todir="${viz-wrapper}/peripheral/viz">
-      <fileset dir="${base-classes}/peripheral/viz"/>
-    </copy>
+    <copy todir="${viz-wrapper}/peripheral/viz" file="${base-classes}/peripheral/viz/VisualizationStartup.class"/>
 
     <jar jarfile="${viz-wrapper}/vis-runnable.jar" basedir="${base-classes}">
       <manifest>
