@@ -29,4 +29,4 @@ So you simply have to download the Jar-Files from the Download Page. To ensure t
 
 You can find an Ant File in there that allows to compile and build both the visualization and the designer.
 
-If you would like to include the project into an IDE you have to check out the project into your IDE and set all libraries under `Peripheral/lib` as depending libraries. Moreover add the Gluegen-rt and your system specific gluegen jar in folder `Peripheral/lib/processing-1.0.3-essentials/libraries/opengl/library`. Do the same for the Jogl.jar in the same directory and set the native library path to this folder as Jogl needs native libraries for execution.
+If you would like to include the project into an IDE you have to check out the project into your IDE and set all libraries under `Peripheral/lib` as depending libraries. Moreover add the Gluegen-rt and your system specific gluegen jar in folder `Peripheral/lib/processing-1.0.3-essentials/libraries/opengl/library`. Do the same for OpenGL.jar and the Jogl.jar in the same directory and set for jogl the native library path to this folder as it needs native libraries for execution.
