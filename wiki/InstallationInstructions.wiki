@@ -7,8 +7,8 @@ As PDC uses the JDDAC Framework for sensor management, access to a running JDDAC
 =Required downloads=
   # [http://jddac.labs.agilent.com/jddac/downloads/jddac-1.3-src.zip JDDAC Framework]
   # [http://peripheral.googlecode.com/files/jddac.war Modified jddac.War webarchive]
-  # PDC Designer for [http://code.google.com/p/peripheral/downloads/list Windows], [http://code.google.com/p/peripheral/downloads/list Mac OS X] or [http://code.google.com/p/peripheral/downloads/list Linux]
-  # PDC Visualization for [http://code.google.com/p/peripheral/downloads/list Windows], [http://code.google.com/p/peripheral/downloads/list Mac OS X] or [http://code.google.com/p/peripheral/downloads/list Linux]
+  # PDC Designer (runs on Windows, Linux, Mac OS)
+  # PDC Visualization (runs on Windows, Linux, Mac OS)
 
 =Installation=
 ==JDDAC Framework & modified jddac.war==
@@ -24,3 +24,7 @@ A tutorial on how to implement your own sensors (probes) and run them on a Jddac
 
 ==Peripheral Display Creator & Visualization==
 The designer and visualization components of our framework which are used to design peripheral displays, create configuration files and visualize those configuration files, are executable, so there is no need to install anything.
+
+So you simply have to download the Jar-Files from the Download Page. To ensure that you download the latest version we recommend to checkout the svn repository /trunk/peripheral/unstable
+
+You can find an Ant File in there that allows to compile and build both the visualization and the designer.
