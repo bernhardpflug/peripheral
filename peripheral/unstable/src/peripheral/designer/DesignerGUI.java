@@ -349,7 +349,7 @@ public class DesignerGUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("Tip: The order in the list defines the order of painting the symbols of an adapter");
+        jLabel1.setText("Tip: The order in the list defines the order of painting the animations");
 
         org.jdesktop.layout.GroupLayout AnimationsPanelLayout = new org.jdesktop.layout.GroupLayout(AnimationsPanel);
         AnimationsPanel.setLayout(AnimationsPanelLayout);
