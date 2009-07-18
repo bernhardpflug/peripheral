@@ -28,3 +28,5 @@ The designer and visualization components of our framework which are used to des
 So you simply have to download the Jar-Files from the Download Page. To ensure that you download the latest version we recommend to checkout the svn repository `/trunk/peripheral/unstable`
 
 You can find an Ant File in there that allows to compile and build both the visualization and the designer.
+
+If you would like to include the project into an IDE you have to check out the project into your IDE and set all libraries under `Peripheral/lib` and `Peripheral/lib/opengl` as depending libraries. Furthermore the Jogl library needs native libraries depending on the system. You have to add this by adding your system specific subfolder of `Peripheral/lib/opengl`
