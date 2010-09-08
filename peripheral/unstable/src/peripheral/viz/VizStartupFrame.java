@@ -11,8 +11,10 @@
 package peripheral.viz;
 
 import java.io.File;
+import java.util.logging.Level;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import peripheral.logic.Logging;
 import processing.core.PApplet;
 
 /**
@@ -27,7 +29,7 @@ public class VizStartupFrame extends javax.swing.JFrame {
     /** Creates new form VizConfigFrame */
     public VizStartupFrame() {
         initComponents();
-
+        Logging.getLogger().setLevel(Level.INFO);
         this.setSize(550, 400);
         this.setLocation(
                 getToolkit().getScreenSize().width / 2 - this.getWidth() / 2,
