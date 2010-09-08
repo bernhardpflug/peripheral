@@ -8,7 +8,9 @@
 
 
 = Customize used sensors on client =
-Sensors (so called probes) are implemented within each client and need to be compiled with it. Which sensors are considered and registered on the server depends on the configuration file of the client (default config.xml). This either needs to be set on startup in Eclipse as program argument (run config) or the corresponding file needs to be referenced in build.xml if you use ant for compilation and run via jar file.
+If you consider writing or just running different senors (so called probes) on the client there are two aspects to consider
+# Put your sensor implementation into the common/src package of the jddac framework (not client or server src dir). Compile this changes using the ant script within this package. 
+# After that the client needs to be aware of which probes you want to use for measurements and in return need to be registered on the server. Therefor it uses a configuration file which can either be set as program argument on startup (in eclipse via run configuration) or can be set in build.xml file if you use ant for compilation.
 
 
 = Writing your own transducer block =
