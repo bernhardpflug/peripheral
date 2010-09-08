@@ -51,11 +51,13 @@ public class SensorUpdateThread extends Thread implements Observer{
             //run through all channels of the sensor and change the act-value of
             //the assigned sensor values
             for (SensorChannel channel : sensor.getSensorChannels()) {
+                //Logging.getLogger().info("channel " + channel.getFullname() + ", queue size: " + channel.getMeasQueue().size());
                 Measurement actMeasurement = channel.getMeasQueue().poll();
                 if (actMeasurement != null) {
                     sensorChanged = true;
                     List<SensorValue> sensorValues = channel.getSensorValues();
                     for (SensorValue sv : sensorValues) {
+                        //Logging.getLogger().info("act value: " + actMeasurement.getValue());
                         sv.setActValue(actMeasurement.getValue());
                     }
                 }
@@ -75,6 +77,7 @@ public class SensorUpdateThread extends Thread implements Observer{
 
             try {
                 float samplingRate = sensor.getSamplerate();
+                //Logging.getLogger().info("sampling rate: " + (samplingRate * 1000));
                 sleep((long) (samplingRate * 1000));
             } catch (InterruptedException e) {
                 e.printStackTrace();
