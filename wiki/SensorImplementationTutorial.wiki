@@ -74,3 +74,4 @@ For further information about how to implement and configure your senor via the 
 
 = Pitfalls =
 # That a sensor works with attached metainformation (lower/upper limit) the attribute meta-id (which is used in original jddac examples) must be removed!!
+# In the configuration file there are two values, the BasicTransducerBlock.period defines the interval of taking measurements from the sensor, the Reporter.connectInterval instead defines how often the client transfers its data to the server. If the connect interval is higher than the transducer period that means that the server won't be informed about every measurement, instead it always gets a bunch of measures on every connect. Be aware of this if you want to get very time-accurate values.
