@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Peripheral" default="default" basedir=".">
+  <description>Builds, tests, and runs the project Peripheral.</description>
+
+  <property name="base" value="."/>
+  <property name="base-src" value="${base}/src"/>
+  <property name="designer-src" value="${base-src}/peripheral/designer"/>
+  <property name="logic-src" value="${base-src}/peripheral/logic"/>
+  <property name="viz-src" value="${base-src}/peripheral/viz"/>
+  <property name="resources" value="${base-src}/peripheral/resources"/>
+  <property name="tmp" value="${base}/tmp"/>
+  <property name="tmp-src" value="${tmp}/src"/>
+  <property name="base-classes" value="${tmp}/classes"/>
+  <property name="script" value="${base}/script"/>
+  <property name="bin" value="${base}/bin"/>
+  <property name="processing-lib" value="processing-1.0.3-essentials"/>
+  <property name="viz-wrapper" value="${tmp}/viz-wrapper"/>
+
+  <property name="lib" value="${base}/lib"/>
+
+    <!-- clean the temporal folders -->
+  <target name="clean-designer">
+    <delete dir="${tmp}" quiet="true"/>
+    <delete file="${bin}/designer.jar" quiet="true"/>
+  </target>
+
+  <target name="clean-visualization">
+    <delete dir="${tmp}" quiet="true"/>
+    <delete file="${bin}/visualization.jar" quiet="true"/>
+  </target>
+
+  <target name="clean" depends="clean-designer,clean-visualization"/>
+
+    <!-- compile the whole project and its dependencies -->
+  <target name="compile-all">
+
+        <!-- create temporal folders  -->
+    <mkdir dir="${tmp}"/>
+
+    <delete dir = "${base-classes}" quiet="true"/>
+    <mkdir dir="${base-classes}"/>
+
+        <!-- copy required resources directly to class folder -->
+    <copy todir="${base-classes}/peripheral/resources" overwrite="yes">
+      <fileset dir="${resources}"/>
+    </copy>
+
+        <!-- unpack all required libraries into class folder -->
+   <!-- <unzip src="${lib}/core.jar" dest="${base-classes}/"/>-->
+    <unzip src="${lib}/commons-logging-1.1.1.jar" dest="${base-classes}/"/>
+    <unzip src="${lib}/swing-layout-1.0.3.jar" dest="${base-classes}/"/>
+    <unzip src="${lib}/spring2.5.6.jar" dest="${base-classes}/"/>
+
+        <!-- compile source files -->
+    <javac srcdir="${base-src}"
+                       destdir="${base-classes}" 
+                       classpath="${lib}/${processing-lib}/lib/core.jar;${lib}/${processing-lib}/libraries/opengl/library/opengl.jar"
+               debug="${debug-build}"
+                       optimize="${optimised-build}"
+                       deprecation="off"/>
+
+  </target>
+
+    <!-- create jar file of the designer -->
+  <target name="designer-single">
+
+    <delete file="${bin}/designer.jar" quiet="true"/>
+
+    <jar jarfile="${bin}/designer.jar" basedir="${base-classes}">
+      <manifest>
+        <attribute name="Main-Class" value="peripheral.designer.DesignerGUI"/>
+      </manifest>
+    </jar>
+
+  </target>
+
+  <target name="visualization-single">
+    <delete file="${bin}/visualization.jar" quiet="true"/>
+
+    <copy todir="${viz-wrapper}/lib/${processing-lib}" overwrite="yes">
+      <fileset dir="${lib}/${processing-lib}"/>
+    </copy>
+
+    <!--<copy todir="${base-classes}/script" overwrite="yes">
+      <fileset dir="${script}"/>
+    </copy>-->
+    <copy todir="${viz-wrapper}/peripheral/viz" file="${base-classes}/peripheral/viz/VisualizationStartup.class"/>
+
+    <jar jarfile="${viz-wrapper}/vis-runnable.jar" basedir="${base-classes}">
+      <manifest>
+        <attribute name="Main-Class" value="peripheral.viz.VizStartupFrame"/>
+        <attribute name="Class-Path" value=". lib/processing-1.0.3-essentials/lib/core.jar lib/processing-1.0.3-essentials/libraries/opengl/library/opengl.jar lib/processing-1.0.3-essentials/libraries/opengl/library/jogl.jar lib/processing-1.0.3-essentials/libraries/opengl/library/gluegen-rt.jar"/>
+      </manifest>
+    </jar>
+
+    <jar jarfile="${bin}/visualization.jar" basedir="${viz-wrapper}">
+      <manifest>
+        <attribute name="Main-Class" value="peripheral.viz.VisualizationStartup"/>
+      </manifest>
+    </jar>
+
+  </target>
+
+  <target name="designer" depends="clean-designer,compile-all,designer-single">
+    <delete dir = "${tmp}" quiet="true"/>
+  </target>
+  <target name="visualization" depends="clean-visualization,compile-all,visualization-single">
+    <delete dir = "${tmp}" quiet="true"/>
+  </target>
+  <target name="all" depends="clean,compile-all,designer-single,visualization-single">
+    <delete dir = "${tmp}" quiet="true"/>
+  </target>
+</project>
+

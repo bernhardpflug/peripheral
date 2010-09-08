@@ -1,0 +1,6 @@
+cd tmp
+
+set CLASSPATH=".;lib/processing-1.0.3-essentials/lib/core.jar;lib/processing-1.0.3-essentials/libraries/opengl/library/opengl.jar;lib/processing-1.0.3-essentials/libraries/opengl/library/jogl.jar;lib/processing-1.0.3-essentials/libraries/opengl/library/gluegen-rt.jar"
+java -Xmx512m -Djava.library.path=lib/processing-1.0.3-essentials/libraries/opengl/library peripheral.viz.VizStartupFrame
+
+exit
