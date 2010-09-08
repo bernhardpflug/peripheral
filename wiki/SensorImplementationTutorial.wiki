@@ -71,3 +71,6 @@ There are just a few things you need to draw attention to:
   * `protected Measurement readChannel(int chanNum){...}` is the method that actually collects a new measurement and returns it to the reporter block which forwards it to the JDDAC Server the sensor is connected to.
 
 For further information about how to implement and configure your senor via the JDDAC XML configuration format, please refer to the JDDAC documentation and JavaDoc.
+
+= Pitfalls =
+# That a sensor works with attached metainformation (lower/upper limit) the attribute meta-id (which is used in original jddac examples) must be removed!!
