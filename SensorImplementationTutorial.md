@@ -1,0 +1,75 @@
+# Prerequisites #
+
+  1. Download [JDDAC Framework](http://jddac.labs.agilent.com/jddac/downloads/jddac-1.3-src.zip)
+  1. Compile the JddacClient by invoking `ant` in the clients root dir: `/apps/JddacClient/` or by compiling the whole JDDAC Framework at once by invoking `ant` in the framworks root directory
+  1. Read through the documentation provided with JDDAC to get familiar with the IEEE 1451.0 standard
+
+
+# Customize used sensors on client #
+If you consider writing or just running different senors (so called probes) on the client there are two aspects to consider
+# Put your sensor implementation into the common/src package of the jddac framework (not client or server src dir). Compile this changes using the ant script within this package.
+# After that the client needs to be aware of which probes you want to use for measurements and in return need to be registered on the server. Therefor it uses a configuration file which can either be set as program argument on startup (in eclipse via run configuration) or can be set in build.xml file if you use ant for compilation.
+
+
+# Writing your own transducer block #
+To write your own basic sensor, a new class needs to be added to the package `net.java.jddac.jmdi.transducers`, where you can already find the demo transducers provided by JDDAC. By taking a look on the following sample transducer, one can see that writing your own transducers is a pretty simple task:
+
+```
+public class DemoSensor extends BasicTIM{
+
+	private final Object teds[][][] = {
+			
+			// chan0
+			{{MeasAttr.NAME, "DemoSensor"},
+				{MeasAttr.DESCRIPTION, "Awesome Demo Sensor"},
+				{MeasAttr.VERSION, "0.X"},
+				{MeasAttr.MANUFACTURER, "Foo"}},
+			// chan1
+			{{MeasAttr.NAME, "AccX"},
+				{MeasAttr.DESCRIPTION, "Acceleration along X-Axis"},
+				{MeasAttr.UNITS, "G-Force in Percent"},
+				{MeasAttr.DATA_TYPE, TypeAttr.INTEGER8},
+				{MeasAttr.LOWER_LIMIT, -200},
+				{MeasAttr.UPPER_LIMIT, 200}}
+	};
+	
+	public MotionSensor(){
+		setChannelTeds(teds);
+	}
+	
+	@Override
+	public String getMetaID() {
+		return "QkqlDBlQ3hGcYD2kVtiVkw:1";
+	}
+	
+	protected Measurement readChannel(int chanNum){
+		Measurement newMeas = genEmptyMeasurement(chanNum);
+		Object result = null;
+		
+		switch(chanNum){
+		case 1:
+			int x = Unimotion.getSMSX();
+			result = (int)(x/2.55);
+			
+			break;
+		}
+		newMeas.put(MeasAttr.VALUE, result);
+		return newMeas;
+	}
+
+}
+```
+
+There are just a few things you need to draw attention to:
+
+  * Your newly created class needs to extend the BasicTIM class: `public class DemoSensor extends BasicTIM {...}`
+  * `private final Object teds[][][] = {...}` creates an Object containing the sensors Metadata
+  * The constructor of your class needs to call the `setChannelTeds(Object teds)` function to pass the metadata of your sensorchannels to the other existing functionblocks
+  * The function `getMetaID()` needs to return a generated HEX64 id
+  * `protected Measurement readChannel(int chanNum){...}` is the method that actually collects a new measurement and returns it to the reporter block which forwards it to the JDDAC Server the sensor is connected to.
+
+For further information about how to implement and configure your senor via the JDDAC XML configuration format, please refer to the JDDAC documentation and JavaDoc.
+
+# Pitfalls #
+# That a sensor works with attached metainformation (lower/upper limit) the attribute meta-id (which is used in original jddac examples) must be removed!!
+# In the configuration file there are two values, the BasicTransducerBlock.period defines the interval of taking measurements from the sensor, the Reporter.connectInterval instead defines how often the client transfers its data to the server. If the connect interval is higher than the transducer period that means that the server won't be informed about every measurement, instead it always gets a bunch of measures on every connect. Be aware of this if you want to get very time-accurate values.

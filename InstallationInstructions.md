@@ -1,0 +1,30 @@
+Allthough all PDC components such as the Peripheral Display Creator and Visualization are executable with setting any prior modifcations of your runtime environment. The only prerequisite is an installed Java VM running JRE 1.5, which can be considered as "standard configuration" nowadays.
+
+As PDC uses the JDDAC Framework for sensor management, access to a running JDDAC Server is needed. If you do not have this access you might want to download and setup your own server installation, as well as implement own probes and attach them to your own server. To do so, read through the following steps.
+
+# Required downloads #
+  1. [JDDAC Framework](http://jddac.labs.agilent.com/jddac/downloads/jddac-1.3-src.zip)
+  1. [Modified jddac.War webarchive](http://peripheral.googlecode.com/files/jddac.war)
+  1. PDC Designer (runs on Windows, Linux, Mac OS)
+  1. PDC Visualization (runs on Windows, Linux, Mac OS)
+
+# Installation #
+## JDDAC Framework & modified jddac.war ##
+JDDAC (Java Distributed Data Acquisition and Control) is a platform for building sensor networks and data acquisition systems. JDDAC enables Java applications to interact with the physical world by providing the means to manage transducers and to access measurement data streams. JDDAC is based on the IEEE 1451 standards for smart transducers, and it is available for the J2ME, J2SE, and J2EE environments.
+
+For more information about the JDDAC platform visit http://jddac.dev.java.net. If your objective is to set up your own installation of a JDDAC Sensor server, follow the installation instructions provided with the download.
+
+As already outlined in the JDDAC installation instructions, after compiling the jddacServer source by invoking `ant` in the servers root dir `/apps/jddacServer/`, the server is started by executing run.sh (Windows), run\_linux.sh or [run\_mac.sh](http://peripheral.googlecode.com/files/run_mac.sh) (needs to be downloaded first) in the servers `/apps/jddacServer/bin/` directory.  To enable the PDC Framework to communicate with existing JDDAC sensor servers, the jddac.war webarchive in your servers webapp folder needs to be replaced with the previously downloaded [jddac.war](http://peripheral.googlecode.com/files/jddac.war).
+
+When your server is up and running, compile the JddacClient application provided with the JDDAC Framework to run sensors and connect them to the server. Each JddacClient can be seen as a stand alone sensor. If you would like to run multiple sensors simultaneously on the same VM you need to copy the JddacClient folder and run the copied client again via `java -jar JddacClient.jar`, as configuration file conflicts would occur if more than one instance is executed from one JddacClient.jar. If you would like to run the JddacClient with another configuration file, you could do that by invoking `java -jar JddacClient.jar -f config.xml`.
+
+A tutorial on how to implement your own sensors (probes) and run them on a JddacClient can be found in the wiki: SensorImplementationTutorial.
+
+## Peripheral Display Creator & Visualization ##
+The designer and visualization components of our framework which are used to design peripheral displays, create configuration files and visualize those configuration files, are executable, so there is no need to install anything.
+
+So you simply have to download the Jar-Files from the Download Page. To ensure that you download the latest version we recommend to checkout the svn repository `/trunk/peripheral/unstable`
+
+You can find an Ant File in there that allows to compile and build both the visualization and the designer.
+
+If you would like to include the project into an IDE you have to check out the project into your IDE and set all libraries under `Peripheral/lib` as depending libraries. Moreover add the Gluegen-rt and your system specific gluegen jar in folder `Peripheral/lib/processing-1.0.3-essentials/libraries/opengl/library`. Do the same for OpenGL.jar and the Jogl.jar in the same directory and set for jogl the native library path to this folder as it needs native libraries for execution.
